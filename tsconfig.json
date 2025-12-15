@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "module": "commonjs",
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "module": "commonjs", //output code format
+    "rootDir": "./src", //source code
+    "outDir": "./dist", //compiled code
+    "allowSyntheticDefaultImports": true, //default import where there is not
+    "esModuleInterop": true, //compatibility CommonJs and ES modules !(import * as express from "express")
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true // not check node_modules
   },
   "include": ["src/**/*"],
   "exclude": ["__tests__", "dist", "node_modules"]
