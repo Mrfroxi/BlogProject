@@ -12,5 +12,11 @@
   "packageManager": "pnpm@10.25.0",
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.2",
+    "nodemon": "^3.1.11",
+    "typescript": "^5.9.3"
   }
 }
