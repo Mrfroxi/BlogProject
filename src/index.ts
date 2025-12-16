@@ -9,4 +9,4 @@ setupApp(app);
 
 const PORT:string|number = process.env.port || 5009;
 
-app.listen(PORT , () => { `server start on port: ${PORT}`});
+app.listen(PORT , () => { console.log(`server start on port: ${PORT}`)});
