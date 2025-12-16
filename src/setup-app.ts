@@ -1,6 +1,7 @@
 import express, {Express,Request,Response} from "express";
 import {HttpStatuses} from "./core/types/http-statuses";
 import {blogsRouter} from "./blogs/routers/blogs.router";
+import {BLOGS_PATH} from "./core/paths/paths";
 
 
 export  const setupApp = (app:Express) => {
@@ -10,7 +11,7 @@ export  const setupApp = (app:Express) => {
         res.status(HttpStatuses.Ok).send('mainPath')
     })
 
-    app.use('/blogs',blogsRouter)
+    app.use(BLOGS_PATH,blogsRouter)
 
     return app;
 }
