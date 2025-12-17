@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult, ValidationError,FieldValidationError } from 'express-validator';
 import { HttpStatuses } from '../types/http-statuses';
+import {ValidationErrorType} from "../types/validator-error";
 
-const formatterError = (error: ValidationError) => {
+
+
+
+
+const formatterError = (error: ValidationError):ValidationErrorType => {
 
         const expressError = error as unknown as FieldValidationError;
 
@@ -28,9 +33,7 @@ export const inputValidationResultMiddleware = (
 
     if (result.length > 0) {
         return res.status(HttpStatuses.BadRequest).send({
-            "errorsMessages": [
-                ...result
-            ]
+            "errorsMessages": result,
         });
     }
 

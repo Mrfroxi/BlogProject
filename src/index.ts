@@ -9,6 +9,6 @@ dotenv.config();
 setupApp(app);
 
 
-const PORT:string|number = process.env.PORT || 5009;
+const PORT:string|number = process.env["PORT"] || 5009;
 
 app.listen(PORT , () => { console.log(`server start on port: ${PORT}`)});

@@ -1,6 +1,5 @@
 import {body} from "express-validator";
 
-
 const webRegex = process.env['WEB_REGEX'] || '' ;
 
 const blogNameValidator = body('name')
@@ -23,9 +22,8 @@ const blogWebsiteUrlValidator = body('websiteUrl')
     .isLength({ max: 100 }).withMessage('websiteUrl of name is not correct')
     .matches(webRegex).withMessage('Regex')
 
-
-export const blogCreateValidator = [
+export const blogUpdateValidator = [
     blogNameValidator,
     blogDescriptionValidator,
-    blogWebsiteUrlValidator,
+    blogWebsiteUrlValidator
 ]
