@@ -12,6 +12,6 @@ export const blogsRouter = Router({});
 
 
 blogsRouter
-    .get('', SuperAdminGuard,getBlogsListHandler)
+    .get('',getBlogsListHandler)
     .get('/:id',IdParamValidator, inputValidationResultMiddleware , getBlogHandler)
-    .post('',blogCreateValidator,inputValidationResultMiddleware ,createBlogHandler )
+    .post('',SuperAdminGuard,blogCreateValidator,inputValidationResultMiddleware ,createBlogHandler )
