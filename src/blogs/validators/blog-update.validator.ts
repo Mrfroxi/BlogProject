@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 
-const webRegex = '^https://([a-zA-Z0-9_-]+\\\\.)+[a-zA-Z0-9_-]+(\\\\/[a-zA-Z0-9_-]+)*\\\\/?$'
+const webRegex =  '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'
 
 const blogNameValidator = body('name')
     .notEmpty().withMessage('name is empty')
