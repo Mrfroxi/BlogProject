@@ -1,5 +1,5 @@
 export interface BlogListOutput {
-    id:number,
+    id:string,
     name:string,
     description:string,
     websiteUrl:string,

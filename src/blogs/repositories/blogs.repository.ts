@@ -10,15 +10,15 @@ export const blogsRepository = {
     },
     findById: (id:number) => {
 
-        return  db.blogs.find((elem:Blog)=> elem.id === id ) ?? null;
+        return  db.blogs.find((elem:Blog)=> +elem.id === id ) ?? null;
     },
     findIndexById(id:number){
-        return  db.blogs.findIndex((elem:Blog)=> elem.id === id );
+        return  db.blogs.findIndex((elem:Blog)=> +elem.id === id );
     },
     createBlog(blog:BlogCreateInput){
 
         const newBlog:Blog = {
-            id: db.blogs.length+1 ,
+            id: `${db.blogs.length+1}` ,
             name: blog.name,
             description: blog.description,
             websiteUrl: blog.websiteUrl,

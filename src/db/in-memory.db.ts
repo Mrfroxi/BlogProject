@@ -5,13 +5,13 @@ import {Post} from "../posts/types/post";
 export  const db = {
     blogs: <Blog[]>[
         {
-            id:1,
+            id:"1",
             name:'testName',
             description:"testDescription",
             websiteUrl:'websiteUrl'
         },
         {
-            id:2,
+            id:"2",
             name:'testName',
             description:"testDescription",
             websiteUrl:'websiteUrl'
@@ -19,7 +19,7 @@ export  const db = {
     ],
     posts: <Post[]> [
         {
-            "id": 1,
+            "id": "1",
             "title": "string",
             "shortDescription": "string",
             "content": "string",
@@ -27,7 +27,7 @@ export  const db = {
             "blogName": "string"
         },
         {
-            "id": 2,
+            "id": "2",
             "title": "string",
             "shortDescription": "string",
             "content": "string",

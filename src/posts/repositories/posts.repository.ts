@@ -2,22 +2,21 @@ import {db} from "../../db/in-memory.db";
 import {postCreateDto} from "../dto/post-create.input";
 import {Post} from "../types/post";
 import {postUpdateDto} from "../dto/post-update.input";
-import {Blog} from "../../blogs/types/blog";
 
 
 export const postsRepository = {
     getPostById : (id:number) => {
-        return  db.posts.find((elem) => elem.id === id) ?? null;
+        return  db.posts.find((elem) => +elem.id === id) ?? null;
     },
     getPostsList:()=>{
         return db.posts;
     },
     findIndexById(id:number){
-        return  db.posts.findIndex((elem:Post)=> elem.id === id );
+        return  db.posts.findIndex((elem:Post)=> +elem.id === id );
     },
     createPost: (body:postCreateDto) => {
         const newPost:Post = {
-            id:db.posts.length +1,
+            id:`${db.posts.length +1}`,
             title: body.title,
             shortDescription: body.shortDescription,
             content: body.content,

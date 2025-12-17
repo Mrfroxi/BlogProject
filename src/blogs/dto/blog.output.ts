@@ -1,5 +1,5 @@
 export interface  BlogOutput{
-    id:number,
+    id:string,
     name:string,
     description:string,
     websiteUrl:string,
