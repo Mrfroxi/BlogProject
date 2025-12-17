@@ -1,8 +1,9 @@
 import express, {Express,Request,Response} from "express";
 import {HttpStatuses} from "./core/types/http-statuses";
 import {blogsRouter} from "./blogs/routers/blogs.router";
-import {BLOGS_PATH, POSTS_PATH} from "./core/paths/paths";
+import {BLOGS_PATH, POSTS_PATH, TEST_ALLDATA_PATH} from "./core/paths/paths";
 import {postsRouter} from "./posts/posts.router";
+import {testAllDataRouter} from "./test/routers/testAllData.router";
 
 
 export  const setupApp = (app:Express) => {
@@ -14,6 +15,7 @@ export  const setupApp = (app:Express) => {
 
     app.use(BLOGS_PATH,blogsRouter)
     app.use(POSTS_PATH,postsRouter)
+    app.use(TEST_ALLDATA_PATH,testAllDataRouter)
 
     return app;
 }
