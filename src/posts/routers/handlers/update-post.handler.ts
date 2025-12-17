@@ -10,7 +10,7 @@ export const updatePostHandler = (req:Request,res:Response) =>{
     const id = req.params.id;
     const reqBody:postUpdateDto = req.body;
 
-    const updatedPost:Post | null = postsRepository.updatePost(id,reqBody)
+    const updatedPost:Post | null= postsRepository.updatePost(id,reqBody)
 
     if(!updatedPost){
         res.sendStatus(HttpStatuses.NotFound)

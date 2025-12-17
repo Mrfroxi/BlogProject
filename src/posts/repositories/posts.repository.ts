@@ -21,7 +21,7 @@ export const postsRepository = {
             shortDescription: body.shortDescription,
             content: body.content,
             blogId: body.blogId,
-            blogName: null ,
+            blogName: '' ,
         }
 
         db.posts.push(newPost);
@@ -29,7 +29,7 @@ export const postsRepository = {
         return newPost;
     },
     updatePost : (id:string,body:postUpdateDto) => {
-        const post:Post | null  = postsRepository.getPostById(+id)
+        const post:Post | null = postsRepository.getPostById(+id)
 
         if (!post) {
             return post;
