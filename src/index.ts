@@ -1,14 +1,19 @@
 import express, {Express} from 'express'
 import {setupApp} from "./setup-app";
 import dotenv from 'dotenv';
-
-const app:Express = express();
-
 dotenv.config();
+import {SETTINGS} from "./core/setting/settings";
+import {runDB} from "./db/mongo.db";
 
-setupApp(app);
+const bootstrap = async () => {
+    const app:Express = express();
+    setupApp(app);
+    const PORT = SETTINGS.PORT;
 
+    await runDB(SETTINGS.MONGO_URL);
 
-const PORT:string|number = process.env["PORT"] || 5009;
+    app.listen(PORT, () => console.log(`server start on port: ${PORT}`));
+    return app;
+};
 
-app.listen(PORT , () => { console.log(`server start on port: ${PORT}`)});
+bootstrap();
