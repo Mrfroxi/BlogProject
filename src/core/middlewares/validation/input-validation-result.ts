@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult, ValidationError,FieldValidationError } from 'express-validator';
-import { HttpStatuses } from '../types/http-statuses';
-import {ValidationErrorType} from "../types/validator-error";
+import { HttpStatuses } from '../../types/http-statuses';
+import {ValidationErrorType} from "../../types/validator-error";
 
 
 
