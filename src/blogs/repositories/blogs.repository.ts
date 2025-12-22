@@ -1,58 +1,50 @@
-import {db} from "../../db/in-memory.db";
 import {BlogCreateInput} from "../dto/blog-create.input";
 import {Blog} from "../types/blog";
 import {BlogUpdateDto} from "../dto/blog-update";
+import {blogCollection} from "../../db/mongo.db";
+import {ObjectId, WithId} from "mongodb";
 
 
 export const blogsRepository = {
-    findAll: () =>{
-        return db.blogs;
+    async findAll():Promise<WithId<Blog>[]> {
+        return blogCollection.find().toArray();
     },
-    findById: (id:number) => {
+    async findById(id:string): Promise<WithId<Blog>  | null>{
+        return blogCollection.findOne({_id: new ObjectId(id)})
+    },
+    async createBlog(newBlog:Blog): Promise<WithId<Blog>>{
+        const insertResult = await blogCollection.insertOne(newBlog);
+        return { ...newBlog, _id: insertResult.insertedId };
 
-        return  db.blogs.find((elem:Blog)=> +elem.id === id ) ?? null;
     },
-    findIndexById(id:number){
-        return  db.blogs.findIndex((elem:Blog)=> +elem.id === id );
-    },
-    createBlog(blog:BlogCreateInput){
+    async updateBlog(id: string, dto: BlogUpdateDto): Promise<void> {
+        const updateResult = await blogCollection.updateOne(
+            {
+                _id: new ObjectId(id),
+            },
+            {
+                $set: {
+                   name:dto.name,
+                   description:dto.description,
+                   websiteUrl:dto.websiteUrl,
+                },
+            },
+        );
 
-        const newBlog:Blog = {
-            id: `${db.blogs.length+1}` ,
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
+        if (updateResult.matchedCount < 1) {
+            throw new Error('Driver not exist');
         }
-
-        db.blogs.push(newBlog)
-
-        return newBlog;
+        return;
     },
-    updateBlog(id:string,body:BlogUpdateDto){
 
-        const blog:Blog | null = blogsRepository.findById(+id)
+    async deleteBlog(id: string): Promise<void> {
+        const deleteResult = await blogCollection.deleteOne({
+            _id: new ObjectId(id),
+        });
 
-        if (!blog) {
-            return blog;
+        if (deleteResult.deletedCount < 1) {
+            throw new Error('Driver not exist');
         }
-
-        blog.name = body.name
-        blog.description = body.description
-        blog.websiteUrl = body.websiteUrl
-
-        return blog;
+        return;
     },
-    deleteBlog(id:string){
-
-        const deletedBlogIndex:number = blogsRepository.findIndexById(+id);
-
-        if(deletedBlogIndex === -1) {
-            return null
-        }
-
-        db.blogs.splice(deletedBlogIndex, 1);
-
-        return deletedBlogIndex
-
-    }
 }

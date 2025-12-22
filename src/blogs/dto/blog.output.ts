@@ -3,4 +3,6 @@ export interface  BlogOutput{
     name:string,
     description:string,
     websiteUrl:string,
+    createAt:string,
+    isMembership:boolean,
 }

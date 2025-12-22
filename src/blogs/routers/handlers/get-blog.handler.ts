@@ -3,13 +3,14 @@ import {blogsRepository} from "../../repositories/blogs.repository";
 import {Blog} from "../../types/blog";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {mapBlogToOutput} from "../mappers/map-blog-to-output";
+import {WithId} from "mongodb";
 
 
-export function getBlogHandler(req:Request, res:Response){
+export async function getBlogHandler(req:Request, res:Response){
 
-    const blogId:number = +req.params.id;
+    const blogId:string = req.params.id;
 
-    const blog:Blog | null= blogsRepository.findById(blogId);
+    const blog:WithId<Blog> | null= await  blogsRepository.findById(blogId);
 
     if(blog){
         res.status(HttpStatuses.Ok).send(mapBlogToOutput(blog));

@@ -1,6 +1,6 @@
 import {Router} from "express";
-import {IdParamValidator} from "../../core/validators/id-param.validator";
-import {inputValidationResultMiddleware} from "../../core/validators/input-validation-result";
+import {IdParamValidator} from "../../core/middlewares/validation/id-param.validator";
+import {inputValidationResultMiddleware} from "../../core/middlewares/validation/input-validation-result";
 import { getPostListHandler } from "./handlers/get-posts-list.handler";
 import {SuperAdminGuard} from "../../auth/middleware/super-admin.guard-middleware";
 import {createPostValidator} from "../validators/post-create.validator";

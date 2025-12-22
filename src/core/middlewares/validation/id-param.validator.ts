@@ -1,4 +1,9 @@
 import {param} from "express-validator";
 
-export const IdParamValidator = param('id')
-    .isInt({min:0}).withMessage('ID must be')
+export const idParamValidator = param('id')
+    .exists()
+    .withMessage('ID is required')
+    .isString()
+    .withMessage('ID must be a string')
+    .isMongoId()
+    .withMessage('Неверный формат ObjectId');
