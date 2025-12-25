@@ -3,10 +3,6 @@ import { validationResult, ValidationError,FieldValidationError } from 'express-
 import { HttpStatuses } from '../../types/http-statuses';
 import {ValidationErrorType} from "../../types/validator-error";
 
-
-
-
-
 const formatterError = (error: ValidationError):ValidationErrorType => {
 
         const expressError = error as unknown as FieldValidationError;
