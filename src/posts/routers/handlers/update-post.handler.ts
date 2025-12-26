@@ -3,8 +3,6 @@ import {postsRepository} from "../../repositories/posts.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 
 
-
-
 export const updatePostHandler =async (req:Request,res:Response) =>{
     try {
         const postId = req.params.id;
