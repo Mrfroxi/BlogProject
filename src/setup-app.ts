@@ -10,7 +10,7 @@ export  const setupApp = (app:Express) => {
     app.use(express.json());
 
     app.get('/' , (_req:Request, res:Response) =>{
-        res.status(HttpStatuses.Ok).send('mainPath')
+        res.status(HttpStatuses.Ok).send('testEndPoint')
     })
 
     app.use(BLOGS_PATH,blogsRouter)
