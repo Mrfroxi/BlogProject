@@ -17,15 +17,13 @@ export const paginationAndSortingDefault:PaginationDefaults<string> = {
 }
 
 
-
-
 //the elements in the array must be of type string
 export function paginationSortingValidator<T extends string>(
     sortFieldsEnum:  Record<string,T>, //for enum
 ) {
 
     const allowedSortFields = Object.values(sortFieldsEnum);
-
+    const allowSortDirections = Object.values(SortDirection);
     return [
         query('pageNumber')
             .default(DEFAULT_PAGE_NUMBER)
@@ -41,7 +39,7 @@ export function paginationSortingValidator<T extends string>(
 
         query('sortDirection')
             .default(DEFAULT_SORT_DIRECTION)
-            .isIn( Object.values(SortDirection))
+            .isIn(allowSortDirections)
             .withMessage('Sort direction must be either asc or desc'),
 
         query('searchNameTerm')
