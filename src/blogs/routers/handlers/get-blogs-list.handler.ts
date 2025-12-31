@@ -6,13 +6,15 @@ import {WithId} from "mongodb";
 
 import { Request, Response } from 'express';
 import {matchedData} from "express-validator";
+import {PaginationDefaults} from "../../../core/types/pagination-and-sorting.default";
+import {BlogSortField} from "../../../core/types/blog-sortField";
 
 export async function getBlogsListHandler(
     req: Request<{}, {}, {}>,
     res: Response,
 ) {
     try {
-        const sanitizedQuery = matchedData(req, {
+        const sanitizedQuery = matchedData<PaginationDefaults<BlogSortField>>(req, {
             locations: ['query'],
             includeOptionals: true,//include optional fields even if they are not sent
         });
