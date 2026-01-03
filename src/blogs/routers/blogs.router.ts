@@ -13,7 +13,6 @@ import {deleteBlogHandler} from "./handlers/delete-blog.handler";
 export const blogsRouter = Router({});
 
 
-
 blogsRouter
     .get('',getBlogsListHandler)
     .get('/:id',IdParamValidator, inputValidationResultMiddleware , getBlogHandler)
