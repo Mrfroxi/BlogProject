@@ -1,4 +1,3 @@
-import {BlogCreateInput} from "../dto/blog-create.input";
 import {Blog} from "../types/blog";
 import {BlogUpdateDto} from "../dto/blog-update";
 import {blogCollection} from "../../db/mongo.db";
@@ -32,7 +31,7 @@ export const blogsRepository = {
         );
 
         if (updateResult.matchedCount < 1) {
-            throw new Error('Driver not exist');
+            throw new Error('Blog not exist');
         }
         return;
     },

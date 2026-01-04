@@ -3,10 +3,10 @@ import {postsRepository} from "../../repositories/posts.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {Post} from "../../types/post";
 
-export const getPostListHandler = (_req:Request,res:Response) =>{
+export const getPostListHandler = async (_req:Request,res:Response) =>{
 
 
-    const posts:Post[] = postsRepository.getPostsList();
+    const posts:Post[] = await  postsRepository.findAll();
 
     res.status(HttpStatuses.Ok).send(posts);
 

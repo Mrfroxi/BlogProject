@@ -8,7 +8,7 @@ export const deletePostHandler = (req:Request,res:Response,next:NextFunction) =>
     const id = req.params.id;
 
 
-    const deletedPost:number | null = postsRepository.deletePost(id)
+    const deletedPost:Promise<void> = postsRepository.deletePost(id)
 
     if(!deletedPost && deletedPost !== 0){
         res.sendStatus(HttpStatuses.NotFound);

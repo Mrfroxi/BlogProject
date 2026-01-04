@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {IdParamValidator} from "../../core/middlewares/validation/id-param.validator";
+import {idParamValidator} from "../../core/middlewares/validation/id-param.validator";
 import {inputValidationResultMiddleware} from "../../core/middlewares/validation/input-validation-result";
 import { getPostListHandler } from "./handlers/get-posts-list.handler";
 import {SuperAdminGuard} from "../../auth/middleware/super-admin.guard-middleware";
@@ -13,12 +13,15 @@ import {deletePostHandler} from "./handlers/delete-post.handler";
 
 export const postsRouter = Router({});
 
-
-
 postsRouter
-    .get('',getPostListHandler)
-    .get('/:id', IdParamValidator , inputValidationResultMiddleware , getPostHandler )
-    .post('',SuperAdminGuard,createPostValidator,inputValidationResultMiddleware,createPostHandler)
-    .put('/:id',SuperAdminGuard ,IdParamValidator ,updatePostValidator, inputValidationResultMiddleware,updatePostHandler)
-    .delete('/:id',SuperAdminGuard ,IdParamValidator,inputValidationResultMiddleware,deletePostHandler)
+    .get('',
+        getPostListHandler)
+    .get('/:id', idParamValidator , inputValidationResultMiddleware ,
+        getPostHandler )
+    .post('',SuperAdminGuard,createPostValidator,inputValidationResultMiddleware,
+        createPostHandler)
+    .put('/:id',SuperAdminGuard ,idParamValidator ,updatePostValidator, inputValidationResultMiddleware,
+        updatePostHandler)
+    .delete('/:id',SuperAdminGuard ,idParamValidator,inputValidationResultMiddleware,
+        deletePostHandler)
 

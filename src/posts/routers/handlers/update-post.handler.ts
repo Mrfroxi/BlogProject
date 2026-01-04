@@ -3,14 +3,15 @@ import {postsRepository} from "../../repositories/posts.repository";
 import {Post} from "../../types/post";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {postUpdateDto} from "../../dto/post-update.input";
+import {WithId} from "mongodb";
 
 
-export const updatePostHandler = (req:Request,res:Response) =>{
+export const updatePostHandler =async (req:Request,res:Response) =>{
 
     const id = req.params.id;
     const reqBody:postUpdateDto = req.body;
 
-    const updatedPost:Post | null= postsRepository.updatePost(id,reqBody)
+    const updatedPost: Promise<void> =  postsRepository.updatePost(id,reqBody)
 
     if(!updatedPost){
         res.sendStatus(HttpStatuses.NotFound)

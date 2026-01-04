@@ -14,8 +14,8 @@ export  const setupApp = (app:Express) => {
     })
 
     app.use(BLOGS_PATH,blogsRouter)
-    // app.use(POSTS_PATH,postsRouter)
-    // app.use(TEST_ALLDATA_PATH,testAllDataRouter)
+    app.use(POSTS_PATH,postsRouter)
+    app.use(TEST_ALLDATA_PATH,testAllDataRouter)
 
     return app;
 }
