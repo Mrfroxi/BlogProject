@@ -9,7 +9,7 @@ export  function mapBlogToOutput(blog:WithId<Blog>):BlogOutput{
         name:blog.name,
         description:blog.description,
         websiteUrl:blog.websiteUrl,
-        createAt:blog.createdAt,
+        createdAt:blog.createdAt,
         isMembership:blog.isMembership,
     }
 

@@ -13,7 +13,7 @@ export async  function  createBlogHandler(req:Request,res:Response){
 
     const newBlog : Blog = {
         name:body.name,
-        createdAt: `${new Date()}`,
+        createdAt: `${new Date().toISOString()}`,
         description: body.description,
         isMembership: false,
         websiteUrl: body.websiteUrl,
