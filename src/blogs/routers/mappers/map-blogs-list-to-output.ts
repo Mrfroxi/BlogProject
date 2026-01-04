@@ -4,7 +4,7 @@ import {WithId} from "mongodb";
 
 
 export function mapBlogsListToOutput(blogs:WithId<Blog>[]){
-    console.log(blogs)
+
     return blogs.map((elem:WithId<Blog>):BlogListOutput => ({
         id: `${elem._id.toString()}`,
         name: elem.name,

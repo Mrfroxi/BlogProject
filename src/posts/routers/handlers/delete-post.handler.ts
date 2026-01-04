@@ -1,19 +1,30 @@
 import {Request,Response, NextFunction} from 'express'
-import {blogsRepository} from "../../../blogs/repositories/blogs.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {postsRepository} from "../../repositories/posts.repository";
 
-export const deletePostHandler = (req:Request,res:Response,next:NextFunction) =>{
+export const deletePostHandler =async (req:Request,res:Response,next:NextFunction) =>{
 
     const id = req.params.id;
 
+    const blog = await postsRepository.findById(id);
 
-    const deletedPost:Promise<void> = postsRepository.deletePost(id)
-
-    if(!deletedPost && deletedPost !== 0){
-        res.sendStatus(HttpStatuses.NotFound);
-        return
+    if (!blog) {
+        res
+            .status(HttpStatuses.NotFound)
+            .send(
+                {
+                    "errorsMessages": [
+                        {
+                            "message": "id",
+                            "field": "blog not found"
+                        }
+                    ]
+                }
+            );
+        return;
     }
+
+    await postsRepository.deletePost(id)
 
     res.sendStatus(HttpStatuses.NoContent);
 
