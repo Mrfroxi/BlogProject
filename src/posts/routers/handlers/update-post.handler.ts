@@ -1,22 +1,36 @@
 import {Request,Response} from 'express'
 import {postsRepository} from "../../repositories/posts.repository";
-import {Post} from "../../types/post";
 import {HttpStatuses} from "../../../core/types/http-statuses";
-import {postUpdateDto} from "../../dto/post-update.input";
-import {WithId} from "mongodb";
+
+
 
 
 export const updatePostHandler =async (req:Request,res:Response) =>{
+    try {
+        const postId = req.params.id;
+        const reqBody = req.body;
 
-    const id = req.params.id;
-    const reqBody:postUpdateDto = req.body;
+        const post = await postsRepository.findById(postId);
 
-    const updatedPost: Promise<void> =  postsRepository.updatePost(id,reqBody)
+        if(!post){
+            res.sendStatus(HttpStatuses.NotFound).send(
+                {
+                    "errorsMessages": [
+                        {
+                            "message": "id",
+                            "field": "blog not found"
+                        }
+                    ]
+                }
+            );
+            return;
+        }
 
-    if(!updatedPost){
-        res.sendStatus(HttpStatuses.NotFound)
+        await postsRepository.updatePost(postId,reqBody)
+        res.sendStatus(HttpStatuses.NoContent)
+
+    }catch (e:unknown){
+        res.sendStatus(HttpStatuses.InternalServerError)
     }
-
-    res.sendStatus(HttpStatuses.NoContent);
 
 }
