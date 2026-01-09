@@ -2,11 +2,11 @@
 import {WithId} from "mongodb";
 import {Post} from "../../types/post";
 import {PostOutput} from "../../dto/post.output";
-import {blogPaginationOutput} from "../../../blogs/routers/mappers/dto/blog-pagination-output";
+import {PaginationOutput} from "../../../blogs/routers/mappers/dto/blog-pagination-output";
 
 
 
-export function mapPostListToOutput(posts:WithId<Post>[],setup:blogPaginationOutput){
+export function mapPostListToOutput(posts:WithId<Post>[],setup:PaginationOutput){
 
     const {
         totalCount,

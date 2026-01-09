@@ -11,6 +11,9 @@ import {blogUpdateValidator} from "../validators/blog-update.validator";
 import {deleteBlogHandler} from "./handlers/delete-blog.handler";
 import {paginationSortingValidator} from "../../core/middlewares/validation/pagination.sorting.validator";
 import {BlogSortField} from "../types/blog-sortField";
+import {createBlogPostHandler} from "./handlers/create-blog-post";
+import {getBlogPostListHandler} from "./handlers/get-blog-post-list";
+import {PostSortField} from "../../posts/types/post-sort-fields";
 
 export const blogsRouter = Router({});
 
@@ -28,3 +31,9 @@ blogsRouter
         updateBlogHandler)
     .delete(('/:id'),SuperAdminGuard,idParamValidator,inputValidationResultMiddleware,
         deleteBlogHandler)
+    .post('/:id/posts',idParamValidator,inputValidationResultMiddleware,createBlogPostHandler)
+    .get('/:id/posts',
+        paginationSortingValidator(PostSortField),
+        idParamValidator,
+        inputValidationResultMiddleware,
+        getBlogPostListHandler)

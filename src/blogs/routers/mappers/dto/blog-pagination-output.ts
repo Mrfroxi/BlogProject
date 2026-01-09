@@ -1,6 +1,6 @@
 
 
-export  interface blogPaginationOutput{
+export  interface PaginationOutput{
     totalCount:number,
     pageNumber:number,
     pageSize:number

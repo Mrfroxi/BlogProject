@@ -1,7 +1,8 @@
 import {PaginationDefaults} from "../../core/types/pagination-and-sorting.default";
-import {PostSortField} from "../types/post-sort-fields";
 
 
-export type PostQueryInput = PaginationDefaults<PostSortField>& Partial<{
+export type PostQueryInput<T> = PaginationDefaults<T>& Partial<{
     searchNameTerm:string;
+    id: string;
 }>
+

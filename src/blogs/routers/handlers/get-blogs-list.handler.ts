@@ -5,6 +5,9 @@ import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helper/set-de
 import {blogService} from "../../services/blog.service";
 import {BlogQueryInput} from "../../dto/blog-query-input";
 import {mapBlogsListToOutput} from "../mappers/map-blogs-list-to-output";
+import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {PostSortField} from "../../../posts/types/post-sort-fields";
+import {BlogSortField} from "../../types/blog-sortField";
 
 export async function getBlogsListHandler(
     req: Request,
@@ -17,7 +20,7 @@ export async function getBlogsListHandler(
             includeOptionals: true,//include optional fields even if they are not sent
         });
 
-        const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
+        const queryInput = setDefaultSortAndPaginationIfNotExist<BlogSortField>(sanitizedQuery);
 
         const {items, totalCount} = await blogService.findAll(queryInput);
 
@@ -32,6 +35,6 @@ export async function getBlogsListHandler(
         res.status(HttpStatuses.Ok).send(blogListOutput);
 
     } catch (e) {
-        res.status(500).send('error');
+       errorHandler(e,res)
     }
 }

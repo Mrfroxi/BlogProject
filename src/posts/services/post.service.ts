@@ -3,11 +3,12 @@ import {postCreateDto} from "../dto/post-create.input";
 import {Post} from "../types/post";
 import {postUpdateDto} from "../dto/post-update.input";
 import {PostQueryInput} from "../dto/post-query-input";
+import {PostSortField} from "../types/post-sort-fields";
 
 export const postService = {
 
 
-    async findAll(querySetup:PostQueryInput){
+    async findAll(querySetup:PostQueryInput<PostSortField>){
         return  postsRepository.findAll(querySetup);
     },
 
@@ -16,13 +17,14 @@ export const postService = {
     },
 
     async createPost(dto:postCreateDto){
+
         const   createPostDto : Post = {
-            blogId: dto.blogId,
+            blogId: dto.blogId ,
             blogName: "string",
-            content: dto.content,
+            content: dto.content ?? "Default content",
             createdAt: `${new Date().toISOString()}`,
-            shortDescription: dto.shortDescription,
-            title: dto.title
+            shortDescription: dto.shortDescription ?? "Default shortDescription",
+            title: dto.title ?? "Default Title"
 
         }
 

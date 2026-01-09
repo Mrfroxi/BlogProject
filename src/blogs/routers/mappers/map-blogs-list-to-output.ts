@@ -1,10 +1,10 @@
 import {Blog} from "../../types/blog";
 import {BlogListOutput} from "../../dto/blog-list.output";
 import {WithId} from "mongodb";
-import {blogPaginationOutput} from "./dto/blog-pagination-output";
+import {PaginationOutput} from "./dto/blog-pagination-output";
 
 
-export function mapBlogsListToOutput(blogs:WithId<Blog>[],setup:blogPaginationOutput){
+export function mapBlogsListToOutput(blogs:WithId<Blog>[],setup:PaginationOutput){
 
     const {
         totalCount,

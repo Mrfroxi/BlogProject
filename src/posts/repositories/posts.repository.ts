@@ -4,10 +4,11 @@ import {ObjectId, WithId} from "mongodb";
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found";
 import {PostQueryInput} from "../dto/post-query-input";
 import {postCollection} from "../../db/mongo.db";
+import {PostSortField} from "../types/post-sort-fields";
 
 
 export const postsRepository = {
-    async findAll(querySetup:PostQueryInput): Promise<{ items: WithId<Post>[]; totalCount: number }> {
+    async findAll(querySetup:PostQueryInput<PostSortField>): Promise<{ items: WithId<Post>[]; totalCount: number }> {
 
         const {
             pageNumber,
@@ -15,6 +16,7 @@ export const postsRepository = {
             sortBy,
             sortDirection,
             searchNameTerm,
+            id: blogId
         } = querySetup
 
         const skip = (pageNumber - 1) * pageSize;
@@ -23,6 +25,10 @@ export const postsRepository = {
 
         if (searchNameTerm) {
             filter.name = { $regex: searchNameTerm, $options: 'i' };
+        }
+
+        if(blogId){
+            filter.blogId = { $regex: blogId };
         }
 
 
