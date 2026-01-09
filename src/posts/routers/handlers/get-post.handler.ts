@@ -1,21 +1,22 @@
 import {Request,Response} from 'express'
-import {postsRepository} from "../../repositories/posts.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
+import {mapPostToOutput} from "../mappers/map-post-to-output";
+import {postService} from "../../services/post.service";
 import {WithId} from "mongodb";
 import {Post} from "../../types/post";
-import {mapPostToOutput} from "../mappers/map-post-to-output";
+import {errorHandler} from "../../../core/errors/handler/errorHandler";
 
 export const getPostHandler =   async (req:Request,res:Response) =>{
 
     const postId:string = req.params.id;
 
-    const post:WithId<Post> | null = await postsRepository.findById(postId);
+    try{
+        const post:WithId<Post> = await postService.findPostById(postId);
 
-    if(!post){
-        res.sendStatus(HttpStatuses.NotFound)
-        return
+        res.status(HttpStatuses.Ok).send(mapPostToOutput(post));
+
+    }catch (e){
+        errorHandler(e,res)
     }
-
-    res.status(HttpStatuses.Ok).send(mapPostToOutput(post));
 
 }

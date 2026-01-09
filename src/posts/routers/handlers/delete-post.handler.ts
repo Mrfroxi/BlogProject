@@ -1,31 +1,18 @@
-import {Request,Response, NextFunction} from 'express'
+import {Request,Response} from 'express'
 import {HttpStatuses} from "../../../core/types/http-statuses";
-import {postsRepository} from "../../repositories/posts.repository";
+import {postService} from "../../services/post.service";
+import {errorHandler} from "../../../core/errors/handler/errorHandler";
 
-export const deletePostHandler =async (req:Request,res:Response,next:NextFunction) =>{
+export const deletePostHandler =async (req:Request,res:Response) =>{
 
     const id = req.params.id;
 
-    const blog = await postsRepository.findById(id);
+   try {
+       await postService.deletePost(id)
 
-    if (!blog) {
-        res
-            .status(HttpStatuses.NotFound)
-            .send(
-                {
-                    "errorsMessages": [
-                        {
-                            "message": "id",
-                            "field": "blog not found"
-                        }
-                    ]
-                }
-            );
-        return;
-    }
-
-    await postsRepository.deletePost(id)
-
-    res.sendStatus(HttpStatuses.NoContent);
+       res.sendStatus(HttpStatuses.NoContent);
+   }catch (e){
+       errorHandler(e,res)
+   }
 
 }

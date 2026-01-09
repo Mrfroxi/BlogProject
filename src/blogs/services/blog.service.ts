@@ -1,11 +1,9 @@
 import {BlogQueryInput} from "../dto/blog-query-input";
 import {WithId} from "mongodb";
 import {Blog} from "../types/blog";
-import {RepositoryNotFoundError} from "../../core/errors/repository-not-found";
 import {BlogCreateInput} from "../dto/blog-create.input";
 import {blogsRepository} from "../repositories/blogs.repository";
 import {BlogUpdateDto} from "../dto/blog-update";
-import {HttpStatuses} from "../../core/types/http-statuses";
 
 
 export const blogService = {

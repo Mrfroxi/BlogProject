@@ -1,28 +1,23 @@
 import {Request,Response} from 'express'
-import {postsRepository} from "../../repositories/posts.repository";
 import {Post} from "../../types/post";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {WithId} from "mongodb";
 import {mapPostToOutput} from "../mappers/map-post-to-output";
-import {Blog} from "../../../blogs/types/blog";
+import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {postService} from "../../services/post.service";
 
 
 export const createPostHandler = async (req:Request,res:Response) =>{
 
     const reqBody = req.body;
 
-    const   createPostDto : Post = {
-        blogId: reqBody.blogId,
-        blogName: "string",
-        content: reqBody.content,
-        createdAt: `${new Date().toISOString()}`,
-        shortDescription: reqBody.shortDescription,
-        title: reqBody.title
+    try {
+        const newPost:WithId<Post> = await postService.createPost(reqBody);
 
+        res.status(HttpStatuses.Created).send(mapPostToOutput(newPost));
+    }catch (e){
+        errorHandler(e,res)
     }
 
-    const newPost:WithId<Post> = await postsRepository.createPost(createPostDto)
-
-    res.status(HttpStatuses.Created).send(mapPostToOutput(newPost));
 
 }

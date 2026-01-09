@@ -1,6 +1,7 @@
 import {Request,Response} from 'express'
-import {postsRepository} from "../../repositories/posts.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
+import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {postService} from "../../services/post.service";
 
 
 export const updatePostHandler =async (req:Request,res:Response) =>{
@@ -8,27 +9,12 @@ export const updatePostHandler =async (req:Request,res:Response) =>{
         const postId = req.params.id;
         const reqBody = req.body;
 
-        const post = await postsRepository.findById(postId);
+        await postService.updatePost(postId,reqBody)
 
-        if(!post){
-            res.sendStatus(HttpStatuses.NotFound).send(
-                {
-                    "errorsMessages": [
-                        {
-                            "message": "id",
-                            "field": "blog not found"
-                        }
-                    ]
-                }
-            );
-            return;
-        }
-
-        await postsRepository.updatePost(postId,reqBody)
         res.sendStatus(HttpStatuses.NoContent)
 
     }catch (e:unknown){
-        res.sendStatus(HttpStatuses.InternalServerError)
+        errorHandler(e,res)
     }
 
 }

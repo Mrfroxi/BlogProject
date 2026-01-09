@@ -3,14 +3,23 @@ import {postCreateDto} from "../dto/post-create.input";
 import {postUpdateDto} from "../dto/post-update.input";
 import {ObjectId, WithId} from "mongodb";
 import {postCollection} from "../../db/mongo.db";
+import {RepositoryNotFoundError} from "../../core/errors/repository-not-found";
 
 
 export const postsRepository = {
     async findAll():Promise<WithId<Post>[]> {
         return postCollection.find().toArray();
     },
-    async findById(id:string): Promise<WithId<Post>  | null>{
-        return postCollection.findOne({_id: new ObjectId(id)})
+
+    async findById(id:string): Promise<WithId<Post>>{
+
+        const post= await postCollection.findOne({_id: new ObjectId(id)})
+
+        if(!post){
+            throw new RepositoryNotFoundError('Post not found');
+        }
+
+        return  post
     },
     async createPost(newPost:Post): Promise<WithId<Post>>{
         const insertResult = await postCollection.insertOne(newPost);
@@ -18,6 +27,7 @@ export const postsRepository = {
 
     },
     async updatePost(id: string, dto: postUpdateDto): Promise<void> {
+
         const updateResult = await postCollection.updateOne(
             {
                 _id: new ObjectId(id),
@@ -33,7 +43,7 @@ export const postsRepository = {
         );
 
         if (updateResult.matchedCount < 1) {
-            throw new Error('Post not exist');
+            throw new RepositoryNotFoundError('Post not exist');
         }
 
         return;
@@ -44,7 +54,7 @@ export const postsRepository = {
         });
 
         if (deleteResult.deletedCount < 1) {
-            throw new Error('Post not exist');
+            throw new RepositoryNotFoundError('Post not exist');
         }
 
         return;
