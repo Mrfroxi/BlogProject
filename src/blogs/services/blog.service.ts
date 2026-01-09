@@ -1,4 +1,4 @@
-import {blogsRepository} from "../repositories/blogs.repository";
+import blogsRepository from "../repositories/blogs.repository";
 import {BlogQueryInput} from "../dto/blog-query-input";
 
 

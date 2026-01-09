@@ -4,5 +4,5 @@ import {BlogSortField} from "../../core/types/blog-sortField";
 
 export type BlogQueryInput = PaginationDefaults<BlogSortField> &
     Partial<{
-        searchBlogNameTerm: string;
+        searchNameTerm: string;
     }>;

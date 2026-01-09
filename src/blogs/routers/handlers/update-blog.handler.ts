@@ -1,6 +1,6 @@
 import {Request,Response} from 'express'
 import {HttpStatuses} from "../../../core/types/http-statuses";
-import {blogsRepository} from "../../repositories/blogs.repository";
+import blogsRepository from "../../repositories/blogs.repository";
 
 export const  updateBlogHandler = async (req:Request,res:Response) =>{
     try {

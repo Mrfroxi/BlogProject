@@ -19,6 +19,8 @@ export async function getBlogsListHandler(
 
         const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
+
+        console.log(queryInput)
         const {items, totalCount} = await blogService.findAll(queryInput);
 
         const blogListOutput = mapBlogsListToOutput(items,

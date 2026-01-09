@@ -1,5 +1,5 @@
 import {Response,Request} from "express";
-import {blogsRepository} from "../../repositories/blogs.repository";
+import blogsRepository from "../../repositories/blogs.repository";
 import {Blog} from "../../types/blog";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {mapBlogToOutput} from "../mappers/map-blog-to-output";

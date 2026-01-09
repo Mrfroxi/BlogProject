@@ -1,5 +1,5 @@
 import {Request,Response, NextFunction} from 'express'
-import {blogsRepository} from "../../repositories/blogs.repository";
+import blogsRepository from "../../repositories/blogs.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 
 export const deleteBlogHandler = async (req:Request,res:Response,next:NextFunction) =>{

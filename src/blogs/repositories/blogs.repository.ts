@@ -5,7 +5,7 @@ import {ObjectId, WithId} from "mongodb";
 import {BlogQueryInput} from "../dto/blog-query-input";
 
 
-export const blogsRepository = {
+const blogsRepository = {
     async findAll(querySetup:BlogQueryInput):
         Promise<{ items: WithId<Blog>[]; totalCount: number }> {
 
@@ -14,7 +14,7 @@ export const blogsRepository = {
         pageSize,
         sortBy,
         sortDirection,
-        searchBlogNameTerm,
+        searchNameTerm,
     } = querySetup
 
         const skip = (pageNumber - 1) * pageSize;
@@ -22,9 +22,10 @@ export const blogsRepository = {
         const filter: any = {};
 
 
-        if (searchBlogNameTerm) {
-            filter.name = { $regex: searchBlogNameTerm, $options: 'i' };
+        if (searchNameTerm) {
+            filter.name = { $regex: searchNameTerm, $options: 'i' };
         }
+
 
         const items = await blogCollection
             .find(filter)
@@ -79,3 +80,4 @@ export const blogsRepository = {
         return;
     },
 }
+export default blogsRepository
