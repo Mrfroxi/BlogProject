@@ -1,6 +1,6 @@
 import {Router,Request,Response} from "express";
-import {HttpStatuses} from "../../core/types/http-statuses";
-import {blogCollection, postCollection} from "../../db/mongo.db";
+import {HttpStatuses} from "../../types/http-statuses";
+import {blogCollection, postCollection} from "../../../db/mongo.db";
 
 
 export const testAllDataRouter = Router({})

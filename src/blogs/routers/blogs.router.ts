@@ -10,7 +10,7 @@ import {updateBlogHandler} from "./handlers/update-blog.handler";
 import {blogUpdateValidator} from "../validators/blog-update.validator";
 import {deleteBlogHandler} from "./handlers/delete-blog.handler";
 import {paginationSortingValidator} from "../../core/middlewares/validation/pagination.sorting.validator";
-import {BlogSortField} from "../../core/types/blog-sortField";
+import {BlogSortField} from "../types/blog-sortField";
 
 export const blogsRouter = Router({});
 

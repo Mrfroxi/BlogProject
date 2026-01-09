@@ -23,7 +23,9 @@ export function paginationSortingValidator<T extends string>(
 ) {
 
     const allowedSortFields = Object.values(sortFieldsEnum);
+
     const allowSortDirections = Object.values(SortDirection);
+
     return [
         query('pageNumber')
             .default(DEFAULT_PAGE_NUMBER)
@@ -42,14 +44,14 @@ export function paginationSortingValidator<T extends string>(
             .isIn(allowSortDirections)
             .withMessage('Sort direction must be either asc or desc'),
 
-        query('searchNameTerm')
-            .optional({ nullable: true })
-            .isString()
-            .withMessage('searchNameTerm must be a string'),
-
         query('sortBy')
             .default(allowedSortFields[0])
             .isIn(allowedSortFields)
             .withMessage(`Sort field must be one of: ${allowedSortFields}`),
+
+        query('searchNameTerm')
+            .optional({ nullable: true })
+            .isString()
+            .withMessage('searchNameTerm must be a string'),
     ];
 }

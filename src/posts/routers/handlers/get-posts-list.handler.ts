@@ -1,15 +1,38 @@
 import {Response,Request} from "express";
-import {postsRepository} from "../../repositories/posts.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
-import {Post} from "../../types/post";
-import {mapPostsListToOutput} from "../mappers/map-posts-list-to-output";
-import {WithId} from "mongodb";
+import {matchedData} from "express-validator";
+import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {PostQueryInput} from "../../dto/post-query-input";
+import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helper/set-default-sort-and-pagination";
+import {postService} from "../../services/post.service";
+import {mapPostListToOutput} from "../mappers/map-posts-list-to-output";
 
-export const getPostListHandler = async (_req:Request,res:Response) =>{
+export const getPostListHandler = async (req:Request,res:Response) =>{
+
+    try{
+        const sanitizedQuery = matchedData<PostQueryInput>(req, {
+            locations: ['query'],
+            includeOptionals: true,//include optional fields even if they are not sent
+        });
+
+        const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
+
+        const {items, totalCount} = await postService.findAll(queryInput);
+
+        const blogListOutput = mapPostListToOutput(items,
+            {
+                totalCount,
+                pageNumber:queryInput.pageNumber,
+                pageSize:queryInput.pageSize,
+            }
+        )
+
+        res.status(HttpStatuses.Ok).send(blogListOutput);
 
 
-    const posts:WithId<Post>[] = await  postsRepository.findAll();
+    }catch (e:unknown){
+        errorHandler(e,res)
+    }
 
-    res.status(HttpStatuses.Ok).send(mapPostsListToOutput(posts));
 
 }
