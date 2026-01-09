@@ -1,17 +1,32 @@
 import {Blog} from "../../types/blog";
 import {BlogListOutput} from "../../dto/blog-list.output";
 import {WithId} from "mongodb";
+import {blogPaginationOutput} from "./dto/blog-pagination-output";
 
 
-export function mapBlogsListToOutput(blogs:WithId<Blog>[]){
+export function mapBlogsListToOutput(blogs:WithId<Blog>[],setup:blogPaginationOutput){
 
-    return blogs.map((elem:WithId<Blog>):BlogListOutput => ({
-        id: `${elem._id.toString()}`,
-        name: elem.name,
-        description:elem.description,
-        websiteUrl:elem.websiteUrl,
-        createdAt:elem.createdAt,
-        isMembership:elem.isMembership,
-    }))
+    const {
+        totalCount,
+        pageNumber,
+        pageSize
+    } = setup
+
+    const pageCount = Math.ceil(totalCount / pageSize)
+
+    return {
+        page:pageNumber,
+        totalCount,
+        pageCount,
+        pageSize,
+        items:   blogs.map((elem:WithId<Blog>):BlogListOutput => ({
+                id: `${elem._id.toString()}`,
+                name: elem.name,
+                description:elem.description,
+                websiteUrl:elem.websiteUrl,
+                createdAt:elem.createdAt,
+                isMembership:elem.isMembership,
+            }))
+    }
 }
 

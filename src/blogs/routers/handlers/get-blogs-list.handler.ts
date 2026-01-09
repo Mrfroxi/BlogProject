@@ -4,6 +4,7 @@ import {matchedData} from "express-validator";;
 import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helper/set-default-sort-and-pagination";
 import {blogService} from "../../services/blog.service";
 import {BlogQueryInput} from "../../dto/blog-query-input";
+import {mapBlogsListToOutput} from "../mappers/map-blogs-list-to-output";
 
 export async function getBlogsListHandler(
     req: Request,
@@ -18,9 +19,17 @@ export async function getBlogsListHandler(
 
         const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
-        const blogList = blogService.findAll(queryInput);
+        const {items, totalCount} = await blogService.findAll(queryInput);
 
-        res.sendStatus(HttpStatuses.Ok)
+        const blogListOutput = mapBlogsListToOutput(items,
+            {
+                totalCount,
+                pageNumber:queryInput.pageNumber,
+                pageSize:queryInput.pageSize,
+            }
+            )
+
+        res.status(HttpStatuses.Ok).send(blogListOutput);
 
     } catch (e) {
         res.status(500).send('error');
