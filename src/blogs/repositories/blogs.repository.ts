@@ -44,6 +44,7 @@ const blogsRepository = {
     async findById(id:string): Promise<WithId<Blog>  | null>{
         return blogCollection.findOne({_id: new ObjectId(id)})
     },
+
     async createBlog(newBlog:Blog): Promise<WithId<Blog>>{
         const insertResult = await blogCollection.insertOne(newBlog);
         return { ...newBlog, _id: insertResult.insertedId };
