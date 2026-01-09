@@ -1,25 +1,22 @@
 import {Request,Response} from "express";
-import blogsRepository from "../../repositories/blogs.repository";
 import {Blog} from "../../types/blog";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {mapBlogToOutput} from "../mappers/map-blog-to-output";
 import {body} from "express-validator";
 import {WithId} from "mongodb";
+import {blogService} from "../../services/blog.service";
+import {errorHandler} from "../../../core/errors/handler/errorHandler";
 
 
 export async  function  createBlogHandler(req:Request,res:Response){
 
     const { body } = req;
+    try{
+        const createdBlog:WithId<Blog> = await blogService.createBlog(body);
 
-    const newBlog : Blog = {
-        name:body.name,
-        createdAt: `${new Date().toISOString()}`,
-        description: body.description,
-        isMembership: false,
-        websiteUrl: body.websiteUrl,
+        res.status(HttpStatuses.Created).send(mapBlogToOutput(createdBlog));
+
+    }catch (e:unknown){
+        errorHandler(e, res);
     }
-
-    const blog:WithId<Blog> = await blogsRepository.createBlog(newBlog);
-
-    res.status(HttpStatuses.Created).send(mapBlogToOutput(blog));
 }

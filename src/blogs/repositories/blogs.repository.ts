@@ -3,9 +3,10 @@ import {BlogUpdateDto} from "../dto/blog-update";
 import {blogCollection} from "../../db/mongo.db";
 import {ObjectId, WithId} from "mongodb";
 import {BlogQueryInput} from "../dto/blog-query-input";
+import {RepositoryNotFoundError} from "../../core/errors/repository-not-found";
 
 
-const blogsRepository = {
+export const blogsRepository = {
     async findAll(querySetup:BlogQueryInput):
         Promise<{ items: WithId<Blog>[]; totalCount: number }> {
 
@@ -39,10 +40,14 @@ const blogsRepository = {
         return { items, totalCount };
     },
 
+    async findById(id:string): Promise<WithId<Blog>>{
+        const res = await blogCollection.findOne({_id: new ObjectId(id)})
 
+        if(!res){
+            throw new RepositoryNotFoundError('Blog not exist');
+        }
 
-    async findById(id:string): Promise<WithId<Blog>  | null>{
-        return blogCollection.findOne({_id: new ObjectId(id)})
+        return  res
     },
 
     async createBlog(newBlog:Blog): Promise<WithId<Blog>>{
@@ -65,7 +70,7 @@ const blogsRepository = {
         );
 
         if (updateResult.matchedCount < 1) {
-            throw new Error('Blog not exist');
+            throw new RepositoryNotFoundError('Blog not exist');
         }
         return;
     },
@@ -76,9 +81,10 @@ const blogsRepository = {
         });
 
         if (deleteResult.deletedCount < 1) {
-            throw new Error('Driver not exist');
+            throw new RepositoryNotFoundError('Blog not exist');
         }
         return;
     },
 }
-export default blogsRepository
+
+

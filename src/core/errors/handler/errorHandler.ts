@@ -5,12 +5,11 @@ import {messageErrorCreate} from "../message-error-create";
 
 export  function errorHandler(error:unknown,res:Response){
 
+
     if (error instanceof RepositoryNotFoundError) {
         const httpStatus = HttpStatuses.NotFound;
 
-        res.status(httpStatus).send(
-            messageErrorCreate(httpStatus,error.message),
-        );
+        res.sendStatus(httpStatus)
 
         return;
     }

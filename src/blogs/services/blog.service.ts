@@ -1,25 +1,43 @@
-import blogsRepository from "../repositories/blogs.repository";
 import {BlogQueryInput} from "../dto/blog-query-input";
 import {WithId} from "mongodb";
 import {Blog} from "../types/blog";
-
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found";
+import {BlogCreateInput} from "../dto/blog-create.input";
+import {blogsRepository} from "../repositories/blogs.repository";
+import {BlogUpdateDto} from "../dto/blog-update";
+import {HttpStatuses} from "../../core/types/http-statuses";
 
 
 export const blogService = {
 
     async findAll(querySetup:BlogQueryInput){
-        return  await blogsRepository.findAll(querySetup);
+        return  blogsRepository.findAll(querySetup);
     },
 
-    async findById (blogId:string){
-        const blog:WithId<Blog> | null= await  blogsRepository.findById(blogId);
+    async findById (blogId:string):Promise<WithId<Blog>>{
+        return  blogsRepository.findById(blogId);
+    },
 
-        if(blog){
-            return blog
-        }else{
-            throw new RepositoryNotFoundError('Driver not exist');
+    async createBlog(dto:BlogCreateInput){
+
+        const newBlog : Blog = {
+            name:dto.name,
+            createdAt: `${new Date().toISOString()}`,
+            description: dto.description,
+            isMembership: false,
+            websiteUrl: dto.websiteUrl,
         }
 
+        return await blogsRepository.createBlog(newBlog);
+
+    },
+
+    async updateBlog(blogId:string,reqBody:BlogUpdateDto){
+      return await blogsRepository.updateBlog(blogId,reqBody)
+    },
+
+    async deleteBlog(id:string):Promise<void>{
+        return  blogsRepository.deleteBlog(id)
     }
+
 }
