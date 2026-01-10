@@ -11,7 +11,7 @@ import {mapPostListToOutput} from "../../../posts/routers/mappers/map-posts-list
 
 export const  getBlogPostListHandler =  async (req:Request,res:Response) =>{
     try {
-        const blogId = req.params.id;
+        const blogId = req.params.blogId;
         const sanitizedQuery = matchedData<PostQueryInput<PostSortField>>(req, {
             locations: ['query','params'],
             includeOptionals: true,//include optional fields even if they are not sent
