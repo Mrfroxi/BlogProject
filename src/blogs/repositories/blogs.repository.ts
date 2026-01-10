@@ -18,6 +18,7 @@ export const blogsRepository = {
         searchNameTerm,
     } = querySetup
 
+        console.log(querySetup)
         const skip = (pageNumber - 1) * pageSize;
 
         const filter: any = {};
@@ -27,7 +28,7 @@ export const blogsRepository = {
             filter.name = { $regex: searchNameTerm, $options: 'i' };
         }
 
-
+        console.log(filter)
         const items = await blogCollection
             .find(filter)
             .sort({ [sortBy]: sortDirection })

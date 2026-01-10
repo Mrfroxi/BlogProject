@@ -48,6 +48,10 @@ export function paginationSortingValidator<T extends string>(
             .default(allowedSortFields[0])
             .isIn(allowedSortFields)
             .withMessage(`Sort field must be one of: ${allowedSortFields}`),
-        
+
+        query('searchNameTerm')
+            .optional({ nullable: true })
+            .isString()
+            .withMessage('searchNameTerm must be a string'),
     ];
 }
