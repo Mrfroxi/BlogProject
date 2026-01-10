@@ -39,7 +39,7 @@ export const postsRepository = {
             .limit(pageSize)
             .toArray();
 
-        console.log(items)
+
         const totalCount = await postCollection.countDocuments(filter);
 
         return { items, totalCount };

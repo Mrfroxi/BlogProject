@@ -16,8 +16,6 @@ export const  createBlogPostHandler =  async (req:Request,res:Response) =>{
 
         const createdPost =  await postService.createPost({blogId,...reqBody})
 
-        await blogService.findById(blogId)
-
         res.status(HttpStatuses.Created).send(mapPostToOutput(createdPost));
 
     }catch (e:unknown){
