@@ -11,15 +11,13 @@ import {paginationSortingValidator} from "../../core/middlewares/validation/pagi
 import {PostSortField} from "../types/post-sort-fields";
 import {postCreateValidator} from "../validators/post-create.validator";
 import {postUpdateValidator} from "../validators/post-update.validator";
-import {postPaginationSortingValidator} from "../../core/middlewares/validation/post.pagination.sorting.validator";
 
 
 export const postsRouter = Router({});
 
 postsRouter
     .get('',
-        postPaginationSortingValidator(PostSortField),
-        inputValidationResultMiddleware,
+        paginationSortingValidator(PostSortField),
         getPostListHandler)
     .get('/:id', idParamValidator , inputValidationResultMiddleware ,
         getPostHandler )
