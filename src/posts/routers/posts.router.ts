@@ -19,6 +19,7 @@ postsRouter
         paginationSortingValidator(PostSortField),
         inputValidationResultMiddleware,
         getPostListHandler)
+
     .get('/:id', idParamValidator , inputValidationResultMiddleware ,
         getPostHandler )
     .post('',SuperAdminGuard,postCreateValidator,inputValidationResultMiddleware,
