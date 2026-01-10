@@ -2,8 +2,6 @@ import {postsRepository} from "../repositories/posts.repository";
 import {postCreateDto} from "../dto/post-create.input";
 import {Post} from "../types/post";
 import {postUpdateDto} from "../dto/post-update.input";
-import {PaginationDefaults} from "../../core/types/pagination-and-sorting.default";
-import {PostSortField} from "../types/post-sort-fields";
 
 export const postService = {
 

@@ -16,7 +16,7 @@ export const postsRepository = {
             sortBy,
             sortDirection,
             searchNameTerm,
-            id: blogId
+            blogId,
         } = querySetup
 
         const skip = (pageNumber - 1) * pageSize;
@@ -39,6 +39,7 @@ export const postsRepository = {
             .limit(pageSize)
             .toArray();
 
+        console.log(items)
         const totalCount = await postCollection.countDocuments(filter);
 
         return { items, totalCount };
