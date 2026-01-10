@@ -22,27 +22,23 @@ export function paginationSortingValidator<T extends string>(
 
     return [
         query('pageNumber')
-            .optional({ nullable: true })
             .default(DEFAULT_PAGE_NUMBER)
             .toInt()
             .isInt({ min: 1 })
             .withMessage('Page number must be a positive integer'),
 
         query('pageSize')
-            .optional({ nullable: true })
             .default(DEFAULT_PAGE_SIZE)
             .toInt()
             .isInt({ min: 1, max: 100 })
             .withMessage('Page size must be between 1 and 100'),
 
         query('sortDirection')
-            .optional({ nullable: true })
             .default(DEFAULT_SORT_DIRECTION)
             .isIn(allowedSortDirections)
             .withMessage(`Sort direction must be one of: ${allowedSortDirections.join(', ')}`),
 
         query('sortBy')
-            .optional({ nullable: true })
             .default(allowedSortFields[0])
             .isIn(allowedSortFields)
             .withMessage(`Sort field must be one of: ${allowedSortFields.join(', ')}`),
