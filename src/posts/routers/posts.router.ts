@@ -17,7 +17,7 @@ export const postsRouter = Router({});
 postsRouter
     .get('',
         paginationSortingValidator(PostSortField),
-        //inputValidationResultMiddleware,
+        inputValidationResultMiddleware,
         getPostListHandler)
     .get('/:id', idParamValidator , inputValidationResultMiddleware ,
         getPostHandler )

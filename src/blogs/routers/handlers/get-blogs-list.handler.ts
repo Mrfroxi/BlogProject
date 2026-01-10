@@ -3,9 +3,9 @@ import { Request, Response } from 'express';
 import {matchedData} from "express-validator";;
 import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helper/set-default-sort-and-pagination";
 import {errorHandler} from "../../../core/errors/handler/errorHandler";
-import {PostSortField} from "../../../posts/types/post-sort-fields";
 import {mapPostListToOutput} from "../../../posts/routers/mappers/map-posts-list-to-output";
-import {postService} from "../../../posts/services/post.service";
+import {blogService} from "../../services/blog.service";
+import {mapBlogsListToOutput} from "../mappers/map-blogs-list-to-output";
 
 export async function getBlogsListHandler(
     req: Request,
@@ -18,11 +18,11 @@ export async function getBlogsListHandler(
             includeOptionals: true,//include optional fields even if they are not sent
         });
 
-        const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);
+        const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
-        const {items, totalCount} = await postService.findAll(queryInput);
+        const {items, totalCount} = await blogService.findAll(queryInput);
 
-        const blogListOutput = mapPostListToOutput(items,
+        const blogListOutput = mapBlogsListToOutput(items,
             {
                 totalCount,
                 pageNumber:queryInput.pageNumber,

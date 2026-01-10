@@ -19,7 +19,7 @@ export const  getBlogPostListHandler =  async (req:Request,res:Response) =>{
 
         await blogService.findById(blogId)
 
-        const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);
+        const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
         const {items,totalCount} = await postService.findAll(queryInput)
 

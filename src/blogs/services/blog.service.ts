@@ -8,7 +8,7 @@ import {BlogUpdateDto} from "../dto/blog-update";
 
 export const blogService = {
 
-    async findAll(querySetup:BlogQueryInput){
+    async findAll(querySetup:any){
         return  blogsRepository.findAll(querySetup);
     },
 

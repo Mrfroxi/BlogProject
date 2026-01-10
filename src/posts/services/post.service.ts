@@ -2,13 +2,13 @@ import {postsRepository} from "../repositories/posts.repository";
 import {postCreateDto} from "../dto/post-create.input";
 import {Post} from "../types/post";
 import {postUpdateDto} from "../dto/post-update.input";
-import {PostQueryInput} from "../dto/post-query-input";
+import {PaginationDefaults} from "../../core/types/pagination-and-sorting.default";
 import {PostSortField} from "../types/post-sort-fields";
 
 export const postService = {
 
 
-    async findAll(querySetup:PostQueryInput<PostSortField>){
+    async findAll(querySetup:any){
         return  postsRepository.findAll(querySetup);
     },
 
