@@ -25,6 +25,7 @@ blogsRouter
         paginationSortingValidator(BlogSortField),
         inputValidationResultMiddleware,
         getBlogsListHandler)
+
     .get('/:id',idParamValidator, inputValidationResultMiddleware,
          getBlogHandler)
     .post('',SuperAdminGuard,blogCreateValidator,inputValidationResultMiddleware ,
