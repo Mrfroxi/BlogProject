@@ -1,17 +1,14 @@
 import {paginationAndSortingDefault} from "../middlewares/validation/pagination.sorting.validator";
-import {PostQueryInput} from "../../posts/dto/post-query-input";
+import {PaginationDefaults} from "../types/pagination-and-sorting.default";
 
 
 
-export function setDefaultSortAndPaginationIfNotExist<
-    T extends string
->(
-    query: Partial<PostQueryInput<T>>,
-): PostQueryInput<T> {
+export function setDefaultSortAndPaginationIfNotExist<P = string>(
+    query: Partial<PaginationDefaults<P>>,
+): PaginationDefaults<P> {
     return {
         ...paginationAndSortingDefault,
         ...query,
-        sortBy: query.sortBy ?? paginationAndSortingDefault.sortBy as T,
+        sortBy: (query.sortBy ?? paginationAndSortingDefault.sortBy) as P,
     };
 }
-

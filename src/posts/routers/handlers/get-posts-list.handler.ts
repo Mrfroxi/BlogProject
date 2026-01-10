@@ -16,7 +16,7 @@ export const getPostListHandler = async (req:Request,res:Response) =>{
             includeOptionals: false,//include optional fields even if they are not sent
         });
 
-        const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);
+        const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
         const {items, totalCount} = await postService.findAll(queryInput);
 
