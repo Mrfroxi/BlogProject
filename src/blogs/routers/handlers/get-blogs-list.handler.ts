@@ -20,7 +20,6 @@ export async function getBlogsListHandler(
             includeOptionals: true,//include optional fields even if they are not sent
         });
 
-        console.log(sanitizedQuery)
         const queryInput = setDefaultSortAndPaginationIfNotExist<BlogSortField>(sanitizedQuery);
 
         const {items, totalCount} = await blogService.findAll(queryInput);
