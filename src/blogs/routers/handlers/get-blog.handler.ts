@@ -14,7 +14,7 @@ export async function getBlogHandler(req:Request, res:Response){
     try {
       const blog:WithId<Blog> = await  blogService.findById(blogId);
 
-      res.status(HttpStatuses.Created).send(mapBlogToOutput(blog))
+      res.status(HttpStatuses.Ok).send(mapBlogToOutput(blog))
     }catch (e){
         errorHandler(e, res);
     }
