@@ -13,7 +13,7 @@ export const getPostListHandler = async (req:Request,res:Response) =>{
     try{
         const sanitizedQuery = matchedData<PostQueryInput<PostSortField>>(req, {
             locations: ['query'],
-            includeOptionals: true,//include optional fields even if they are not sent
+            includeOptionals: false,//include optional fields even if they are not sent
         });
 
         const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);

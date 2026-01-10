@@ -8,7 +8,7 @@ import {mapPostToOutput} from "../../../posts/routers/mappers/map-post-to-output
 
 export const  createBlogPostHandler =  async (req:Request,res:Response) =>{
 
-    const blogId = req.params.id;
+    const blogId = req.params.blogId;
     const reqBody = req.body
     try {
 
