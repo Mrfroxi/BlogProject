@@ -33,7 +33,14 @@ blogsRouter
         updateBlogHandler)
     .delete(('/:id'),SuperAdminGuard,idParamValidator,inputValidationResultMiddleware,
         deleteBlogHandler)
-    .post('/:blogId/posts',SuperAdminGuard,blogIdParamValidator,blogPostCreateValidator,inputValidationResultMiddleware,createBlogPostHandler)
+
+    .post('/:blogId/posts',
+        SuperAdminGuard,
+        blogIdParamValidator,
+        blogPostCreateValidator,
+        inputValidationResultMiddleware,
+        createBlogPostHandler)
+
     .get('/:blogId/posts',
         paginationSortingValidator(PostSortField),
         blogIdParamValidator,
