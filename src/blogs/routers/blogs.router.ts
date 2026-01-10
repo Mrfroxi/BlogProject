@@ -14,6 +14,7 @@ import {BlogSortField} from "../types/blog-sortField";
 import {createBlogPostHandler} from "./handlers/create-blog-post";
 import {getBlogPostListHandler} from "./handlers/get-blog-post-list";
 import {PostSortField} from "../../posts/types/post-sort-fields";
+import {postCreateValidator} from "../../posts/validators/post-create.validator";
 
 export const blogsRouter = Router({});
 
@@ -31,7 +32,7 @@ blogsRouter
         updateBlogHandler)
     .delete(('/:id'),SuperAdminGuard,idParamValidator,inputValidationResultMiddleware,
         deleteBlogHandler)
-    .post('/:id/posts',idParamValidator,inputValidationResultMiddleware,createBlogPostHandler)
+    .post('/:id/posts',SuperAdminGuard,idParamValidator,postCreateValidator,inputValidationResultMiddleware,createBlogPostHandler)
     .get('/:id/posts',
         paginationSortingValidator(PostSortField),
         idParamValidator,

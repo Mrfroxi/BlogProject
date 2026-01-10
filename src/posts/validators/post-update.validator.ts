@@ -24,7 +24,7 @@ const blogIdValidator = body('blogId')
     .isString().withMessage('title must be a string')
 
 
-export const updatePostValidator = [
+export const postUpdateValidator = [
     titleValidator,
     shortDescriptionValidator,
     contentValidator,

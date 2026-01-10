@@ -14,12 +14,12 @@ export function mapPostListToOutput(posts:WithId<Post>[],setup:PaginationOutput)
         pageSize
     } = setup
 
-    const pageCount = Math.ceil(totalCount / pageSize)
+    const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
         page:pageNumber,
         totalCount,
-        pageCount,
+        pagesCount,
         pageSize,
         items:   posts.map((post:WithId<Post>):PostOutput => ({
             id: post._id.toString(),

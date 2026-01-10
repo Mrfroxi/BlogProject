@@ -12,12 +12,12 @@ export function mapBlogsListToOutput(blogs:WithId<Blog>[],setup:PaginationOutput
         pageSize
     } = setup
 
-    const pageCount = Math.ceil(totalCount / pageSize)
+    const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
         page:pageNumber,
         totalCount,
-        pageCount,
+        pagesCount,
         pageSize,
         items:   blogs.map((elem:WithId<Blog>):BlogListOutput => ({
                 id: `${elem._id.toString()}`,

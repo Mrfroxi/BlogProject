@@ -23,7 +23,7 @@ export const  getBlogPostListHandler =  async (req:Request,res:Response) =>{
 
         const {items,totalCount} = await postService.findAll(queryInput)
 
-        res.status(HttpStatuses.Ok).send(mapPostListToOutput(items,{
+        res.status(HttpStatuses.Created).send(mapPostListToOutput(items,{
             pageNumber: queryInput.pageNumber,
             pageSize: queryInput.pageSize,
             totalCount
