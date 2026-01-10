@@ -10,6 +10,7 @@ export const  createBlogPostHandler =  async (req:Request,res:Response) =>{
 
     const blogId = req.params.blogId;
     const reqBody = req.body
+
     try {
 
 
