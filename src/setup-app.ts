@@ -1,9 +1,10 @@
 import express, {Express,Request,Response} from "express";
 import {HttpStatuses} from "./core/types/http-statuses";
 import {blogsRouter} from "./entities/blogs/routers/blogs.router";
-import {BLOGS_PATH, POSTS_PATH, TEST_ALLDATA_PATH} from "./core/paths/paths";
+import {BLOGS_PATH, POSTS_PATH, TEST_ALLDATA_PATH, USER_PATH} from "./core/paths/paths";
 import {testAllDataRouter} from "./core/reset/routers/testAllData.router";
 import {postsRouter} from "./entities/posts/routers/posts.router";
+import {userRouter} from "./entities/user/routers/user.router";
 
 
 export  const setupApp = (app:Express) => {
@@ -15,6 +16,7 @@ export  const setupApp = (app:Express) => {
 
     app.use(BLOGS_PATH,blogsRouter)
     app.use(POSTS_PATH,postsRouter)
+    app.use(USER_PATH,userRouter)
     app.use(TEST_ALLDATA_PATH,testAllDataRouter)
 
     return app;
