@@ -30,7 +30,7 @@ export function paginationSortingValidator<T extends string>(
         query('pageSize')
             .default(DEFAULT_PAGE_SIZE)
             .toInt()
-            .isInt({ min: 1, max: 10000 })
+            .isInt({ min: 1, max: 100 })
             .withMessage('Page size must be between 1 and 100'),
 
         query('sortDirection')

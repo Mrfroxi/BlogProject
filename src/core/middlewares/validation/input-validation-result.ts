@@ -25,6 +25,7 @@ export const inputValidationResultMiddleware = (
     res: Response,
     next: NextFunction
 ) => {
+
     const result = validationResult(req).formatWith(formatterError).array({ onlyFirstError: true });
 
     if (result.length > 0) {

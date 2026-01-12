@@ -5,7 +5,7 @@ import {idParamValidator} from "../../../core/middlewares/validation/id-param.va
 import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validation-result";
 import {createBlogHandler} from "./handlers/create-blog.handler";
 import {blogCreateValidator} from "../validators/blog-create.validator";
-import {SuperAdminGuard} from "../../../auth/middleware/super-admin.guard-middleware";
+import {SuperAdminGuard} from "../../../auth/routers/middleware/super-admin.guard-middleware";
 import {updateBlogHandler} from "./handlers/update-blog.handler";
 import {blogUpdateValidator} from "../validators/blog-update.validator";
 import {deleteBlogHandler} from "./handlers/delete-blog.handler";

@@ -1,6 +1,6 @@
 
 
-export function messageErrorCreate(message:unknown,field:unknown){
+export function createErrorMessage(message:unknown,field:unknown){
 
     return [{
         message: `${message}`,

@@ -1,5 +1,5 @@
 import {Request,Response, NextFunction} from 'express'
-import {HttpStatuses} from "../../core/types/http-statuses";
+import {HttpStatuses} from "../../../core/types/http-statuses";
 
 
 export const SuperAdminGuard = (req:Request,res:Response,next:NextFunction) =>{
