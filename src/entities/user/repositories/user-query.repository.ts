@@ -51,17 +51,17 @@ export const userQueryRepository = {
             }
 
             const skip = (pageNumber - 1) * pageSize;
-
+            const sortDirMongo = sortDirection === 'asc' ? 1 : -1;
 
             const userList = await userCollection
                 .find(filter)
-                .sort({ [sortBy]: sortDirection })
+                .sort({ [sortBy]: sortDirMongo })
                 .skip(skip)
                 .limit(pageSize)
                 .toArray()
 
 
-            const totalCount:number = await userCollection.countDocuments();
+            const totalCount: number = await userCollection.countDocuments(filter);
 
             const pagesCount:number = Math.ceil(totalCount / pageSize)
 
