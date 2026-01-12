@@ -3,5 +3,6 @@
 export type User = {
     login:string,
     email:string,
-    createAt:string,
+    password:string,
+    createdAt:string,
 }
