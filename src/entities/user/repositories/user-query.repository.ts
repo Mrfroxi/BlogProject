@@ -40,15 +40,20 @@ export const userQueryRepository = {
                 searchLoginTerm
             } = sortingDefault
 
-            const filter:any = {}
 
-            if(searchEmailTerm){
-                filter.email = { $regex: searchEmailTerm, $options: 'i' }
+            const orFilter: any[] = [];
+
+            if (searchLoginTerm) {
+                orFilter.push({ login: { $regex: searchLoginTerm, $options: 'i' } });
             }
 
-            if(searchLoginTerm){
-                filter.login = { $regex: searchLoginTerm, $options: 'i' }
+            if (searchEmailTerm) {
+                orFilter.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
             }
+
+            const filter = orFilter.length > 0 ? { $or: orFilter } : {};
+
+
 
             const skip = (pageNumber - 1) * pageSize;
             const sortDirMongo = sortDirection === 'asc' ? 1 : -1;
