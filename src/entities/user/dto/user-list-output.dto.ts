@@ -2,7 +2,7 @@ import {UserOutputDto} from "./user-output.dto";
 
 
 export interface UserListOutputDto {
-    pageCount: number
+    pagesCount: number
     page: number
     pageSize: number
     totalCount: number

@@ -68,7 +68,7 @@ export const userQueryRepository = {
             const mappedUserList:UserOutputDto[] =  mapUserListToOutput(userList);
 
             return {
-                pageCount:pagesCount,
+                pagesCount:pagesCount,
                 page:pageNumber,
                 pageSize,
                 totalCount,
@@ -86,7 +86,7 @@ export const userQueryRepository = {
             });
 
             if (!user) {
-                throw new RepositoryNotFoundError()
+                throw new UnauthorizedError()
             }
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
