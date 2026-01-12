@@ -1,16 +1,16 @@
 import {Router} from "express";
-import {idParamValidator} from "../../core/middlewares/validation/id-param.validator";
+import {idParamValidator} from "../../../core/middlewares/validation/id-param.validator";
 import { getPostListHandler } from "./handlers/get-posts-list.handler";
-import {SuperAdminGuard} from "../../auth/middleware/super-admin.guard-middleware";
+import {SuperAdminGuard} from "../../../auth/middleware/super-admin.guard-middleware";
 import {getPostHandler} from "./handlers/get-post.handler";
 import {createPostHandler} from "./handlers/create-post.handler";
 import {updatePostHandler} from "./handlers/update-post.handler";
 import {deletePostHandler} from "./handlers/delete-post.handler";
-import {paginationSortingValidator} from "../../core/middlewares/validation/pagination.sorting.validator";
+import {paginationSortingValidator} from "../../../core/middlewares/validation/pagination.sorting.validator";
 import {PostSortField} from "../types/post-sort-fields";
 import {postCreateValidator} from "../validators/post-create.validator";
 import {postUpdateValidator} from "../validators/post-update.validator";
-import {inputValidationResultMiddleware} from "../../core/middlewares/validation/input-validation-result";
+import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validation-result";
 
 export const postsRouter = Router({});
 

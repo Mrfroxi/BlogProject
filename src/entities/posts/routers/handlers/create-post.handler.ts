@@ -1,9 +1,9 @@
 import {Request,Response} from 'express'
 import {Post} from "../../types/post";
-import {HttpStatuses} from "../../../core/types/http-statuses";
+import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {WithId} from "mongodb";
 import {mapPostToOutput} from "../mappers/map-post-to-output";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 import {postService} from "../../services/post.service";
 
 

@@ -1,11 +1,10 @@
-import {HttpStatuses} from "../../../core/types/http-statuses";
 import { Request, Response } from 'express';
 import {matchedData} from "express-validator";;
-import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helper/set-default-sort-and-pagination";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
-import {mapPostListToOutput} from "../../../posts/routers/mappers/map-posts-list-to-output";
-import {blogService} from "../../services/blog.service";
 import {mapBlogsListToOutput} from "../mappers/map-blogs-list-to-output";
+import {setDefaultSortAndPaginationIfNotExist} from "../../../../core/helper/set-default-sort-and-pagination";
+import {blogService} from "../../services/blog.service";
+import {HttpStatuses} from "../../../../core/types/http-statuses";
+import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 
 export async function getBlogsListHandler(
     req: Request,

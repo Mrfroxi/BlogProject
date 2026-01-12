@@ -1,9 +1,9 @@
 import {Blog} from "../types/blog";
 import {BlogUpdateDto} from "../dto/blog-update";
-import {blogCollection} from "../../db/mongo.db";
+import {blogCollection} from "../../../db/mongo.db";
 import {ObjectId, WithId} from "mongodb";
 import {BlogQueryInput} from "../dto/blog-query-input";
-import {RepositoryNotFoundError} from "../../core/errors/repository-not-found";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found";
 
 
 export const blogsRepository = {

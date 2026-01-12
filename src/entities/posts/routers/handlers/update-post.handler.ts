@@ -1,6 +1,6 @@
 import {Request,Response} from 'express'
-import {HttpStatuses} from "../../../core/types/http-statuses";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {HttpStatuses} from "../../../../core/types/http-statuses";
+import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 import {postService} from "../../services/post.service";
 
 

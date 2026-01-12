@@ -1,9 +1,9 @@
 import express, {Express,Request,Response} from "express";
 import {HttpStatuses} from "./core/types/http-statuses";
-import {blogsRouter} from "./blogs/routers/blogs.router";
+import {blogsRouter} from "./entities/blogs/routers/blogs.router";
 import {BLOGS_PATH, POSTS_PATH, TEST_ALLDATA_PATH} from "./core/paths/paths";
 import {testAllDataRouter} from "./core/reset/routers/testAllData.router";
-import {postsRouter} from "./posts/routers/posts.router";
+import {postsRouter} from "./entities/posts/routers/posts.router";
 
 
 export  const setupApp = (app:Express) => {

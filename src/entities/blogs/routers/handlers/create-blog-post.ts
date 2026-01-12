@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import {HttpStatuses} from "../../../core/types/http-statuses";
 import {postService} from "../../../posts/services/post.service";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
-import {blogService} from "../../services/blog.service";
+import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 import {mapPostToOutput} from "../../../posts/routers/mappers/map-post-to-output";
+import {HttpStatuses} from "../../../../core/types/http-statuses";
 
 
 export const  createBlogPostHandler =  async (req:Request,res:Response) =>{

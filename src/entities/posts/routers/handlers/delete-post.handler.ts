@@ -1,7 +1,7 @@
 import {Request,Response} from 'express'
-import {HttpStatuses} from "../../../core/types/http-statuses";
+import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {postService} from "../../services/post.service";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 
 export const deletePostHandler =async (req:Request,res:Response) =>{
 

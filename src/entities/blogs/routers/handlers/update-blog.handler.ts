@@ -1,7 +1,7 @@
 import {Request,Response} from 'express'
-import {HttpStatuses} from "../../../core/types/http-statuses";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
 import {blogService} from "../../services/blog.service";
+import {HttpStatuses} from "../../../../core/types/http-statuses";
+import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 
 export const  updateBlogHandler = async (req:Request,res:Response) =>{
     try {

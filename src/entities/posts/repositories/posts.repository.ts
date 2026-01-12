@@ -1,9 +1,9 @@
 import {Post} from "../types/post";
 import {postUpdateDto} from "../dto/post-update.input";
 import {ObjectId, WithId} from "mongodb";
-import {RepositoryNotFoundError} from "../../core/errors/repository-not-found";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found";
 import {PostQueryInput} from "../dto/post-query-input";
-import {postCollection} from "../../db/mongo.db";
+import {postCollection} from "../../../db/mongo.db";
 import {PostSortField} from "../types/post-sort-fields";
 
 

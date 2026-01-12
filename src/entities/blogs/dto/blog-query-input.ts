@@ -1,4 +1,4 @@
-import {PaginationDefaults} from "../../core/types/pagination-and-sorting.default";
+import {PaginationDefaults} from "../../../core/types/pagination-and-sorting.default";
 import {BlogSortField} from "../types/blog-sortField";
 
 

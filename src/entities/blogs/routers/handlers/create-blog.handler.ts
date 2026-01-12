@@ -1,11 +1,10 @@
 import {Request,Response} from "express";
-import {Blog} from "../../types/blog";
-import {HttpStatuses} from "../../../core/types/http-statuses";
 import {mapBlogToOutput} from "../mappers/map-blog-to-output";
-import {body} from "express-validator";
 import {WithId} from "mongodb";
+import {Blog} from "../../types/blog";
+import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {blogService} from "../../services/blog.service";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
+import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 
 
 export async  function  createBlogHandler(req:Request,res:Response){
