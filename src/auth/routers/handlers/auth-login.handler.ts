@@ -9,7 +9,7 @@ export const authLoginHandler = async (req:Request,res:Response) => {
     try{
         const {loginOrEmail,password} = req.body
 
-        await userQueryRepository.validateLogin(loginOrEmail,password);
+        await userQueryRepository.validateUserData(loginOrEmail,password);
 
         res.sendStatus(HttpStatuses.NoContent)
 

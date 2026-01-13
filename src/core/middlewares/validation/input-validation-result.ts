@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult, ValidationError,FieldValidationError } from 'express-validator';
 import { HttpStatuses } from '../../types/http-statuses';
-import {ValidationErrorType} from "../../types/validator-error";
+
+export type ValidationErrorType = {
+    field: string,
+    message: string,
+}
 
 const formatterError = (error: ValidationError):ValidationErrorType => {
 

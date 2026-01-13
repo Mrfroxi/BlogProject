@@ -1,4 +1,4 @@
-import {Filter, ObjectId, WithId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {userCollection} from "../../../db/mongo.db";
 import { User } from "../types/user";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found";
@@ -10,21 +10,15 @@ import {UserListOutputDto} from "../dto/user-list-output.dto";
 import bcrypt from "bcrypt";
 import {UnauthorizedError} from "../../../core/errors/Unauthorized-error";
 
-interface filterForRegex {
-    email?: string;
-    login?: string;
-}
 export const userQueryRepository = {
 
         async findUserById(id:string) {
-
 
            const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
 
             if(!user){//ts
                 throw new RepositoryNotFoundError()
             }
-
             return  mapUserToOutput(user);
 
         },
@@ -81,7 +75,7 @@ export const userQueryRepository = {
             }
         },
 
-        async validateLogin(loginOrEmail:string,password:string){
+        async validateUserData(loginOrEmail:string,password:string){
 
             const user:WithId<User> | null = await userCollection.findOne({
                 $or: [

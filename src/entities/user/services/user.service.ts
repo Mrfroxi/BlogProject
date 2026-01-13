@@ -4,13 +4,14 @@ import {User} from "../types/user";
 import {validateUserUniqueness} from "../routers/helpers/user-validate-uniqueness.helper";
 import {userPasswordBcrypt } from "../routers/helpers/user-password-bcrypt.helper";
 import {userRepository} from "../repositories/user.repository";
+import {UserOutputDto} from "../dto/user-output.dto";
 
 
 
 export const userService = {
 
-    async findUserById(UserId:string){
-
+    async findUserById(userId:string):Promise<UserOutputDto>{
+       return  userRepository.findUserById(userId);
     },
 
 
@@ -37,11 +38,13 @@ export const userService = {
     },
 
 
-
-
     async deleteUser(userId:string){
 
+        await this.findUserById(userId)
 
+        await userRepository.deleteUserById(userId);
+
+        return
 
     }
 

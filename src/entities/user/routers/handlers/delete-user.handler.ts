@@ -2,6 +2,7 @@ import {Request,Response} from "express";
 import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 import {userRepository} from "../../repositories/user.repository";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
+import {userService} from "../../services/user.service";
 
 
 export  const deleteUserHandler =  async (req:Request,res:Response ) => {
@@ -10,9 +11,7 @@ export  const deleteUserHandler =  async (req:Request,res:Response ) => {
 
     try {
 
-        await userRepository.findUserById(userId);
-
-        await userRepository.deleteUserById(userId);
+       await userService.deleteUser(userId)
 
         res.sendStatus(HttpStatuses.NoContent)
 
