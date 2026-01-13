@@ -1,7 +1,7 @@
 import {Request,Response} from "express";
 import {errorHandler} from "../../../core/errors/handler/errorHandler";
-import {userQueryRepository} from "../../../entities/user/repositories/user-query.repository";
 import {HttpStatuses} from "../../../core/types/http-statuses";
+import {authService} from "../../services/auth.service";
 
 
 export const authLoginHandler = async (req:Request,res:Response) => {
@@ -9,7 +9,7 @@ export const authLoginHandler = async (req:Request,res:Response) => {
     try{
         const {loginOrEmail,password} = req.body
 
-        await userQueryRepository.validateUserData(loginOrEmail,password);
+        await authService.loginUser(loginOrEmail,password);
 
         res.sendStatus(HttpStatuses.NoContent)
 
