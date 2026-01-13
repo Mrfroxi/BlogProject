@@ -1,10 +1,10 @@
 import {CreateUserDto} from "../dto/create-user.dto";
 import {InsertOneResult, ObjectId, WithId} from "mongodb";
 import {User} from "../types/user";
-import {validateUserUniqueness} from "../routers/helpers/user-validate-uniqueness.helper";
-import {userPasswordBcrypt } from "../routers/helpers/user-password-bcrypt.helper";
+import {validateUserUniqueness} from "./helpers/user-validate-uniqueness.helper";
 import {userRepository} from "../repositories/user.repository";
 import {UserOutputDto} from "../dto/user-output.dto";
+import {bcryptService} from "../../../core/services/bcrypt.service";
 
 
 
@@ -21,7 +21,7 @@ export const userService = {
 
             await validateUserUniqueness(email,login);
 
-            const hashPassword = await userPasswordBcrypt(password);
+            const hashPassword = await bcryptService.userPasswordBcrypt(password);
 
             const validUser:User = {
                 login:login,

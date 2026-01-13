@@ -1,4 +1,5 @@
 import {ObjectId, WithId} from "mongodb";
+import bcrypt from "bcrypt";
 import {userCollection} from "../../../db/mongo.db";
 import { User } from "../types/user";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found";
@@ -7,8 +8,8 @@ import {DefaultValuesSortingDto} from "../dto/default-values-sorting.dto";
 import {mapUserListToOutput} from "../routers/mappers/map-user-list-to-output";
 import {UserOutputDto} from "../dto/user-output.dto";
 import {UserListOutputDto} from "../dto/user-list-output.dto";
-import bcrypt from "bcrypt";
 import {UnauthorizedError} from "../../../core/errors/Unauthorized-error";
+import {bcryptService} from "../../../core/services/bcrypt.service";
 
 export const userQueryRepository = {
 
@@ -88,7 +89,7 @@ export const userQueryRepository = {
                 throw new UnauthorizedError()
             }
 
-            const isPasswordValid = await bcrypt.compare(password, user.password);
+            const isPasswordValid = await bcryptService.userPasswordCompare(password,user.password);
 
             if (!isPasswordValid) {
                 throw new UnauthorizedError()

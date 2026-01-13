@@ -1,5 +1,4 @@
 import {Request,Response} from "express";
-import {ObjectId} from "mongodb";
 import {userService} from "../../services/user.service";
 import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
@@ -10,7 +9,6 @@ import {userRepository} from "../../repositories/user.repository";
 export const createUserHandler = async (req:Request,res:Response) => {
 
     const reqBody = req.body;
-
 
     try {
         const createdUserId:string = await userService.createUser(reqBody);
