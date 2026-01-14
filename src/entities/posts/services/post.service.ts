@@ -3,11 +3,16 @@ import {postCreateDto} from "../dto/post-create.input";
 import {Post} from "../types/post";
 import {postUpdateDto} from "../dto/post-update.input";
 import {blogService} from "../../blogs/services/blog.service";
-import {WithId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import { Blog } from "../../blogs/types/blog";
 import {PostOutput} from "../dto/post.output";
 import {ResultStatus} from "../../../core/result/resultCode";
 import {ResultType} from "../../../core/result/result.type";
+import {PostQueryInput} from "../dto/post-query-input";
+import {PostSortField} from "../types/post-sort-fields";
+import {commentCollection, postCollection, userCollection} from "../../../db/mongo.db";
+import {UserOutputDto} from "../../user/dto/user-output.dto";
+import {mapUserListToOutput} from "../../user/repositories/mappers/map-user-list-to-output";
 
 export const postService = {
 
@@ -59,10 +64,42 @@ export const postService = {
         return postsRepository.updatePost(postId,reqBody)
     },
 
-
     async deletePost(postId:string){
         return postsRepository.deletePost(postId);
 
+    },
+
+    async findAllComments(query:any) {
+        const {
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortDirection,
+            postId,
+        } = query;
+
+        const skip = (pageNumber - 1) * pageSize;
+
+        const filter = { postId };
+
+        const comments = await commentCollection
+            .find(filter)
+            .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
+            .skip(skip)
+            .limit(pageSize)
+            .toArray();
+
+        const totalCount = await commentCollection.countDocuments(filter);
+        const pagesCount = Math.ceil(totalCount / pageSize);
+
+        return {
+            pagesCount,
+            page: pageNumber,
+            pageSize,
+            totalCount,
+            items: comments,
+        };
     }
+
 
 }

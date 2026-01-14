@@ -13,7 +13,9 @@ import {postUpdateValidator} from "../validators/post-update.validator";
 import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validation-result";
 import {createCommentValidator} from "../validators/postId.validator";
 import {JwtAuthorizations} from "../../../auth/routers/middleware/jwt-authorizations.guard-middleware";
-import {createPostCommentHandler} from "./handlers/createPostComment.handler";
+import {createPostCommentHandler} from "./handlers/create-post-comment.handler";
+import {getAllPostCommentsValidator} from "../validators/post-getAll.sorting.validation";
+import {getAllPostCommentHandler} from "./handlers/getAll-post-comment.handler";
 
 export const postsRouter = Router({});
 
@@ -37,4 +39,9 @@ postsRouter
         createCommentValidator ,
         inputValidationResultMiddleware ,
         createPostCommentHandler )
+
+    .get('/:postId/comments',
+        getAllPostCommentsValidator,
+        inputValidationResultMiddleware ,
+        getAllPostCommentHandler )
 
