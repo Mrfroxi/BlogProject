@@ -29,8 +29,8 @@ export const commentRepository = {
         return isDelete.deletedCount === 1;
     },
 
-    isCommentOwner : async (dto:CommentDeleteInputDto):Promise<boolean> => {
-        return !!  commentCollection.findOne(//true or false
+    isCommentOwner : async (dto:CommentDeleteInputDto):Promise<WithId<Comment>|null> => {
+        return commentCollection.findOne(
             {
                 _id: new ObjectId(dto.commentId),
                 userId: new ObjectId(dto.userId),

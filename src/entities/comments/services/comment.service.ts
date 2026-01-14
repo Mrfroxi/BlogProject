@@ -141,6 +141,7 @@ export const commentService = {
         }
 
         const isOwner = await commentRepository.isCommentOwner({ commentId, userId });
+
         if (!isOwner) {
             return {
                 status: ResultStatus.Forbidden,
