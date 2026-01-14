@@ -29,13 +29,14 @@ export const commentRepository = {
         return isDelete.deletedCount === 1;
     },
 
-    isCommentOwner : async (dto:CommentDeleteInputDto):Promise<WithId<Comment>|null> => {
-        return commentCollection.findOne(
-            {
-                _id: new ObjectId(dto.commentId),
-                userId: new ObjectId(dto.userId),
-            }
-        )
+    isCommentOwner : async (dto:CommentDeleteInputDto):Promise<boolean> => {
+
+        const comment = await commentCollection.findOne({
+            _id: new ObjectId(dto.commentId),
+            ["commentatorInfo.userId"]: dto.userId,
+        });
+
+        return !!comment;
     },
 
     updateCommentContent: async (commentId: string, content: string): Promise<WithId<Comment> | null> => {

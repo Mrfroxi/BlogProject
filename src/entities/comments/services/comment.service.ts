@@ -11,7 +11,6 @@ import {ObjectId, WithId} from "mongodb";
 import {mapCommentToOutput} from "../repositories/mappers/map-comment-to-Output";
 import {CommentOutputDto} from "../dto/comment-outPut.dto";
 import {CommentDeleteInputDto} from "../dto/comment-delete-input.dto";
-import {commentCollection} from "../../../db/mongo.db";
 
 
 export const commentService = {

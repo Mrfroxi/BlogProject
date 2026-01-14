@@ -92,12 +92,19 @@ export const postService = {
         const totalCount = await commentCollection.countDocuments(filter);
         const pagesCount = Math.ceil(totalCount / pageSize);
 
+        const mappedItems = comments.map(c => ({
+            id: c._id.toString(),
+            content: c.content,
+            commentatorInfo: c.commentatorInfo,
+            createdAt: c.createdAt,
+        }));
+
         return {
             pagesCount,
             page: pageNumber,
             pageSize,
             totalCount,
-            items: comments,
+            items: mappedItems,
         };
     }
 
