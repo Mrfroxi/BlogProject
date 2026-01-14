@@ -9,15 +9,18 @@ import {updateCommentHandler} from "./handlers/put-comment.handler";
 
 
 export const commentRouter = Router({})
-    .get(':id',idParamValidator('id'),inputValidationResultMiddleware,getCommentHandler)
-    .delete('commentId',
+
+
+commentRouter
+    .get('/:id',idParamValidator('id'),inputValidationResultMiddleware,getCommentHandler)
+    .delete('/:commentId',
         JwtAuthorizations,
         idParamValidator('commentId'),
         inputValidationResultMiddleware,
         deleteCommentHandler
         )
 
-    .put('commentId',
+    .put('/:commentId',
         JwtAuthorizations,
         idParamValidator('commentId'),
         dataValidator,
