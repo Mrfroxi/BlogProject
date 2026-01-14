@@ -1,24 +1,23 @@
-import {Request,Response} from "express";
+import {Request, Response} from "express";
 import {errorHandler} from "../../../core/errors/handler/errorHandler";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {authService} from "../../services/auth.service";
+import {ResultStatus} from "../../../core/result/resultCode";
+import {resultCodeToHttpException} from "../../../core/result/resultCodeToHttpException";
 
 
 export const authLoginHandler = async (req:Request,res:Response) => {
 
-    try{
-        const {loginOrEmail,password} = req.body
+    const {loginOrEmail, password} = req.body;
 
-        await authService.loginUser(loginOrEmail,password);
 
-        res.sendStatus(HttpStatuses.NoContent)
+    const result = await authService.loginUser(loginOrEmail, password);
 
-    }catch (e){
-        errorHandler(e,res)
+    if (result.status !== ResultStatus.OK) {
+        return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
     }
 
-
-
+    return res.status(HttpStatuses.Ok).send({accessToken: result.data!.accessToken});
 
 
 }

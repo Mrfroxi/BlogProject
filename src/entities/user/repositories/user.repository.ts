@@ -2,7 +2,7 @@ import {userCollection} from "../../../db/mongo.db";
 import {ObjectId, WithId} from "mongodb";
 import {User} from "../types/user";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found";
-import {mapUserToOutput} from "../routers/mappers/map-user-to-output";
+import {mapUserToOutput} from "./mappers/map-user-to-output";
 
 
 export const userRepository = {

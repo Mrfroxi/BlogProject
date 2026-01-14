@@ -1,6 +1,5 @@
 import {Request,Response} from "express";
 import {errorHandler} from "../../../../core/errors/handler/errorHandler";
-import {userRepository} from "../../repositories/user.repository";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {userService} from "../../services/user.service";
 
