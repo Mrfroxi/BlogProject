@@ -5,6 +5,9 @@ import {postUpdateDto} from "../dto/post-update.input";
 import {blogService} from "../../blogs/services/blog.service";
 import {WithId} from "mongodb";
 import { Blog } from "../../blogs/types/blog";
+import {PostOutput} from "../dto/post.output";
+import {ResultStatus} from "../../../core/result/resultCode";
+import {ResultType} from "../../../core/result/result.type";
 
 export const postService = {
 
@@ -13,8 +16,25 @@ export const postService = {
         return  postsRepository.findAll(querySetup);
     },
 
-    async findPostById(postId:string) {
-        return postsRepository.findById(postId)
+    async findPostById(postId:string):Promise<ResultType<PostOutput|null>>{
+
+        const postResult:PostOutput|null =  await postsRepository.findById(postId);
+
+        if(!postResult){
+            return  {
+                    status:ResultStatus.NotFound ,
+                    data: null,
+                    extensions: [{ field: 'postId', message: 'Post Not Found' }],
+                    errorMessage: 'Post Not Found'
+            };
+        }
+
+        return {
+                status: ResultStatus.Success,
+                data: postResult,
+                extensions: [{ field: ' ', message: ' ' }],
+        };
+
     },
 
     async createPost(dto:postCreateDto){

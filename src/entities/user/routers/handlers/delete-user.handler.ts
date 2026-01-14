@@ -1,20 +1,21 @@
 import {Request,Response} from "express";
-import {errorHandler} from "../../../../core/errors/handler/errorHandler";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {userService} from "../../services/user.service";
+import {ResultStatus} from "../../../../core/result/resultCode";
+import {resultCodeToHttpException} from "../../../../core/result/resultCodeToHttpException";
+import {ResultType} from "../../../../core/result/result.type";
 
 
 export  const deleteUserHandler =  async (req:Request,res:Response ) => {
 
     const userId = req.params.id;
 
-    try {
+    const isDelete:ResultType<boolean | null> = await userService.deleteUser(userId)
 
-       await userService.deleteUser(userId)
-
-        res.sendStatus(HttpStatuses.NoContent)
-
-    }catch (e){
-        errorHandler(e,res)
+    if (isDelete.status !== ResultStatus.Success) {
+        return res.status(resultCodeToHttpException(isDelete.status)).send(isDelete.extensions);
     }
+
+    res.sendStatus(HttpStatuses.NoContent)
+
 }

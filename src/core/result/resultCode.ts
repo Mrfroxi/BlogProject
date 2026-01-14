@@ -1,5 +1,5 @@
 export enum ResultStatus {
-    OK = 'OK',
+    Success = 'Success',
     NotFound = 'NotFound',
     Forbidden = 'Forbidden',
     Unauthorized = 'Unauthorized',

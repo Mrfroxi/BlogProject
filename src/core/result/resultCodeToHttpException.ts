@@ -4,6 +4,8 @@ import {HttpStatuses} from "../types/http-statuses";
 
 export const resultCodeToHttpException = (resultCode: ResultStatus): number => {
     switch (resultCode) {
+        case ResultStatus.NotFound:
+            return HttpStatuses.NotFound
         case ResultStatus.BadRequest:
             return HttpStatuses.BadRequest;
         case ResultStatus.Forbidden:
@@ -14,3 +16,6 @@ export const resultCodeToHttpException = (resultCode: ResultStatus): number => {
             return HttpStatuses.InternalServerError;
     }
 };
+// if (result.status !== ResultStatus.Success) {
+//     return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
+// }

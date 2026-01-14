@@ -1,8 +1,6 @@
 import {ObjectId, WithId} from "mongodb";
 import {userCollection} from "../../../db/mongo.db";
 import { User } from "../types/user";
-import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found";
-import {mapUserToOutput} from "./mappers/map-user-to-output";
 import {DefaultValuesSortingDto} from "../dto/default-values-sorting.dto";
 import {mapUserListToOutput} from "./mappers/map-user-list-to-output";
 import {UserOutputDto} from "../dto/user-output.dto";
@@ -11,17 +9,6 @@ import {mapUserAuthMeToOutput} from "./mappers/map-userAuthMe-to-output";
 
 export const userQueryRepository = {
 
-        async findUserById(id:string) {
-
-           const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
-
-            if(!user){//ts
-                throw new RepositoryNotFoundError()
-            }
-
-            return  mapUserToOutput(user);
-
-        },
 
         async findAll(sortingDefault:DefaultValuesSortingDto): Promise<UserListOutputDto> {
 
@@ -95,7 +82,7 @@ export const userQueryRepository = {
             }
         },
 
-        async findUserByIdAuthMe(id:string) {
+        async AuthMeById(id:string) {
 
         const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
 

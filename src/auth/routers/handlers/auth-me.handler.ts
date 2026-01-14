@@ -8,7 +8,7 @@ export const authMeHandler = async (req:Request,res:Response) => {
 
     const userId:string|null= req.userId;
 
-    const userData = await userQueryRepository.findUserByIdAuthMe(userId!)
+    const userData = await userQueryRepository.AuthMeById(userId!)
 
     if(!userData){
         res.sendStatus(HttpStatuses.Unauthorized)

@@ -14,7 +14,7 @@ export const jwtService = {
         return  jwt.sign(
             { login: dto.login,id:dto.id },
             SETTINGS.JWT_AUTH_SECRET,
-            { expiresIn: "1h" }
+            { expiresIn: "24h" }
         );
     },
 

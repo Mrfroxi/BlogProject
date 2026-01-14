@@ -1,19 +1,19 @@
 import {userCollection} from "../../../db/mongo.db";
 import {ObjectId, WithId} from "mongodb";
 import {User} from "../types/user";
-import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found";
 import {mapUserToOutput} from "./mappers/map-user-to-output";
+import {UserOutputDto} from "../dto/user-output.dto";
 
 
 export const userRepository = {
 
-    async findUserById(id:string) {
+    async findUserById(id:string): Promise<UserOutputDto | null> {
 
 
         const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
 
         if(!user){//ts
-            throw new RepositoryNotFoundError()
+            return null //:)
         }
 
         return  mapUserToOutput(user);
@@ -25,7 +25,11 @@ export const userRepository = {
     },
 
     async deleteUserById(userId:string){
-        return  userCollection.deleteOne({_id:new ObjectId(userId)})
+        //Returns true if deleted, otherwise false
+        const isDeleted   = await userCollection.deleteOne({_id:new ObjectId(userId)})
+
+        return isDeleted.deletedCount === 1 && isDeleted.acknowledged;
+
     },
 
     async userUniqueLogin(userLogin:string):Promise<WithId<User>|null>{

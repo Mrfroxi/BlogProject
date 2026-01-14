@@ -39,7 +39,7 @@ export const authService = {
         const accessToken:string = await  jwtService.generateUserToken({login:userCredentials.login,id:userCredentials.id})
 
         return {
-                status: ResultStatus.OK,
+                status: ResultStatus.Success,
                 data: { accessToken },
                 extensions: [],
         };

@@ -13,7 +13,7 @@ export const authLoginHandler = async (req:Request,res:Response) => {
 
     const result = await authService.loginUser(loginOrEmail, password);
 
-    if (result.status !== ResultStatus.OK) {
+    if (result.status !== ResultStatus.Success) {
         return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
     }
 
