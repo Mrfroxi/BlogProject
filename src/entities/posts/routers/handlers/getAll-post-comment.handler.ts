@@ -4,6 +4,8 @@ import {matchedData} from "express-validator";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {postService} from "../../services/post.service";
 import {mapPostListToOutput} from "../mappers/map-posts-list-to-output";
+import {ResultStatus} from "../../../../core/result/resultCode";
+import {resultCodeToHttpException} from "../../../../core/result/resultCodeToHttpException";
 
 
 export const getAllPostCommentHandler = async (req:Request,res:Response) => {
@@ -12,6 +14,12 @@ export const getAllPostCommentHandler = async (req:Request,res:Response) => {
         locations:['query','params'],
         includeOptionals:true,
     })
+
+    const isVerifyPostId = await postService.findPostById(req.params.postId)
+
+    if(isVerifyPostId.status !== ResultStatus.Success){
+        return   res.sendStatus(resultCodeToHttpException(isVerifyPostId.status))
+    }
 
     const validatedParams = await postService.findAllComments(matchSortingData)
 
