@@ -22,6 +22,7 @@ export const JwtAuthorizations = async (req:Request,res:Response,next:NextFuncti
 
         return;
     }
+
     res.sendStatus(HttpStatuses.Unauthorized);
 
     return;

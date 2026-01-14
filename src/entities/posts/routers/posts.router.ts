@@ -33,8 +33,8 @@ postsRouter
         deletePostHandler)
 
     .post('/:postId/comments',
+        JwtAuthorizations,
         createCommentValidator ,
         inputValidationResultMiddleware ,
-        JwtAuthorizations,
         createPostCommentHandler )
 

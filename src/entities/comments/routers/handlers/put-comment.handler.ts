@@ -6,6 +6,7 @@ import {commentService} from "../../services/comment.service";
 
 export const updateCommentHandler = async (req:Request,res:Response) => {
 
+
     const commentId = req.params.commentId;
     const {content} = req.body;
     const userId = req.userId!
@@ -16,6 +17,6 @@ export const updateCommentHandler = async (req:Request,res:Response) => {
         return res.status(resultCodeToHttpException(updatedComment.status)).send(updatedComment.extensions);
     }
 
-    res.status(HttpStatuses.NoContent)
+    res.sendStatus(HttpStatuses.NoContent)
 
 }
