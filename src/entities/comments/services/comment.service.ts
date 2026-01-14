@@ -1,5 +1,5 @@
 import {commentRepository} from "../repositories/commentRepository";
-import {CommentCreateDto} from "../repositories/dto/comment-create.dto";
+import {CommentCreateDto} from "../dto/comment-create.dto";
 import {ResultType} from "../../../core/result/result.type";
 import {UserOutputDto} from "../../user/dto/user-output.dto";
 import {userService} from "../../user/services/user.service";
@@ -7,12 +7,34 @@ import {PostOutput} from "../../posts/dto/post.output";
 import {postService} from "../../posts/services/post.service";
 import {Comment} from "../types/comment";
 import {ResultStatus} from "../../../core/result/resultCode";
-import {WithId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {mapCommentToOutput} from "../repositories/mappers/map-comment-to-Output";
-import {CommentOutputDto} from "../types/comment-outPut.dto";
+import {CommentOutputDto} from "../dto/comment-outPut.dto";
+import {CommentDeleteInputDto} from "../dto/comment-delete-input.dto";
+import {commentCollection} from "../../../db/mongo.db";
 
 
 export const commentService = {
+
+    findById: async (commentId:string):Promise<ResultType<CommentOutputDto|null>> => {
+        const comment = await commentRepository.findById(commentId)
+
+        if(!comment){
+            return {
+                    status: ResultStatus.NotFound,
+                    data: null,
+                    extensions: [{ field: 'commentId', message: ' Not Found commentId' }],
+
+        };
+        }
+
+        const outPutData:CommentOutputDto = await mapCommentToOutput(comment);
+        return {
+                status: ResultStatus.Success,
+                data: outPutData,
+                extensions: [{ field: ' ', message: ' ' }],
+        };
+    },
 
     createComment: async (dto:CommentCreateDto) : Promise<ResultType<CommentOutputDto|null>> =>{
 
@@ -63,7 +85,88 @@ export const commentService = {
         };
     },
 
+    deleteComment :  async function(dto:CommentDeleteInputDto):Promise<ResultType<boolean|null>>{
 
+        const {userId,commentId } = dto
+
+        const comment = await  commentRepository.findById(commentId)
+
+        if(!comment){
+            return {
+                status: ResultStatus.NotFound,
+                data: null,
+                extensions: [{ field: 'commentId', message: 'Not found comment' }],
+            };
+        }
+
+        const isOwner = await commentRepository.isCommentOwner(dto);
+
+        if(!isOwner){
+            return {
+                    status: ResultStatus.Forbidden,
+                    data: null,
+                    extensions: [{ field: 'userId', message: 'Forbidden' }],
+            };
+        }
+
+        const deleteComment = await commentRepository.deleteComment(commentId)
+
+        if(!deleteComment){
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                extensions: [{ field: 'deleted', message: 'deleted' }],
+            };
+        }
+
+        return {
+                status: ResultStatus.Success,
+                data: true,
+                extensions: [{ field: ' ', message: ' ' }],
+        };
+
+    },
+
+    updateComment: async function(dto: { commentId: string; userId: string; content: string }): Promise<ResultType<CommentOutputDto | null>> {
+        const { commentId, userId, content } = dto;
+
+        const comment = await commentRepository.findById(commentId);
+
+        if (!comment) {
+            return {
+                status: ResultStatus.NotFound,
+                data: null,
+                extensions: [{ field: 'commentId', message: 'Comment not found' }],
+            };
+        }
+
+        const isOwner = await commentRepository.isCommentOwner({ commentId, userId });
+        if (!isOwner) {
+            return {
+                status: ResultStatus.Forbidden,
+                data: null,
+                extensions: [{ field: 'userId', message: 'Forbidden: not the owner' }],
+            };
+        }
+
+        const updatedComment = await commentRepository.updateCommentContent(commentId, content);
+
+        if (!updatedComment) {
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                extensions: [{ field: 'content', message: 'Failed to update comment' }],
+            };
+        }
+
+        const outPutData: CommentOutputDto = await mapCommentToOutput(updatedComment);
+
+        return {
+            status: ResultStatus.Success,
+            data: outPutData,
+            extensions: [{ field: ' ', message: ' ' }],
+        };
+    },
 
 
 }

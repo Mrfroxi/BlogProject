@@ -1,6 +1,6 @@
 import {WithId} from "mongodb";
 import {Comment} from "../../types/comment";
-import {CommentOutputDto} from "../../types/comment-outPut.dto";
+import {CommentOutputDto} from "../../dto/comment-outPut.dto";
 
 
 
