@@ -11,7 +11,11 @@
     "skipLibCheck": true // not check node_modules
   },
   "include": ["src/**/*"],
-  "exclude": ["__tests__", "dist", "node_modules"],
+  "exclude": [
+    "__tests__/**/*",
+    "__tests__",
+    "dist",
+    "node_modules"],
   "files": [
     "src/core/types/index.d.ts"
   ]

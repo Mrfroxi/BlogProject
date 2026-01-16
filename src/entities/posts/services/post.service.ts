@@ -8,11 +8,7 @@ import { Blog } from "../../blogs/types/blog";
 import {PostOutput} from "../dto/post.output";
 import {ResultStatus} from "../../../core/result/resultCode";
 import {ResultType} from "../../../core/result/result.type";
-import {PostQueryInput} from "../dto/post-query-input";
-import {PostSortField} from "../types/post-sort-fields";
 import {commentCollection, postCollection, userCollection} from "../../../db/mongo.db";
-import {UserOutputDto} from "../../user/dto/user-output.dto";
-import {mapUserListToOutput} from "../../user/repositories/mappers/map-user-list-to-output";
 
 export const postService = {
 
