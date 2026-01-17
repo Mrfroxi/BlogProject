@@ -19,7 +19,7 @@
   "scripts": {
     "dev": "nodemon --inspect dist/index.js",
     "ts-watch": "tsc -w",
-    "test": "jest --config jest-config.json"
+    "test": "jest --config jest-config.json --runInBand --detectOpenHandles --forceExit"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
