@@ -136,7 +136,7 @@ describe('userEntity', () => {
         ];
 
 
-        it('return all users 201', async () => {
+        it(' POST -> return all users 201', async () => {
             const users = testingUserDtoCreator.createUserDtos(3);
 
             await Promise.all(
@@ -162,7 +162,7 @@ describe('userEntity', () => {
 
         });
 
-        it('should return users sorted by login ascending, first page 2 items', async () => {
+        it(' POST -> should return users sorted by login ascending, first page 2 items', async () => {
 
 
             await Promise.all(
@@ -193,6 +193,35 @@ describe('userEntity', () => {
             expect(response.body.items.length).toBe(2);
             expect(response.body.items[0].login).toBe('alice');
             expect(response.body.items[1].login).toBe('bob');
+        });
+
+        it(' POST -> should return users filtered by email term "eve"', async () => {
+
+            await Promise.all(
+                users.map(user =>
+                    request(app)
+                        .post(USER_PATH)
+                        .auth(SETTINGS.ADMIN_USER, SETTINGS.ADMIN_PASSWORD)
+                        .send({
+                            login: user.login,
+                            email: user.email,
+                            password: user.pass
+                        })
+                        .expect(201)
+                )
+            );
+
+
+            const response = await request(app)
+                .get(`${USER_PATH}`)
+                .auth(SETTINGS.ADMIN_USER, SETTINGS.ADMIN_PASSWORD)
+                .query({
+                    searchEmailTerm: 'eve'
+                })
+                .expect(200);
+
+            expect(response.body.items.length).toBe(1);
+            expect(response.body.items[0].email).toBe('eve@test.com');
         });
 
     });
