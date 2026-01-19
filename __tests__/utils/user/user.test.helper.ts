@@ -6,7 +6,7 @@ export type UserDto = {
 
 
 
-export const testingUserDtoCreator = {
+export const userTestHelper = {
     createUserDto({login, email, pass}: {
         login?: string, email?: string, pass?: string
     }): UserDto {

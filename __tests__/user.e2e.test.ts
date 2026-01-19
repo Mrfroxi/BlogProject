@@ -1,33 +1,13 @@
-import express from 'express';
-import {runDB} from "../src/db/mongo.db";
 import request from 'supertest';
-import {setupApp} from "../src/setup-app";
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import {TEST_ALLDATA_PATH, USER_PATH} from "../src/core/paths/paths";
-import {testingUserDtoCreator} from "./utils/testingUserDtoCreator";
+import {USER_PATH} from "../src/core/paths/paths";
+import {userTestHelper} from "./utils/user/user.test.helper";
 import {SETTINGS} from "../src/core/setting/settings";
+import {createTestApp} from "./utils/testApp";
 
 
 describe('userEntity', () => {
 
-    const app = express();
-    setupApp(app);
-
-    let mongoServer: MongoMemoryServer;
-
-    beforeAll(async () => {
-        mongoServer = await MongoMemoryServer.create();
-        await runDB(mongoServer.getUri());
-
-    });
-
-    beforeEach(async () => {
-        await request(app).delete(`${TEST_ALLDATA_PATH}/all-data`)
-    });
-
-    afterAll(async () => {
-        await mongoServer.stop();
-    });
+    const app = createTestApp()
 
 
     let userDto: any;
@@ -41,7 +21,7 @@ describe('userEntity', () => {
     describe('user post', () =>{
         it('create User', async () => {
 
-            userDto = testingUserDtoCreator.createUserDto({})
+            userDto = userTestHelper.createUserDto({})
 
             const newUser = await request(app)
                 .post(USER_PATH)
@@ -59,7 +39,7 @@ describe('userEntity', () => {
 
         it('create incorrect  User', async () => {
 
-            userDto = testingUserDtoCreator.createUserDto({})
+            userDto = userTestHelper.createUserDto({})
 
             await request(app)
                 .post(USER_PATH)
@@ -70,7 +50,7 @@ describe('userEntity', () => {
 
         it('create Unauthorized  User', async () => {
 
-            userDto = testingUserDtoCreator.createUserDto({})
+            userDto = userTestHelper.createUserDto({})
 
             await request(app)
                 .post(USER_PATH)
@@ -137,7 +117,7 @@ describe('userEntity', () => {
 
 
         it(' POST -> return all users 201', async () => {
-            const users = testingUserDtoCreator.createUserDtos(3);
+            const users = userTestHelper.createUserDtos(3);
 
             await Promise.all(
                 users.map(user =>
@@ -225,7 +205,5 @@ describe('userEntity', () => {
         });
 
     });
-
-
 
 });
