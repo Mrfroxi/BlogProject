@@ -3,8 +3,7 @@ import {createTestApp} from "./utils/testApp";
 import {BLOGS_PATH, POSTS_PATH} from "../src/core/paths/paths";
 import {SETTINGS} from "../src/core/setting/settings";
 import {createBlogList} from "./utils/blog/blogList.test.helper";
-import {createPostList} from "./utils/post/post.test.helper";
-
+import {createPostList} from "./utils/post/postList.test.helper";
 
 describe('blog entity' , () => {
 
@@ -437,7 +436,6 @@ describe('blog entity' , () => {
     })
 
     describe('Blog getAll Posts for Blog', () => {
-        const postsToCreateList = createPostList(3);
 
         it('should return posts for specific blog with pagination', async () => {
 
@@ -449,6 +447,8 @@ describe('blog entity' , () => {
                 .expect(201);
 
             const blogId = blog.body.id
+
+            const postsToCreateList = createPostList(blogId,3);
 
             await Promise.all(
                 postsToCreateList.map(post =>

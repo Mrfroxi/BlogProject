@@ -2,9 +2,12 @@ import { ObjectId } from 'mongodb';
 import request from "supertest";
 import {createTestApp} from "./utils/testApp";
 import {createBlog} from "./utils/blog/blog-create.test.helper";
-import {POSTS_PATH} from "../src/core/paths/paths";
+import {POSTS_PATH, USER_PATH} from "../src/core/paths/paths";
 import {SETTINGS} from "../src/core/setting/settings";
 import {createPostList} from "./utils/post/postList.test.helper";
+import {userTestHelper} from "./utils/user/user.test.helper";
+import {getJwtTokenTest} from "./utils/auth/auth.test.helper";
+import {createCommentsForPost} from "./utils/comment/commentList.test.helper";
 
 describe('post entity' , () => {
 
@@ -308,9 +311,99 @@ describe('post entity' , () => {
                 });
             });
 
+        })
 
+        describe('Post create comment', () => {
 
+            it('should return comment POST User -> AUTH Login -> POST Post -> Post Comment',async () =>{
+                const user = userTestHelper.createUserDto({})
 
+                const createdUser = await request(app)
+                    .post(USER_PATH)
+                    .auth(SETTINGS.ADMIN_USER, SETTINGS.ADMIN_PASSWORD)
+                    .send({
+                        login: user.login,
+                        email: user.email,
+                        password: user.pass
+                    })
+                    .expect(201)
+
+                const token = await getJwtTokenTest(app, createdUser.body.email, user.pass);
+
+                const PostDto = {
+                    title: 'Post title',
+                    shortDescription: 'Short desc',
+                    content: 'Post content',
+                    blogId: ctx.blogId,
+                };
+
+                const resPost = await request(app)
+                    .post(POSTS_PATH)
+                    .auth(SETTINGS.ADMIN_USER,SETTINGS.ADMIN_PASSWORD)
+                    .send(PostDto)
+                    .expect(201);
+
+                const commentRes = await request(app)
+                    .post(`${POSTS_PATH}/${resPost.body.id}/comments`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ content: 'Mycommentstringstringstringststrststringststringstringstringst' })
+                    .expect(201);
+
+                expect(commentRes.body.commentatorInfo.userId).toBe(createdUser.body.id)
+                expect(commentRes.body.commentatorInfo.userLogin).toBe(createdUser.body.login)
+
+            })
+
+            it('should return pagination comment POST User -> AUTH Login -> POST Post -> Post Comment',async () =>{
+                const user = userTestHelper.createUserDto({})
+
+                const createdUser = await request(app)
+                    .post(USER_PATH)
+                    .auth(SETTINGS.ADMIN_USER, SETTINGS.ADMIN_PASSWORD)
+                    .send({
+                        login: user.login,
+                        email: user.email,
+                        password: user.pass
+                    })
+                    .expect(201)
+
+                const token = await getJwtTokenTest(app, createdUser.body.email, user.pass);
+
+                const PostDto = {
+                    title: 'Post title',
+                    shortDescription: 'Short desc',
+                    content: 'Post content',
+                    blogId: ctx.blogId,
+                };
+
+                const resPost = await request(app)
+                    .post(POSTS_PATH)
+                    .auth(SETTINGS.ADMIN_USER,SETTINGS.ADMIN_PASSWORD)
+                    .send(PostDto)
+                    .expect(201);
+
+                const postId = resPost.body.id;
+
+                await createCommentsForPost(app, postId, token, 5);
+
+                const res = await request(app)
+                    .get(`/posts/${postId}/comments`)
+                    .query({ pageNumber: 2, pageSize: 2, sortBy: 'createdAt', sortDirection: 'desc' })
+                    .expect(200);
+
+                expect(res.body.page).toBe(2);
+                expect(res.body.pageSize).toBe(2);
+                expect(res.body.totalCount).toBe(5);
+                expect(res.body.pagesCount).toBe(3);
+                expect(res.body.items).toHaveLength(2);
+
+                res.body.items.forEach((comment: any) => {
+                    expect(comment.id).toBeDefined();
+                    expect(comment.content).toBeDefined();
+                    expect(comment.commentatorInfo.userId).toBe(createdUser.body.id);
+                });
+
+            })
 
         })
 }
