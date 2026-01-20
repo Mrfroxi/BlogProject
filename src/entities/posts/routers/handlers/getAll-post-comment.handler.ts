@@ -4,8 +4,8 @@ import {matchedData} from "express-validator";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {postService} from "../../services/post.service";
 import {mapPostListToOutput} from "../mappers/map-posts-list-to-output";
-import {ResultStatus} from "../../../../core/result/resultCode";
-import {resultCodeToHttpException} from "../../../../core/result/resultCodeToHttpException";
+import {ResultStatus} from "../../../../core/object-result/resultCode";
+import {resultCodeToHttpException} from "../../../../core/object-result/resultCodeToHttpException";
 
 
 export const getAllPostCommentHandler = async (req:Request,res:Response) => {

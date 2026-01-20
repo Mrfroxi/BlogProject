@@ -1,9 +1,9 @@
 import {Request,Response} from "express";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
 import {userService} from "../../services/user.service";
-import {ResultStatus} from "../../../../core/result/resultCode";
-import {resultCodeToHttpException} from "../../../../core/result/resultCodeToHttpException";
-import {ResultType} from "../../../../core/result/result.type";
+import {ResultStatus} from "../../../../core/object-result/resultCode";
+import {resultCodeToHttpException} from "../../../../core/object-result/resultCodeToHttpException";
+import {ResultType} from "../../../../core/object-result/result.type";
 
 
 export  const deleteUserHandler =  async (req:Request,res:Response ) => {

@@ -1,7 +1,7 @@
 import {userQueryRepository} from "../../entities/user/repositories/user-query.repository";
 import {bcryptService} from "../../core/services/bcrypt.service";
-import {ResultType} from "../../core/result/result.type";
-import {ResultStatus} from "../../core/result/resultCode";
+import {ResultType} from "../../core/object-result/result.type";
+import {ResultStatus} from "../../core/object-result/resultCode";
 import {jwtService} from "../../core/services/jwt.service";
 
 interface userCredentials {

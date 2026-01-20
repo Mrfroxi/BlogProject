@@ -63,7 +63,7 @@ export const userQueryRepository = {
         },
 
         async checkUserCredentials(loginOrEmail:string){
-            //result object
+
             const user:WithId<User> | null = await userCollection.findOne({
                 $or: [
                     { login: loginOrEmail },

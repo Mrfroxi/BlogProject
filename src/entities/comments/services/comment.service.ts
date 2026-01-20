@@ -1,12 +1,12 @@
 import {commentRepository} from "../repositories/commentRepository";
 import {CommentCreateDto} from "../dto/comment-create.dto";
-import {ResultType} from "../../../core/result/result.type";
+import {ResultType} from "../../../core/object-result/result.type";
 import {UserOutputDto} from "../../user/dto/user-output.dto";
 import {userService} from "../../user/services/user.service";
 import {PostOutput} from "../../posts/dto/post.output";
 import {postService} from "../../posts/services/post.service";
 import {Comment} from "../types/comment";
-import {ResultStatus} from "../../../core/result/resultCode";
+import {ResultStatus} from "../../../core/object-result/resultCode";
 import {ObjectId, WithId} from "mongodb";
 import {mapCommentToOutput} from "../repositories/mappers/map-comment-to-Output";
 import {CommentOutputDto} from "../dto/comment-outPut.dto";

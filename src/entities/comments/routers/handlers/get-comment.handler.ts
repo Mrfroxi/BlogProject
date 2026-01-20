@@ -1,7 +1,7 @@
 import {Request,Response} from "express";
 import {commentService} from "../../services/comment.service";
-import {ResultStatus} from "../../../../core/result/resultCode";
-import {resultCodeToHttpException} from "../../../../core/result/resultCodeToHttpException";
+import {ResultStatus} from "../../../../core/object-result/resultCode";
+import {resultCodeToHttpException} from "../../../../core/object-result/resultCodeToHttpException";
 import {HttpStatuses} from "../../../../core/types/http-statuses";
 
 

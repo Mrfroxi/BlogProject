@@ -6,8 +6,8 @@ import {blogService} from "../../blogs/services/blog.service";
 import {ObjectId, WithId} from "mongodb";
 import { Blog } from "../../blogs/types/blog";
 import {PostOutput} from "../dto/post.output";
-import {ResultStatus} from "../../../core/result/resultCode";
-import {ResultType} from "../../../core/result/result.type";
+import {ResultStatus} from "../../../core/object-result/resultCode";
+import {ResultType} from "../../../core/object-result/result.type";
 import {commentCollection, postCollection, userCollection} from "../../../db/mongo.db";
 
 export const postService = {

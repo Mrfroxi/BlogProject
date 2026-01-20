@@ -5,8 +5,8 @@ import {validateUserUniqueness} from "./helpers/user-validate-uniqueness.helper"
 import {userRepository} from "../repositories/user.repository";
 import {UserOutputDto} from "../dto/user-output.dto";
 import {bcryptService} from "../../../core/services/bcrypt.service";
-import {ResultStatus} from "../../../core/result/resultCode";
-import {ResultType} from "../../../core/result/result.type";
+import {ResultStatus} from "../../../core/object-result/resultCode";
+import {ResultType} from "../../../core/object-result/result.type";
 
 
 
@@ -46,6 +46,11 @@ export const userService = {
                 email:email,
                 createdAt: `${new Date().toISOString()}`,
                 password: hashPassword,
+                emailConfirmation:{
+                    confirmationCode: '',
+                    expirationDate: null,
+                    isConfirmed: true,
+                }
             }
 
             const createdUser: InsertOneResult<User> = await userRepository.createUser(validUser);

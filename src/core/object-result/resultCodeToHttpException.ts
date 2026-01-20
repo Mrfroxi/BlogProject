@@ -16,6 +16,6 @@ export const resultCodeToHttpException = (resultCode: ResultStatus): number => {
             return HttpStatuses.InternalServerError;
     }
 };
-// if (result.status !== ResultStatus.Success) {
-//     return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
+// if (object-result.status !== ResultStatus.Success) {
+//     return res.status(resultCodeToHttpException(object-result.status)).send(object-result.extensions);
 // }
