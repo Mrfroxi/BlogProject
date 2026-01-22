@@ -1,14 +1,13 @@
 import request from "supertest";
-import {createTestApp} from "./utils/testApp";
 import {BLOGS_PATH, POSTS_PATH} from "../src/core/paths/paths";
 import {SETTINGS} from "../src/core/setting/settings";
 import {createBlogList} from "./utils/blog/blogList.test.helper";
 import {createPostList} from "./utils/post/postList.test.helper";
+import {createTestApp} from "./utils/testApp";
 
 describe('blog entity' , () => {
 
-   const app = createTestApp()
-
+    const app = createTestApp()
 
     it('main endPoint', async () => {
         await request(app)
