@@ -145,16 +145,26 @@ export const userService = {
 
         const validEmail = await this.findUserByEmail(email);
 
-        const validLogin = await this.findUserByLogin(login);
-
-        if(validLogin.data || validEmail.data){
+        if(validEmail.data){
             return {
                 status: ResultStatus.BadRequest,
                 data:null,
-                extensions: [{ field: 'login or email', message: 'login or email exists' }],
-                errorMessage: 'Login or email exists',
+                extensions: [{ field: 'email', message: 'email exists' }],
+                errorMessage: 'Email exists',
             };
         }
+        const validLogin = await this.findUserByLogin(login);
+
+        if(validLogin.data){
+            return {
+                status: ResultStatus.BadRequest,
+                data:null,
+                extensions: [{ field: 'login', message: 'login exists' }],
+                errorMessage: 'Login exists',
+            };
+        }
+
+
 
         const hashPassword = await bcryptService.userPasswordBcrypt(password);
 
@@ -176,10 +186,10 @@ export const userService = {
 
         if(!createdUser.acknowledged){
             return {
-                status: ResultStatus.InternalServerError,
+                status: ResultStatus.BadRequest,
                 data: null,
-                extensions: [{ field: 'db', message: 'dont inset' }],
-                errorMessage: 'dont inset user entity ',
+                extensions: [{ field: 'db', message: 'doesnt inset' }],
+                errorMessage: 'doesnt inset user entity ',
             };
         }
 
@@ -199,7 +209,7 @@ export const userService = {
             return {
                     status: ResultStatus.BadRequest,
                     data: null,
-                    extensions: [{ field: 'confirmation code', message: 'confirmation code not exists' }],
+                    extensions: [{ field: 'code', message: 'confirmation code not exists' }],
                     errorMessage: 'Confirmation Code Not Found',
             };
         }
@@ -239,6 +249,27 @@ export const userService = {
              data: userConfirmed,
              extensions: [{ field: '', message: '' }],
          }
+    },
+
+    changeConfirmationCode: async (email:string) => {
+        const newConfirmedCode = uuid4();
+
+        const changedConfirmationCode = userRepository.userChangeConfirmedCode(email,newConfirmedCode)
+
+        if(!changedConfirmationCode){
+            return{
+                status: ResultStatus.BadRequest,
+                data: null,
+                extensions: [{ field: 'ConfirmationCode', message: 'BadRequest change' }],
+                errorMessage : 'BadRequest change'
+            }
+        }
+
+        return {
+            status: ResultStatus.Success,
+            data: newConfirmedCode,
+            extensions: [{ field: '', message: '' }],
+        }
     }
 
 }

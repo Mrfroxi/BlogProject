@@ -4,8 +4,6 @@ import {ResultType} from "../../core/object-result/result.type";
 import {ResultStatus} from "../../core/object-result/resultCode";
 import {jwtService} from "../../core/services/jwt.service";
 import {userService} from "../../entities/user/services/user.service";
-import {User} from "../../entities/user/types/user";
-import {WithId} from "mongodb";
 import {UserOutputDto} from "../../entities/user/dto/user-output.dto";
 import {nodemailerService} from "../../core/services/nodemailerService";
 import {emailExamples} from "../../core/helper/email-template";
@@ -70,7 +68,7 @@ export const authService = {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
-                extensions: [{ field: 'confirmation code', message: 'confirmation code is Confirmed' }],
+                extensions: [{ field: 'code', message: 'confirmation code is Confirmed' }],
                 errorMessage: 'Confirmation Code is Confirmed',
             };
         }
@@ -102,10 +100,10 @@ export const authService = {
 
         if(!user.data){
             return  {
-                    status: user.status,
+                    status: ResultStatus.BadRequest,
                     data: user.data,
-                    extensions: [...user.extensions],
-                    errorMessage : user.errorMessage
+                    extensions: [{"field":"email","message":"email not found"}],
+                    errorMessage : 'Email not found'
             }
         }
 
@@ -115,14 +113,25 @@ export const authService = {
             return {
                     status: ResultStatus.BadRequest,
                     data: null,
-                    extensions: [{ field: 'isConfirmed', message: 'isConfirmed is true' }],
+                    extensions: [{ field: 'email', message: 'isConfirmed' }],
                     errorMessage: 'Confirmation Code is Confirmed',
             };
         }
 
+        const newCode = await userService.changeConfirmationCode(email);
+
+        if(!newCode.data){
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                extensions: [{ field: 'newCode', message: 'BadRequest code' }],
+                errorMessage: 'BadRequest code',
+            }
+        }
+
         await nodemailerService.sendEmail(
             user.data.email,
-            user.data.emailConfirmation.confirmationCode,
+            newCode.data,
             emailExamples.registrationEmail
         )
 

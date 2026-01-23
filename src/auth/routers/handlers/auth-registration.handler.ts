@@ -16,11 +16,16 @@ export const authRegistrationHandler = async (req: Request, res: Response) => {
     const createdUser:ResultType<User|null> = await userService.createUser({email,login,password});
 
     if (createdUser.status !== ResultStatus.Success) {
-        return res.status(resultCodeToHttpException(createdUser.status)).send(createdUser.extensions);
+        return res.status(resultCodeToHttpException(createdUser.status)).send({
+            errorsMessages:[...createdUser.extensions]
+        });
     }
 
+    //for empty data , ts
     if (createdUser.status !== ResultStatus.Success || !createdUser.data ) {
-        return res.status(resultCodeToHttpException(createdUser.status)).send(createdUser.extensions);
+        return res.status(resultCodeToHttpException(createdUser.status)).send({
+            errorsMessages:[...createdUser.extensions]
+        });
     }
 
     await nodemailerService.sendEmail(

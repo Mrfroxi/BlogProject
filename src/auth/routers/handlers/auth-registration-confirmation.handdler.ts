@@ -13,7 +13,9 @@ export const authRegistrationConfirmationHandler = async (req:Request,res:Respon
     const verifyUser:ResultType<boolean | null> = await  authService.confirmationCode(code)
 
      if (verifyUser.status !== ResultStatus.Success) {
-      return res.status(resultCodeToHttpException(verifyUser.status)).send(verifyUser.extensions);
+      return res.status(resultCodeToHttpException(verifyUser.status)).send({
+          errorsMessages:[...verifyUser.extensions]
+      });
     }
 
     res.sendStatus(HttpStatuses.NoContent)

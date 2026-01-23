@@ -9,7 +9,6 @@ export const userRepository = {
 
     async findUserById(id:string): Promise<UserOutputDto | null> {
 
-
         const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
 
         if(!user){
@@ -54,6 +53,15 @@ export const userRepository = {
         const switchedUser = await userCollection.updateOne(
             { _id: new ObjectId(userId) },
             { $set: { "emailConfirmation.isConfirmed": true } }
+        );
+
+        return switchedUser.acknowledged
+    },
+
+    async userChangeConfirmedCode(userEmail:string,newCode:string){
+        const switchedUser = await userCollection.updateOne(
+            { email: userEmail },
+            { $set: { "emailConfirmation.confirmationCode": newCode } }
         );
 
         return switchedUser.acknowledged
