@@ -23,7 +23,7 @@ export const authRegistrationHandler = async (req: Request, res: Response) => {
         return res.status(resultCodeToHttpException(createdUser.status)).send(createdUser.extensions);
     }
 
-    const emailSender = await nodemailerService.sendEmail(
+    await nodemailerService.sendEmail(
         createdUser.data.email,
         createdUser.data.emailConfirmation.confirmationCode,
         emailExamples.registrationEmail

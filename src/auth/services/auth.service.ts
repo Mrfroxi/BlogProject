@@ -7,6 +7,8 @@ import {userService} from "../../entities/user/services/user.service";
 import {User} from "../../entities/user/types/user";
 import {WithId} from "mongodb";
 import {UserOutputDto} from "../../entities/user/dto/user-output.dto";
+import {nodemailerService} from "../../core/services/nodemailerService";
+import {emailExamples} from "../../core/helper/email-template";
 
 interface userCredentials {
     login:string,
@@ -92,8 +94,44 @@ export const authService = {
             extensions: [],
         }
 
-    }
+    },
 
+    resendByEmail: async (email:string):Promise<ResultType<boolean|null>> => {
+
+        const user:ResultType<UserOutputDto|null> = await userService.findUserByEmail(email)
+
+        if(!user.data){
+            return  {
+                    status: user.status,
+                    data: user.data,
+                    extensions: [...user.extensions],
+                    errorMessage : user.errorMessage
+            }
+        }
+
+        const isConfirmed = user.data.emailConfirmation.isConfirmed;
+
+        if(isConfirmed){
+            return {
+                    status: ResultStatus.BadRequest,
+                    data: null,
+                    extensions: [{ field: 'isConfirmed', message: 'isConfirmed is true' }],
+                    errorMessage: 'Confirmation Code is Confirmed',
+            };
+        }
+
+        await nodemailerService.sendEmail(
+            user.data.email,
+            user.data.emailConfirmation.confirmationCode,
+            emailExamples.registrationEmail
+        )
+
+        return {
+            status: ResultStatus.Success,
+            data: true,
+            extensions: [{ field: '', message: '' }],
+        }
+    }
 
 
 }

@@ -9,6 +9,7 @@ import {ResultStatus} from "../../../core/object-result/resultCode";
 import {ResultType} from "../../../core/object-result/result.type";
 import { v4 as uuid4 } from 'uuid';
 import { add } from 'date-fns';
+import {mapUserToOutput} from "../repositories/mappers/map-user-to-output";
 
 
 export const userService = {
@@ -94,7 +95,7 @@ export const userService = {
     },
 
 
-    findUserByEmail : async (email:string) => {
+    findUserByEmail : async (email:string):Promise< ResultType<UserOutputDto|null>> => {
 
         const validEmail:WithId<User> | null = await userRepository.userUniqueEmail(email);
 
@@ -110,7 +111,7 @@ export const userService = {
 
         return  {
                 status: ResultStatus.Success,
-                data: validEmail,
+                data: mapUserToOutput(validEmail),
                 extensions: [{ field: ' ', message: ' ' }],
               };
 

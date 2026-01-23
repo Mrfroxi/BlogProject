@@ -8,6 +8,8 @@ import {authRegistrationHandler} from "./handlers/auth-registration.handler";
 import {registerValidators} from "../validators/auth-registration.validator";
 import {codeValidator} from "../validators/auth-registration-confirmation.validator";
 import {authRegistrationConfirmationHandler} from "./handlers/auth-registration-confirmation.handdler";
+import {emailResendingValidator} from "../validators/auth-registration-resending.validator";
+import {authRegistrationResendingHandler} from "./handlers/auth-registration-emailResending";
 
 
 export const authRoute = Router({})
@@ -15,6 +17,15 @@ export const authRoute = Router({})
 authRoute
     .post('/login',authLoginValidator,inputValidationResultMiddleware,authLoginHandler)
     .get('/me',JwtAuthorizations,authMeHandler)
-    .post('/registration',registerValidators,inputValidationResultMiddleware,authRegistrationHandler)
-    .post('/registration-confirmation',codeValidator,inputValidationResultMiddleware,authRegistrationConfirmationHandler)
-
+    .post('/registration',registerValidators,
+        inputValidationResultMiddleware,
+        authRegistrationHandler)
+    .post('/registration-confirmation',
+        codeValidator,
+        inputValidationResultMiddleware,
+        authRegistrationConfirmationHandler
+    )
+    .post('/registration-email-resending',
+        emailResendingValidator,
+        inputValidationResultMiddleware,
+        authRegistrationResendingHandler)
