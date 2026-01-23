@@ -12,8 +12,8 @@ export const userRepository = {
 
         const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
 
-        if(!user){//ts
-            return null //:)
+        if(!user){
+            return null
         }
 
         return  mapUserToOutput(user);
@@ -39,6 +39,25 @@ export const userRepository = {
     async userUniqueEmail(userEmail:string):Promise<WithId<User>|null>{
         return userCollection.findOne({email:userEmail})
     },
+
+    async userVerifyCode(userCode:string):Promise<UserOutputDto|null>{
+        const user:WithId<User>| null  = await userCollection.findOne({"emailConfirmation.confirmationCode":userCode})
+
+        if(!user){
+            return null
+        }
+
+        return  mapUserToOutput(user)
+    },
+
+    async userSwitchEmailIsConfirmed(userId:string){
+        const switchedUser = await userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { "emailConfirmation.isConfirmed": true } }
+        );
+
+        return switchedUser.acknowledged
+    }
 
 }
 

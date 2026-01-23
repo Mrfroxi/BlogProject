@@ -12,7 +12,7 @@ export const createUserHandler = async (req:Request,res:Response) => {
 
     try {
 
-        const createdUserId:string = await userService.createUser(reqBody);
+        const createdUserId:string = await userService.createAdminUser(reqBody);
 
         const user:UserOutputDto | null = await  userRepository.findUserById(createdUserId)//qr
 
