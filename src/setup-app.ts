@@ -7,10 +7,14 @@ import {postsRouter} from "./entities/posts/routers/posts.router";
 import {userRouter} from "./entities/user/routers/user.router";
 import {authRoute} from "./auth/routers/auth.router";
 import {commentRouter} from "./entities/comments/routers/comment.router";
+import cookieParser from "cookie-parser";
 
 
 export  const setupApp = (app:Express) => {
+
     app.use(express.json());
+
+    app.use(cookieParser())
 
     app.get('/' , (_req:Request, res:Response) =>{
         res.status(HttpStatuses.Ok).send('testEndPoint')
