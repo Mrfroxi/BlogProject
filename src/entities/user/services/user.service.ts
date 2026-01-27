@@ -7,7 +7,6 @@ import {UserOutputDto} from "../dto/user-output.dto";
 import {bcryptService} from "../../../core/services/bcrypt.service";
 import {ResultStatus} from "../../../core/object-result/resultCode";
 import {ResultType} from "../../../core/object-result/result.type";
-import { v4 as uuid4 } from 'uuid';
 import { add } from 'date-fns';
 import {mapUserToOutput} from "../repositories/mappers/map-user-to-output";
 
@@ -174,7 +173,7 @@ export const userService = {
             createdAt: `${new Date().toISOString()}`,
             password: hashPassword,
             emailConfirmation:{
-                confirmationCode: uuid4(),
+                confirmationCode: crypto.randomUUID(),
                 expirationDate: add(new Date(),{
                     hours:1,
                 }),
@@ -252,7 +251,7 @@ export const userService = {
     },
 
     changeConfirmationCode: async (email:string) => {
-        const newConfirmedCode = uuid4();
+        const newConfirmedCode = crypto.randomUUID();
 
         const changedConfirmationCode = userRepository.userChangeConfirmedCode(email,newConfirmedCode)
 
