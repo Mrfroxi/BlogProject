@@ -1,7 +1,5 @@
 
-
-
-export type RefreshTokenCollection = {
+export type RefreshTokenBlackList = {
     userId:string,
-    refreshTokens: Record<string,boolean>,
+    revokedRefreshTokens: string[];
 }
