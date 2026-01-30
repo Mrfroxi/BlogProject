@@ -10,13 +10,20 @@ import {codeValidator} from "../validators/auth-registration-confirmation.valida
 import {authRegistrationConfirmationHandler} from "./handlers/auth-registration-confirmation.handdler";
 import {emailResendingValidator} from "../validators/auth-registration-resending.validator";
 import {authRegistrationResendingHandler} from "./handlers/auth-registration-emailResending";
+import {authRefreshTokenHandler} from "./handlers/auth-refreshToken.handler";
 
 
 export const authRoute = Router({})
 
 authRoute
-    .post('/login',authLoginValidator,inputValidationResultMiddleware,authLoginHandler)
-    .get('/me',JwtAuthorizations,authMeHandler)
+    .post('/login',
+        authLoginValidator,
+        inputValidationResultMiddleware,
+        authLoginHandler)
+    .get('/me',
+        JwtAuthorizations,
+        authMeHandler
+    )
     .post('/registration',registerValidators,
         inputValidationResultMiddleware,
         authRegistrationHandler)
@@ -29,3 +36,6 @@ authRoute
         emailResendingValidator,
         inputValidationResultMiddleware,
         authRegistrationResendingHandler)
+    .post('/refresh-token',
+        authRefreshTokenHandler
+    )

@@ -1,5 +1,7 @@
-import jwt from "jsonwebtoken";
+import jwt, {JwtPayload} from "jsonwebtoken";
 import {SETTINGS} from "../setting/settings";
+import {ResultStatus} from "../object-result/resultCode";
+import {ResultType} from "../object-result/result.type";
 
 interface generateUserTokenDto {
     id:string,
@@ -10,24 +12,53 @@ interface generateUserTokenDto {
 
 export const jwtService = {
 
-    generateUserToken : async (dto:generateUserTokenDto) => {
+    generateAuthUserToken : async (dto:generateUserTokenDto) => {
         return  jwt.sign(
             { login: dto.login,id:dto.id },
             SETTINGS.JWT_AUTH_SECRET,
-            { expiresIn: "24h" }
+            { expiresIn: SETTINGS.EXPIRES_AUTH as jwt.SignOptions['expiresIn'] }
         );
     },
 
-    verifyToken: async (token:string) => {
+    generateRefreshUserToken : async (dto:generateUserTokenDto) => {
+        return  jwt.sign(
+            { login: dto.login,id:dto.id },
+            SETTINGS.JWT_REFRESH_SECRET,
+            { expiresIn: SETTINGS.EXPIRES_REFRESH as jwt.SignOptions['expiresIn'] }
+        );
+    },
 
-        try {
+    verifyAuthToken: async (token:string):Promise<ResultType<JwtPayload|null>> => {
 
-            return jwt.verify(token, SETTINGS.JWT_AUTH_SECRET) as {id:string};
 
-        } catch (error) {
-            return null;
-        }
+            const verifiedToken:JwtPayload  = jwt.verify(token, SETTINGS.JWT_AUTH_SECRET) as {id:string};
+
+            if(!verifiedToken){
+
+                return  {
+                        status: ResultStatus.Unauthorized,
+                        data: null,
+                        extensions: [{ field: 'verifiedToken', message: 'jwt dont verify token.' }],
+                      };
+            }
+
+
+            return     {
+                    status: ResultStatus.Success,
+                    data: verifiedToken,
+                    extensions: [{ field: ' ', message: ' ' }],
+            };
 
     },
+
+    verifyRefreshToken: async (token:string) => {
+
+        const verifiedToken:JwtPayload  = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as {id:string,login:string}
+
+
+
+        return verifiedToken;
+
+    }
 }
 

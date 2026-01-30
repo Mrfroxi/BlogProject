@@ -1,5 +1,4 @@
 import {Request, Response} from "express";
-import {errorHandler} from "../../../core/errors/handler/errorHandler";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {authService} from "../../services/auth.service";
 import {ResultStatus} from "../../../core/object-result/resultCode";
@@ -17,6 +16,7 @@ export const authLoginHandler = async (req:Request,res:Response) => {
         return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
     }
 
+    res.cookie('refreshToken', result.data?.refreshToken, {httpOnly: true,secure: true})
     return res.status(HttpStatuses.Ok).send({accessToken: result.data!.accessToken});
 
 

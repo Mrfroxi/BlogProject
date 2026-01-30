@@ -7,18 +7,14 @@ import {userService} from "../../entities/user/services/user.service";
 import {UserOutputDto} from "../../entities/user/dto/user-output.dto";
 import {nodemailerService} from "../../core/services/nodemailerService";
 import {emailExamples} from "../../core/helper/email-template";
+import {UserCredentials} from "../dto/userCredentialsDto";
 
-interface userCredentials {
-    login:string,
-    id:string,
-    hashPassword:string
-}
 
 export const authService = {
 
-    loginUser: async (loginOrEmail:string,password:string):Promise<ResultType<{accessToken:string}| null>> => {
+    loginUser: async (loginOrEmail:string,password:string):Promise<ResultType<{accessToken:string,refreshToken:string}| null>> => {
 
-        const userCredentials:userCredentials|null = await userQueryRepository.checkUserCredentials(loginOrEmail);
+        const userCredentials:UserCredentials|null = await userQueryRepository.checkUserCredentials(loginOrEmail);
 
         if(!userCredentials){
             return {
@@ -40,11 +36,13 @@ export const authService = {
             };
         }
 
-        const accessToken:string = await  jwtService.generateUserToken({login:userCredentials.login,id:userCredentials.id})
+        const accessToken:string = await  jwtService.generateAuthUserToken({login:userCredentials.login,id:userCredentials.id})
+
+        const refreshToken:string = await  jwtService.generateRefreshUserToken({login:userCredentials.login,id:userCredentials.id})
 
         return {
                 status: ResultStatus.Success,
-                data: { accessToken },
+                data: { accessToken,refreshToken },
                 extensions: [],
         };
     },

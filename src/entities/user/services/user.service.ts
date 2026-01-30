@@ -178,7 +178,7 @@ export const userService = {
                     hours:1,
                 }),
                 isConfirmed: false,
-            }
+            },
         }
 
         const createdUser: InsertOneResult<User> = await userRepository.createUser(validUser);

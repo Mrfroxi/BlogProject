@@ -6,6 +6,7 @@ import {mapUserListToOutput} from "./mappers/map-user-list-to-output";
 import {UserOutputDto} from "../dto/user-output.dto";
 import {UserListOutputDto} from "../dto/user-list-output.dto";
 import {mapUserAuthMeToOutput} from "./mappers/map-userAuthMe-to-output";
+import {UserCredentials} from "../../../auth/dto/userCredentialsDto";
 
 export const userQueryRepository = {
 
@@ -62,7 +63,7 @@ export const userQueryRepository = {
             }
         },
 
-        async checkUserCredentials(loginOrEmail:string){
+        async checkUserCredentials(loginOrEmail:string):Promise<UserCredentials|null>{
 
             const user:WithId<User> | null = await userCollection.findOne({
                 $or: [
@@ -84,13 +85,13 @@ export const userQueryRepository = {
 
         async AuthMeById(id:string) {
 
-        const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
+            const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
 
-        if(!user){//ts
-            return null
-        }
+            if(!user){//ts
+                return null
+            }
 
-        return  mapUserAuthMeToOutput(user);
+            return  mapUserAuthMeToOutput(user);
 
     },
 

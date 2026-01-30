@@ -1,6 +1,8 @@
 import {NextFunction, Request, Response} from "express";
 import {HttpStatuses} from "../../../core/types/http-statuses";
 import {jwtService} from "../../../core/services/jwt.service";
+import {ResultType} from "../../../core/object-result/result.type";
+import {JwtPayload} from "jsonwebtoken";
 
 
 export const JwtAuthorizations = async (req:Request,res:Response,next:NextFunction) =>{
@@ -11,10 +13,10 @@ export const JwtAuthorizations = async (req:Request,res:Response,next:NextFuncti
 
     if(authType !== 'Bearer') return res.sendStatus(HttpStatuses.Unauthorized);
 
-    const payload = await jwtService.verifyToken(token)
+    const payload:ResultType<JwtPayload|null> = await jwtService.verifyAuthToken(token)
 
-    if (payload) {
-        const { id } = payload;
+    if (payload.data) {
+        const { id } = payload.data;
 
         req.userId = id;
 
