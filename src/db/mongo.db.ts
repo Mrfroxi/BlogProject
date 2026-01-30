@@ -4,21 +4,21 @@ import {Blog} from "../entities/blogs/types/blog";
 import {Post} from "../entities/posts/types/post";
 import {User} from "../entities/user/types/user";
 import {Comment} from "../entities/comments/types/comment";
-import {RefreshTokenCollection} from "../core/types/refreshToken-collection-mongo.type";
+import {RefreshTokenBlackList} from "../core/types/refreshToken-collection-mongo.type";
 
 
 const BLOGS_COLLECTION_NAME = 'blogs';
 const POSTS_COLLECTION_NAME = 'posts';
 const USERS_COLLECTION_NAME = 'users';
 const COMMENTS_COLLECTION_NAME = 'comments';
-const REFRESH_TOKEN_COLLECTION_NAME = 'refreshTokenCollection';
+const REFRESH_TOKEN_BLACK_LIST_COLLECTION_NAME = 'refreshTokenBlackList';
 
 export let client: MongoClient;
 export let blogCollection: Collection<Blog>;
 export let postCollection: Collection<Post>;
 export let userCollection: Collection<User>;
 export let commentCollection: Collection<Comment>;
-export let refreshTokenCollection: Collection<RefreshTokenCollection>;
+export let refreshTokenBlackListCollection: Collection<RefreshTokenBlackList>;
 
 export async function runDB(url: string): Promise<void> {
     client = new MongoClient(url);
@@ -28,7 +28,7 @@ export async function runDB(url: string): Promise<void> {
     postCollection = db.collection<Post>(POSTS_COLLECTION_NAME);
     userCollection = db.collection<User>(USERS_COLLECTION_NAME);
     commentCollection = db.collection<Comment>(COMMENTS_COLLECTION_NAME);
-    refreshTokenCollection = db.collection<RefreshTokenCollection>(REFRESH_TOKEN_COLLECTION_NAME);
+    refreshTokenBlackListCollection = db.collection<RefreshTokenBlackList>(REFRESH_TOKEN_BLACK_LIST_COLLECTION_NAME);
 
     try {
         await client.connect();
