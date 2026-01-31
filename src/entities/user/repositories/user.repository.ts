@@ -2,7 +2,8 @@ import {userCollection} from "../../../db/mongo.db";
 import {ObjectId, WithId} from "mongodb";
 import {User} from "../types/user";
 import {mapUserToOutput} from "./mappers/map-user-to-output";
-import {UserOutputDto} from "../dto/user-output.dto";
+import {AdminUserOutputDto, UserOutputDto} from "../dto/user-output.dto";
+import {mapAdminUserToOutput} from "./mappers/map-adminUser-to-output";
 
 
 export const userRepository = {
@@ -16,6 +17,18 @@ export const userRepository = {
         }
 
         return  mapUserToOutput(user);
+
+    },
+
+    async findAdminUserById(id:string): Promise<AdminUserOutputDto | null> {
+
+        const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
+
+        if(!user){
+            return null
+        }
+
+        return  mapAdminUserToOutput(user);
 
     },
 

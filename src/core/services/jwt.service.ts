@@ -30,33 +30,44 @@ export const jwtService = {
         );
     },
 
-    verifyAuthToken: async (token:string):Promise<ResultType<JwtPayload|null>> => {
+    verifyAuthToken: async (token: string): Promise<ResultType<JwtPayload | null>> => {
+
+        return new Promise((resolve) => {
 
 
-            const verifiedToken:JwtPayload  = jwt.verify(token, SETTINGS.JWT_AUTH_SECRET) as {id:string};
+            jwt.verify(token, SETTINGS.JWT_AUTH_SECRET, (err, decoded) => {
 
-            if(!verifiedToken){
+                if (err || !decoded) {
 
-                return  {
+                    resolve({
                         status: ResultStatus.Unauthorized,
                         data: null,
-                        extensions: [{ field: 'verifiedToken', message: 'jwt dont verify token.' }],
-                      };
-            }
+                        extensions: [{ field: 'verifiedToken', message: 'JWT is invalid or expired.' }],
+                    });
 
+                } else {
 
-            return     {
-                    status: ResultStatus.Success,
-                    data: verifiedToken,
-                    extensions: [{ field: ' ', message: ' ' }],
-            };
+                    resolve({
+                        status: ResultStatus.Success,
+                        data: decoded as JwtPayload & { id: string },
+                        extensions: [{ field: ' ', message: ' ' }],
+                    });
+
+                }
+            });
+        });
 
     },
 
     verifyRefreshToken: async (token:string):Promise<JwtPayload|ResultType> => {
 
         //time
-        const verifiedTokenByExpired:JwtPayload  =  jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as {userId:string,login:string}
+        const verifiedTokenByExpired = await new Promise<JwtPayload | null>((resolve) => {
+            jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET, (err, decoded) => {
+                if (err || !decoded) return resolve(null);
+                resolve(decoded as JwtPayload & { userId: string; login: string });
+            });
+        });
 
         if(!verifiedTokenByExpired){
             return {

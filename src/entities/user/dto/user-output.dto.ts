@@ -13,3 +13,11 @@ export interface UserOutputDto {
     createdAt: string;
     emailConfirmation: EmailConfirmationDto;
 }
+
+export interface AdminUserOutputDto {
+    id: string;
+    login: string;
+    email: string;
+    createdAt: string;
+}
+
