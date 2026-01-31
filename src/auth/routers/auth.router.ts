@@ -12,6 +12,7 @@ import {emailResendingValidator} from "../validators/auth-registration-resending
 import {authRegistrationResendingHandler} from "./handlers/auth-registration-emailResending";
 import {authRefreshTokenHandler} from "./handlers/auth-refreshToken.handler";
 import {refreshTokenValidator} from "../../entities/refreshToken-BlackList/validators/refresh-token.validator";
+import {authLogoutHandler} from "./handlers/auth-logout.handler";
 
 
 export const authRoute = Router({})
@@ -40,4 +41,8 @@ authRoute
     .post('/refresh-token',
         refreshTokenValidator,
         authRefreshTokenHandler
+    )
+    .post('/logout',
+        refreshTokenValidator,
+        authLogoutHandler
     )

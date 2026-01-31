@@ -67,8 +67,9 @@ export const jwtService = {
         }
 
         //blackList
-        const verifiedTokenByBlackList:ResultType<boolean|null> = await refreshTokenBlackListService.blackLIstTokens(verifiedTokenByExpired,token)
+        const verifiedTokenByBlackList:ResultType<boolean|null> = await refreshTokenBlackListService.isTokenBlacklisted(verifiedTokenByExpired,token)
 
+        //There is no token in blackList
         if(verifiedTokenByBlackList.data){
             return {
                 status: ResultStatus.Success,

@@ -8,6 +8,9 @@ import {UserOutputDto} from "../../entities/user/dto/user-output.dto";
 import {nodemailerService} from "../../core/services/nodemailerService";
 import {emailExamples} from "../../core/helper/email-template";
 import {UserCredentials} from "../dto/userCredentialsDto";
+import jwt, {JwtPayload} from "jsonwebtoken";
+import {SETTINGS} from "../../core/setting/settings";
+import {refreshTokenBlackListRepository} from "../../entities/refreshToken-BlackList/refreshToken-BlackList.repository";
 
 
 export const authService = {
@@ -138,6 +141,27 @@ export const authService = {
             data: true,
             extensions: [{ field: '', message: '' }],
         }
+    },
+    logOut: async (token:string):Promise<ResultType<null|boolean>> => {
+
+        const { id }:JwtPayload  =  jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as {id:string}
+
+        const addTokenToBlackList:boolean = await refreshTokenBlackListRepository.addInvalidToken(token,id)
+
+        if(!addTokenToBlackList){
+            return  {
+                    status: ResultStatus.Unauthorized,
+                    data: null,
+                    extensions: [{ field: 'addTokenToBlackList', message: 'dont add token to blackList' }],
+            };
+        }
+
+
+        return {
+            status: ResultStatus.Success,
+            data: addTokenToBlackList,
+            extensions: [{ field: '', message: '' }],
+        };
     }
 
 

@@ -8,15 +8,14 @@ import {jwtService} from "../../core/services/jwt.service";
 
 export const refreshTokenBlackListService = {
 
-    blackLIstTokens: async (JwtPayload:JwtPayload,token:string):Promise<ResultType<boolean|null>> => {
+    isTokenBlacklisted: async (JwtPayload:JwtPayload,token:string):Promise<ResultType<boolean|null>> => {
 
         const { id } =  JwtPayload
 
-        //true if token dont find
         const validUser:ResultType<null|boolean> = await refreshTokenBlackListRepository.findTokensByUserId(id,token)
 
         if(!validUser.data){
-            //find user token in the black list array
+            //found user token in the black list array
             return     {
                     status: ResultStatus.Unauthorized,
                     data: null,
@@ -57,8 +56,6 @@ export const refreshTokenBlackListService = {
             extensions: [],
         };
 
-    }
-
-
+    },
 
 }
