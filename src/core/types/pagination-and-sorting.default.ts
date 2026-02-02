@@ -1,8 +1,8 @@
-import {SortDirection} from "mongodb";
+import { SortDirection } from 'mongodb';
 
-export interface PaginationDefaults<T>{
-    pageNumber: number;
-    pageSize: number;
-    sortBy: T;
-    sortDirection: SortDirection;
+export interface PaginationDefaults<T> {
+  pageNumber: number;
+  pageSize: number;
+  sortBy: T;
+  sortDirection: SortDirection;
 }

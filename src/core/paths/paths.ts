@@ -1,7 +1,7 @@
-export const BLOGS_PATH = '/blogs'
-export const POSTS_PATH = '/posts'
-export const USER_PATH = '/users'
-export const AUTH_PATH = '/auth'
-export const COMMENT_PATH = '/comments'
+export const BLOGS_PATH = '/blogs';
+export const POSTS_PATH = '/posts';
+export const USER_PATH = '/users';
+export const AUTH_PATH = '/auth';
+export const COMMENT_PATH = '/comments';
 
-export const  TEST_ALLDATA_PATH = '/testing'
+export const TEST_ALLDATA_PATH = '/testing';
