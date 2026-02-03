@@ -1,31 +1,29 @@
-import {NextFunction, Request, Response} from "express";
-import {HttpStatuses} from "../../../core/types/http-statuses";
-import {jwtService} from "../../../core/services/jwt.service";
-import {ResultType} from "../../../core/object-result/result.type";
-import {JwtPayload} from "jsonwebtoken";
+import { NextFunction, Request, Response } from 'express';
+import { HttpStatuses } from '../../../core/types/http-statuses';
+import { jwtService } from '../../../core/services/jwt.service';
+import { ResultType } from '../../../core/object-result/result.type';
+import { JwtPayload } from 'jsonwebtoken';
 
+export const JwtAuthorizations = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.headers.authorization) return res.sendStatus(HttpStatuses.Unauthorized);
 
-export const JwtAuthorizations = async (req:Request,res:Response,next:NextFunction) =>{
+  const [authType, token] = req.headers.authorization.split(' ');
 
-    if (!req.headers.authorization) return res.sendStatus(HttpStatuses.Unauthorized);
+  if (authType !== 'Bearer') return res.sendStatus(HttpStatuses.Unauthorized);
 
-    const [authType, token] = req.headers.authorization.split(' ');
+  const payload: ResultType<JwtPayload | null> = await jwtService.verifyAuthToken(token);
 
-    if(authType !== 'Bearer') return res.sendStatus(HttpStatuses.Unauthorized);
+  if (payload.data) {
+    const { id } = payload.data;
 
-    const payload:ResultType<JwtPayload|null> = await jwtService.verifyAuthToken(token)
+    req.userId = id;
 
-    if (payload.data) {
-        const { id } = payload.data;
-
-        req.userId = id;
-
-        next();
-
-        return;
-    }
-
-    res.sendStatus(HttpStatuses.Unauthorized);
+    next();
 
     return;
-}
+  }
+
+  res.sendStatus(HttpStatuses.Unauthorized);
+
+  return;
+};

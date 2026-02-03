@@ -1,7 +1,6 @@
-import {body} from "express-validator";
-
+import { body } from 'express-validator';
 
 export const emailResendingValidator = body('email')
-    .trim()
-    .isEmail()
-    .withMessage('Invalid email format')
+  .trim()
+  .isEmail()
+  .withMessage('Invalid email format');

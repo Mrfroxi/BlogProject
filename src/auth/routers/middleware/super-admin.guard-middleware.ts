@@ -1,27 +1,24 @@
-import {Request,Response, NextFunction} from 'express'
-import {HttpStatuses} from "../../../core/types/http-statuses";
+import { Request, Response, NextFunction } from 'express';
+import { HttpStatuses } from '../../../core/types/http-statuses';
 
+export const SuperAdminGuard = (req: Request, res: Response, next: NextFunction) => {
+  const authToken = req.headers['authorization'];
 
-export const SuperAdminGuard = (req:Request,res:Response,next:NextFunction) =>{
+  if (!authToken || !authToken.startsWith('Basic ')) {
+    res.sendStatus(HttpStatuses.Unauthorized);
+    return;
+  }
 
-    const authToken = req.headers['authorization'];
+  const base64Token = authToken.split(' ')[1];
 
-    if(!authToken || !authToken.startsWith('Basic ')){
-        res.sendStatus(HttpStatuses.Unauthorized);
-        return
-    }
+  const credentials = Buffer.from(base64Token, 'base64').toString('utf-8');
 
-    const base64Token = authToken.split(' ')[1];
+  const [login, password] = credentials.split(':');
 
-    const credentials = Buffer.from(base64Token, 'base64').toString('utf-8');
+  if (login !== process.env['ADMIN_USERNAME'] || password !== process.env['ADMIN_PASSWORD']) {
+    res.sendStatus(HttpStatuses.Unauthorized);
+    return;
+  }
 
-    const [login,password] = credentials.split(':');
-
-    if(login !== process.env["ADMIN_USERNAME"] || password !== process.env["ADMIN_PASSWORD"]){
-        res.sendStatus(HttpStatuses.Unauthorized);
-        return
-    }
-
-
-    next()
-}
+  next();
+};

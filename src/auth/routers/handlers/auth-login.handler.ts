@@ -1,23 +1,18 @@
-import {Request, Response} from "express";
-import {HttpStatuses} from "../../../core/types/http-statuses";
-import {authService} from "../../services/auth.service";
-import {ResultStatus} from "../../../core/object-result/resultCode";
-import {resultCodeToHttpException} from "../../../core/object-result/resultCodeToHttpException";
+import { Request, Response } from 'express';
+import { HttpStatuses } from '../../../core/types/http-statuses';
+import { authService } from '../../services/auth.service';
+import { ResultStatus } from '../../../core/object-result/resultCode';
+import { resultCodeToHttpException } from '../../../core/object-result/resultCodeToHttpException';
 
+export const authLoginHandler = async (req: Request, res: Response) => {
+  const { loginOrEmail, password } = req.body;
 
-export const authLoginHandler = async (req:Request,res:Response) => {
+  const result = await authService.loginUser(loginOrEmail, password);
 
-    const {loginOrEmail, password} = req.body;
+  if (result.status !== ResultStatus.Success) {
+    return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
+  }
 
-
-    const result = await authService.loginUser(loginOrEmail, password);
-
-    if (result.status !== ResultStatus.Success) {
-        return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
-    }
-
-    res.cookie('refreshToken', result.data?.refreshToken, {httpOnly: true,secure: true})
-    return res.status(HttpStatuses.Ok).send({accessToken: result.data!.accessToken});
-
-
-}
+  res.cookie('refreshToken', result.data?.refreshToken, { httpOnly: true, secure: true });
+  return res.status(HttpStatuses.Ok).send({ accessToken: result.data!.accessToken });
+};
