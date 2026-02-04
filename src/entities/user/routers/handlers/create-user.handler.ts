@@ -1,27 +1,20 @@
-import {Request,Response} from "express";
-import {userService} from "../../services/user.service";
-import {errorHandler} from "../../../../core/errors/handler/errorHandler";
-import {HttpStatuses} from "../../../../core/types/http-statuses";
-import {userRepository} from "../../repositories/user.repository";
-import {AdminUserOutputDto, UserOutputDto} from "../../dto/user-output.dto";
-import {mapAdminUserToOutput} from "../../repositories/mappers/map-adminUser-to-output";
+import { Request, Response } from 'express';
+import { userService } from '../../services/user.service';
+import { errorHandler } from '../../../../core/errors/handler/errorHandler';
+import { HttpStatuses } from '../../../../core/types/http-statuses';
+import { userRepository } from '../../repositories/user.repository';
+import { AdminUserOutputDto } from '../../dto/user-output.dto';
 
+export const createUserHandler = async (req: Request, res: Response) => {
+  const reqBody = req.body;
 
-export const createUserHandler = async (req:Request,res:Response) => {
+  try {
+    const createdUserId: string = await userService.createAdminUser(reqBody);
 
-    const reqBody = req.body;
+    const user: AdminUserOutputDto | null = await userRepository.findAdminUserById(createdUserId);
 
-    try {
-
-        const createdUserId:string = await userService.createAdminUser(reqBody);
-
-        const user:AdminUserOutputDto | null = await  userRepository.findAdminUserById(createdUserId)
-
-        res.status(HttpStatuses.Created).send(user)
-
-    }catch(e:unknown){
-        errorHandler(e,res)
-    }
-
-
-}
+    res.status(HttpStatuses.Created).send(user);
+  } catch (e: unknown) {
+    errorHandler(e, res);
+  }
+};

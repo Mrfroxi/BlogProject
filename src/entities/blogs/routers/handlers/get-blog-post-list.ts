@@ -1,40 +1,37 @@
-import {Request, Response} from "express";
-import {matchedData} from "express-validator";
-import {PostQueryInput} from "../../../posts/dto/post-query-input";
-import {PostSortField} from "../../../posts/types/post-sort-fields";
-import {blogService} from "../../services/blog.service";
-import {setDefaultSortAndPaginationIfNotExist} from "../../../../core/helper/set-default-sort-and-pagination";
-import {postService} from "../../../posts/services/post.service";
-import {HttpStatuses} from "../../../../core/types/http-statuses";
-import {mapPostListToOutput} from "../../../posts/routers/mappers/map-posts-list-to-output";
-import {errorHandler} from "../../../../core/errors/handler/errorHandler";
+import { Request, Response } from 'express';
+import { matchedData } from 'express-validator';
+import { PostQueryInput } from '../../../posts/dto/post-query-input';
+import { PostSortField } from '../../../posts/types/post-sort-fields';
+import { blogService } from '../../services/blog.service';
+import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helper/set-default-sort-and-pagination';
+import { postService } from '../../../posts/services/post.service';
+import { HttpStatuses } from '../../../../core/types/http-statuses';
+import { mapPostListToOutput } from '../../../posts/routers/mappers/map-posts-list-to-output';
+import { errorHandler } from '../../../../core/errors/handler/errorHandler';
 
+export const getBlogPostListHandler = async (req: Request, res: Response) => {
+  try {
+    const blogId = req.params.blogId;
 
-export const  getBlogPostListHandler =  async (req:Request,res:Response) =>{
-    try {
+    const sanitizedQuery = matchedData<PostQueryInput<PostSortField>>(req, {
+      locations: ['query', 'params'],
+      includeOptionals: true, //include optional fields even if they are not sent
+    });
 
-        const blogId = req.params.blogId;
+    await blogService.findById(blogId);
 
-        const sanitizedQuery = matchedData<PostQueryInput<PostSortField>>(req, {
-            locations: ['query','params'],
-            includeOptionals: true,//include optional fields even if they are not sent
-        });
+    const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
-        await blogService.findById(blogId)
+    const { items, totalCount } = await postService.findAll(queryInput);
 
-        const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
-
-
-        const {items,totalCount} = await postService.findAll(queryInput)
-
-
-        res.status(HttpStatuses.Ok).send(mapPostListToOutput(items,{
-            pageNumber: queryInput.pageNumber,
-            pageSize: queryInput.pageSize,
-            totalCount
-        }))
-    }catch (e:unknown){
-        errorHandler(e,res)
-    }
-
-}
+    res.status(HttpStatuses.Ok).send(
+      mapPostListToOutput(items, {
+        pageNumber: queryInput.pageNumber,
+        pageSize: queryInput.pageSize,
+        totalCount,
+      })
+    );
+  } catch (e: unknown) {
+    errorHandler(e, res);
+  }
+};

@@ -1,7 +1,5 @@
-
-
-export interface UserAuthMeOutputDto{
-    "userId": string,
-    "login": string,
-    "email": string,
+export interface UserAuthMeOutputDto {
+  userId: string;
+  login: string;
+  email: string;
 }

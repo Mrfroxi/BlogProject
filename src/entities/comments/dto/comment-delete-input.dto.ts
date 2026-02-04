@@ -1,6 +1,4 @@
-
-
 export interface CommentDeleteInputDto {
-    userId:string,
-    commentId:string
+  userId: string;
+  commentId: string;
 }

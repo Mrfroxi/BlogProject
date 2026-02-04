@@ -1,7 +1,5 @@
-
-
-export interface CreateUserDto{
-    login:string,
-    password:string,
-    email:string,
+export interface CreateUserDto {
+  login: string;
+  password: string;
+  email: string;
 }

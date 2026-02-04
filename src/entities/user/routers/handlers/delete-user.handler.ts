@@ -1,21 +1,18 @@
-import {Request,Response} from "express";
-import {HttpStatuses} from "../../../../core/types/http-statuses";
-import {userService} from "../../services/user.service";
-import {ResultStatus} from "../../../../core/object-result/resultCode";
-import {resultCodeToHttpException} from "../../../../core/object-result/resultCodeToHttpException";
-import {ResultType} from "../../../../core/object-result/result.type";
+import { Request, Response } from 'express';
+import { HttpStatuses } from '../../../../core/types/http-statuses';
+import { userService } from '../../services/user.service';
+import { ResultStatus } from '../../../../core/object-result/resultCode';
+import { resultCodeToHttpException } from '../../../../core/object-result/resultCodeToHttpException';
+import { ResultType } from '../../../../core/object-result/result.type';
 
+export const deleteUserHandler = async (req: Request, res: Response) => {
+  const userId = req.params.id;
 
-export  const deleteUserHandler =  async (req:Request,res:Response ) => {
+  const isDelete: ResultType<boolean | null> = await userService.deleteUser(userId);
 
-    const userId = req.params.id;
+  if (isDelete.status !== ResultStatus.Success) {
+    return res.status(resultCodeToHttpException(isDelete.status)).send(isDelete.extensions);
+  }
 
-    const isDelete:ResultType<boolean | null> = await userService.deleteUser(userId)
-
-    if (isDelete.status !== ResultStatus.Success) {
-        return res.status(resultCodeToHttpException(isDelete.status)).send(isDelete.extensions);
-    }
-
-    res.sendStatus(HttpStatuses.NoContent)
-
-}
+  res.sendStatus(HttpStatuses.NoContent);
+};

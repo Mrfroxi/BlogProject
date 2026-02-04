@@ -1,6 +1,4 @@
-
-
-export enum UserSortDirection{
-    asc= 'asc',
-    desc = 'desc'
+export enum UserSortDirection {
+  asc = 'asc',
+  desc = 'desc',
 }

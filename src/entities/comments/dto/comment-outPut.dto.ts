@@ -1,12 +1,11 @@
-
 interface userInfo {
-    userId:string
-    userLogin:string
+  userId: string;
+  userLogin: string;
 }
 
 export type CommentOutputDto = {
-    id:string
-    commentatorInfo :userInfo,
-    content:string,
-    createdAt:string
-}
+  id: string;
+  commentatorInfo: userInfo;
+  content: string;
+  createdAt: string;
+};

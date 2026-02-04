@@ -1,98 +1,79 @@
-import {ObjectId, WithId} from "mongodb";
-import {userCollection} from "../../../db/mongo.db";
-import { User } from "../types/user";
-import {DefaultValuesSortingDto} from "../dto/default-values-sorting.dto";
-import {mapUserListToOutput} from "./mappers/map-user-list-to-output";
-import {UserOutputDto} from "../dto/user-output.dto";
-import {UserListOutputDto} from "../dto/user-list-output.dto";
-import {mapUserAuthMeToOutput} from "./mappers/map-userAuthMe-to-output";
-import {UserCredentials} from "../../../auth/dto/userCredentialsDto";
+import { ObjectId, WithId } from 'mongodb';
+import { userCollection } from '../../../db/mongo.db';
+import { User } from '../types/user';
+import { DefaultValuesSortingDto } from '../dto/default-values-sorting.dto';
+import { mapUserListToOutput } from './mappers/map-user-list-to-output';
+import { UserOutputDto } from '../dto/user-output.dto';
+import { UserListOutputDto } from '../dto/user-list-output.dto';
+import { mapUserAuthMeToOutput } from './mappers/map-userAuthMe-to-output';
+import { UserCredentials } from '../../../auth/dto/userCredentialsDto';
 
 export const userQueryRepository = {
+  async findAll(sortingDefault: DefaultValuesSortingDto): Promise<UserListOutputDto> {
+    const { pageNumber, pageSize, sortBy, sortDirection, searchEmailTerm, searchLoginTerm } =
+      sortingDefault;
 
+    const orFilter: any[] = [];
 
-        async findAll(sortingDefault:DefaultValuesSortingDto): Promise<UserListOutputDto> {
+    if (searchLoginTerm) {
+      orFilter.push({ login: { $regex: searchLoginTerm, $options: 'i' } });
+    }
 
-            const {
-                pageNumber,
-                pageSize,
-                sortBy,
-                sortDirection,
-                searchEmailTerm,
-                searchLoginTerm
-            } = sortingDefault
+    if (searchEmailTerm) {
+      orFilter.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
+    }
 
+    const filter = orFilter.length > 0 ? { $or: orFilter } : {};
 
-            const orFilter: any[] = [];
+    const skip = (pageNumber - 1) * pageSize;
+    const sortDirMongo = sortDirection === 'asc' ? 1 : -1;
 
-            if (searchLoginTerm) {
-                orFilter.push({ login: { $regex: searchLoginTerm, $options: 'i' } });
-            }
+    const userList = await userCollection
+      .find(filter)
+      .sort({ [sortBy]: sortDirMongo })
+      .skip(skip)
+      .limit(pageSize)
+      .toArray();
 
-            if (searchEmailTerm) {
-                orFilter.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
-            }
+    const totalCount: number = await userCollection.countDocuments(filter);
 
-            const filter = orFilter.length > 0 ? { $or: orFilter } : {};
+    const pagesCount: number = Math.ceil(totalCount / pageSize);
 
+    const mappedUserList: UserOutputDto[] = mapUserListToOutput(userList);
 
+    return {
+      pagesCount: pagesCount,
+      page: pageNumber,
+      pageSize,
+      totalCount,
+      items: mappedUserList,
+    };
+  },
 
-            const skip = (pageNumber - 1) * pageSize;
-            const sortDirMongo = sortDirection === 'asc' ? 1 : -1;
+  async checkUserCredentials(loginOrEmail: string): Promise<UserCredentials | null> {
+    const user: WithId<User> | null = await userCollection.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
 
-            const userList = await userCollection
-                .find(filter)
-                .sort({ [sortBy]: sortDirMongo })
-                .skip(skip)
-                .limit(pageSize)
-                .toArray()
+    if (!user) {
+      return null;
+    }
 
+    return {
+      login: user.login,
+      id: user._id.toString(),
+      hashPassword: user.password,
+    };
+  },
 
-            const totalCount: number = await userCollection.countDocuments(filter);
+  async AuthMeById(id: string) {
+    const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
 
-            const pagesCount:number = Math.ceil(totalCount / pageSize)
+    if (!user) {
+      //ts
+      return null;
+    }
 
-            const mappedUserList:UserOutputDto[] =  mapUserListToOutput(userList);
-
-            return {
-                pagesCount:pagesCount,
-                page:pageNumber,
-                pageSize,
-                totalCount,
-                items:mappedUserList,
-            }
-        },
-
-        async checkUserCredentials(loginOrEmail:string):Promise<UserCredentials|null>{
-
-            const user:WithId<User> | null = await userCollection.findOne({
-                $or: [
-                    { login: loginOrEmail },
-                    { email: loginOrEmail }
-                ]
-            });
-
-            if (!user) {
-                return null;
-            }
-
-            return {
-                login:user.login,
-                id:user._id.toString(),
-                hashPassword:user.password
-            }
-        },
-
-        async AuthMeById(id:string) {
-
-            const user:WithId<User> | null  = await userCollection.findOne({_id:new ObjectId(id)})
-
-            if(!user){//ts
-                return null
-            }
-
-            return  mapUserAuthMeToOutput(user);
-
-    },
-
-}
+    return mapUserAuthMeToOutput(user);
+  },
+};
