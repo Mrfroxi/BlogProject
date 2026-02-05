@@ -6,30 +6,29 @@ import { setupApp } from '../../src/setup-app';
 import { TEST_ALLDATA_PATH } from '../../src/core/paths/paths';
 
 export const createTestApp = () => {
+  const app: Express = express();
+  setupApp(app);
 
-    const app: Express = express();
-    setupApp(app);
+  let mongoServer: MongoMemoryServer;
 
-    let mongoServer: MongoMemoryServer;
-
-    beforeAll(async () => {
-        mongoServer = await MongoMemoryServer.create({
-            binary: {
-                version: '6.0.6',
-            },
-        });
-        await runDB(mongoServer.getUri());
+  beforeAll(async () => {
+    mongoServer = await MongoMemoryServer.create({
+      binary: {
+        version: '6.0.6',
+      },
     });
+    await runDB(mongoServer.getUri());
+  });
 
-    beforeEach(async () => {
-        await request(app).delete(`${TEST_ALLDATA_PATH}/all-data`);
-    });
+  beforeEach(async () => {
+    await request(app).delete(`${TEST_ALLDATA_PATH}/all-data`);
+  });
 
-    afterAll(async () => {
-        if (mongoServer) {
-            await mongoServer.stop();
-        }
-    });
+  afterAll(async () => {
+    if (mongoServer) {
+      await mongoServer.stop();
+    }
+  });
 
-    return app;
+  return app;
 };

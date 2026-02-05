@@ -1,11 +1,10 @@
 import { Collection, Db, MongoClient } from 'mongodb';
-import {SETTINGS} from "../core/setting/settings";
-import {Blog} from "../entities/blogs/types/blog";
-import {Post} from "../entities/posts/types/post";
-import {User} from "../entities/user/types/user";
-import {Comment} from "../entities/comments/types/comment";
-import {RefreshTokenBlackList} from "../core/types/refreshToken-collection-mongo.type";
-
+import { SETTINGS } from '../core/setting/settings';
+import { Blog } from '../entities/blogs/types/blog';
+import { Post } from '../entities/posts/types/post';
+import { User } from '../entities/user/types/user';
+import { Comment } from '../entities/comments/types/comment';
+import { RefreshTokenBlackList } from '../core/types/refreshToken-collection-mongo.type';
 
 const BLOGS_COLLECTION_NAME = 'blogs';
 const POSTS_COLLECTION_NAME = 'posts';
@@ -21,22 +20,24 @@ export let commentCollection: Collection<Comment>;
 export let refreshTokenBlackListCollection: Collection<RefreshTokenBlackList>;
 
 export async function runDB(url: string): Promise<void> {
-    client = new MongoClient(url);
-    const db: Db = client.db(SETTINGS.DB_NAME);
+  client = new MongoClient(url);
+  const db: Db = client.db(SETTINGS.DB_NAME);
 
-    blogCollection = db.collection<Blog>(BLOGS_COLLECTION_NAME);
-    postCollection = db.collection<Post>(POSTS_COLLECTION_NAME);
-    userCollection = db.collection<User>(USERS_COLLECTION_NAME);
-    commentCollection = db.collection<Comment>(COMMENTS_COLLECTION_NAME);
-    refreshTokenBlackListCollection = db.collection<RefreshTokenBlackList>(REFRESH_TOKEN_BLACK_LIST_COLLECTION_NAME);
+  blogCollection = db.collection<Blog>(BLOGS_COLLECTION_NAME);
+  postCollection = db.collection<Post>(POSTS_COLLECTION_NAME);
+  userCollection = db.collection<User>(USERS_COLLECTION_NAME);
+  commentCollection = db.collection<Comment>(COMMENTS_COLLECTION_NAME);
+  refreshTokenBlackListCollection = db.collection<RefreshTokenBlackList>(
+    REFRESH_TOKEN_BLACK_LIST_COLLECTION_NAME
+  );
 
-    try {
-        await client.connect();
-        await db.command({ ping: 1 });
-        console.log('✅ Connected to the database');
-        console.log('✅ url:', url);
-    } catch (e) {
-        await client.close();
-        throw new Error(`❌ Database is not connected: ${e}`);
-    }
+  try {
+    await client.connect();
+    await db.command({ ping: 1 });
+    console.log('✅ Connected to the database');
+    console.log('✅ url:', url);
+  } catch (e) {
+    await client.close();
+    throw new Error(`❌ Database is not connected: ${e}`);
+  }
 }

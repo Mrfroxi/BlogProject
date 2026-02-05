@@ -1,5 +1,4 @@
 {
-
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
@@ -9,15 +8,11 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
-
   },
 
   "include": ["src/**/*"],
 
-  "exclude": ["node_modules", "**/*.test.ts","__tests__"],
+  "exclude": ["node_modules", "**/*.test.ts", "__tests__"],
 
-  "files": [
-    "src/core/types/index.d.ts"
-  ]
-
+  "files": ["src/core/types/index.d.ts"]
 }
