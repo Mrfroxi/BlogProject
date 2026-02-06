@@ -1,8 +1,6 @@
-import { userQueryRepository } from '../../entities/user/repositories/user-query.repository';
 import { bcryptService } from '../../core/services/bcrypt.service';
 import { ResultType } from '../../core/object-result/result.type';
 import { ResultStatus } from '../../core/object-result/resultCode';
-import { jwtService } from '../../core/services/jwt.service';
 import { userService } from '../../entities/user/services/user.service';
 import { UserOutputDto } from '../../entities/user/dto/user-output.dto';
 import { nodemailerService } from '../../core/services/nodemailerService';
@@ -10,15 +8,15 @@ import { emailExamples } from '../../core/helper/email-template';
 import { UserCredentials } from '../dto/userCredentialsDto';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { SETTINGS } from '../../core/setting/settings';
-import { refreshTokenBlackListRepository } from '../../entities/refreshToken-BlackList/refreshToken-BlackList.repository';
+import { userRepository } from '../../entities/user/repositories/user.repository';
 
 export const authService = {
   loginUser: async (
     loginOrEmail: string,
     password: string
-  ): Promise<ResultType<{ accessToken: string; refreshToken: string } | null>> => {
+  ): Promise<ResultType<{ userId: string } | null>> => {
     const userCredentials: UserCredentials | null =
-      await userQueryRepository.checkUserCredentials(loginOrEmail);
+      await userRepository.checkUserCredentials(loginOrEmail);
 
     if (!userCredentials) {
       return {
@@ -43,19 +41,9 @@ export const authService = {
       };
     }
 
-    const accessToken: string = await jwtService.generateAuthUserToken({
-      login: userCredentials.login,
-      id: userCredentials.id,
-    });
-
-    const refreshToken: string = await jwtService.generateRefreshUserToken({
-      login: userCredentials.login,
-      id: userCredentials.id,
-    });
-
     return {
       status: ResultStatus.Success,
-      data: { accessToken, refreshToken },
+      data: { userId: userCredentials.id },
       extensions: [],
     };
   },
@@ -151,25 +139,26 @@ export const authService = {
       extensions: [{ field: '', message: '' }],
     };
   },
+
   logOut: async (token: string): Promise<ResultType<null | boolean>> => {
     const { id }: JwtPayload = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as { id: string };
 
-    const addTokenToBlackList: boolean = await refreshTokenBlackListRepository.addInvalidToken(
-      token,
-      id
-    );
+    // const addTokenToBlackList: boolean = await refreshTokenBlackListRepository.addInvalidToken(
+    //   token,
+    //   id
+    // );
 
-    if (!addTokenToBlackList) {
-      return {
-        status: ResultStatus.Unauthorized,
-        data: null,
-        extensions: [{ field: 'addTokenToBlackList', message: 'dont add token to blackList' }],
-      };
-    }
+    // if (!addTokenToBlackList) {
+    //   return {
+    //     status: ResultStatus.Unauthorized,
+    //     data: null,
+    //     extensions: [{ field: 'addTokenToBlackList', message: 'dont add token to blackList' }],
+    //   };
+    // }
 
     return {
       status: ResultStatus.Success,
-      data: addTokenToBlackList,
+      data: null,
       extensions: [{ field: '', message: '' }],
     };
   },

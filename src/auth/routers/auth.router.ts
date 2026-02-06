@@ -11,31 +11,41 @@ import { authRegistrationConfirmationHandler } from './handlers/auth-registratio
 import { emailResendingValidator } from '../validators/auth-registration-resending.validator';
 import { authRegistrationResendingHandler } from './handlers/auth-registration-emailResending';
 import { authRefreshTokenHandler } from './handlers/auth-refreshToken.handler';
-import { refreshTokenValidator } from '../../entities/refreshToken-BlackList/validators/refresh-token.validator';
 import { authLogoutHandler } from './handlers/auth-logout.handler';
+import { rateLimitMiddleware } from '../../entities/rateLimit/middleware/rateLimit-middleware';
 
 export const authRoute = Router({});
 
 authRoute
-  .post('/login', authLoginValidator, inputValidationResultMiddleware, authLoginHandler)
+  .post(
+    '/login',
+    rateLimitMiddleware,
+    authLoginValidator,
+    inputValidationResultMiddleware,
+    authLoginHandler
+  )
   .get('/me', JwtAuthorizations, authMeHandler)
   .post(
     '/registration',
+    rateLimitMiddleware,
     registerValidators,
     inputValidationResultMiddleware,
     authRegistrationHandler
   )
   .post(
     '/registration-confirmation',
+    rateLimitMiddleware,
     codeValidator,
     inputValidationResultMiddleware,
     authRegistrationConfirmationHandler
   )
   .post(
     '/registration-email-resending',
+    rateLimitMiddleware,
     emailResendingValidator,
     inputValidationResultMiddleware,
     authRegistrationResendingHandler
   )
-  .post('/refresh-token', refreshTokenValidator, authRefreshTokenHandler)
-  .post('/logout', refreshTokenValidator, authLogoutHandler);
+
+  .post('/refresh-token', refreshTokenValidator, authRefreshTokenHandler);
+// .post('/logout', refreshTokenValidator, authLogoutHandler);
