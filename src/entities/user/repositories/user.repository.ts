@@ -4,6 +4,7 @@ import { User } from '../types/user';
 import { mapUserToOutput } from './mappers/map-user-to-output';
 import { AdminUserOutputDto, UserOutputDto } from '../dto/user-output.dto';
 import { mapAdminUserToOutput } from './mappers/map-adminUser-to-output';
+import { UserCredentials } from '../../../auth/dto/userCredentialsDto';
 
 export const userRepository = {
   async findUserById(id: string): Promise<UserOutputDto | null> {
@@ -73,5 +74,20 @@ export const userRepository = {
     );
 
     return switchedUser.acknowledged;
+  },
+
+  async checkUserCredentials(loginOrEmail: string): Promise<UserCredentials | null> {
+    const user: WithId<User> | null = await userCollection.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user._id.toString(),
+      hashPassword: user.password,
+    };
   },
 };

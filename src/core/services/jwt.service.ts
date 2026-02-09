@@ -2,22 +2,21 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { SETTINGS } from '../setting/settings';
 import { ResultStatus } from '../object-result/resultCode';
 import { ResultType } from '../object-result/result.type';
-import { refreshTokenBlackListService } from '../../entities/refreshToken-BlackList/refreshToken-BlackList.service';
 
 interface generateUserTokenDto {
   id: string;
-  login?: string;
+  deviceId: string;
 }
 
 export const jwtService = {
   generateAuthUserToken: async (dto: generateUserTokenDto) => {
-    return jwt.sign({ login: dto.login, id: dto.id }, SETTINGS.JWT_AUTH_SECRET, {
+    return jwt.sign({ id: dto.id }, SETTINGS.JWT_AUTH_SECRET, {
       expiresIn: SETTINGS.EXPIRES_AUTH as jwt.SignOptions['expiresIn'],
     });
   },
 
   generateRefreshUserToken: async (dto: generateUserTokenDto) => {
-    return jwt.sign({ login: dto.login, id: dto.id }, SETTINGS.JWT_REFRESH_SECRET, {
+    return jwt.sign({ id: dto.id }, SETTINGS.JWT_REFRESH_SECRET, {
       expiresIn: SETTINGS.EXPIRES_REFRESH as jwt.SignOptions['expiresIn'],
     });
   },
@@ -59,23 +58,27 @@ export const jwtService = {
       };
     }
 
-    //blackList
-    const verifiedTokenByBlackList: ResultType<boolean | null> =
-      await refreshTokenBlackListService.isTokenBlacklisted(verifiedTokenByExpired, token);
-
-    //There is no token in blackList
-    if (verifiedTokenByBlackList.data) {
-      return {
-        status: ResultStatus.Success,
-        data: verifiedTokenByBlackList.data,
-        extensions: [{ field: ' ', message: ' ' }],
-      };
-    }
+    // //blackList
+    // const verifiedTokenByBlackList: ResultType<boolean | null> = null;
+    // // await refreshTokenBlackListService.isTokenBlacklisted(verifiedTokenByExpired, token);
+    //
+    // //There is no token in blackList
+    // if (verifiedTokenByBlackList.data) {
+    //   return {
+    //     status: ResultStatus.Success,
+    //     data: verifiedTokenByBlackList.data,
+    //     extensions: [{ field: ' ', message: ' ' }],
+    //   };
+    // }
 
     return {
       status: ResultStatus.Unauthorized,
       data: null,
       extensions: [{ field: 'verifiedTokenByBlackList', message: 'token blackList' }],
     };
+  },
+
+  async decodeToken(token: string): Promise<JwtPayload | null> {
+    return jwt.decode(token) as { iat: number; exp: number } | null;
   },
 };

@@ -1,4 +1,4 @@
-export const normalizeIp = (ip?: string) => {
+export const normalizeIp = async (ip?: string) => {
   if (!ip) return '';
   if (ip === '::1') return '127.0.0.1';
   if (ip.startsWith('::ffff:')) return ip.replace('::ffff:', '');

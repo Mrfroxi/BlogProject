@@ -60,7 +60,6 @@ export const userQueryRepository = {
     }
 
     return {
-      login: user.login,
       id: user._id.toString(),
       hashPassword: user.password,
     };
