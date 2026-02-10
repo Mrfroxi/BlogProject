@@ -18,4 +18,7 @@ export const SETTINGS = {
 
   EXPIRES_AUTH: process.env.EXPIRES_AUTH || '10s',
   EXPIRES_REFRESH: process.env.EXPIRES_REFRESH || '20s',
+
+  LIMIT_REQUESTS: process.env.LIMIT_REQUESTS || 5,
+  WINDOW_TIME_DELAY: process.env.WINDOW_TIME_DELAY || 10,
 };
