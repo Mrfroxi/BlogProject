@@ -7,14 +7,10 @@ import { sessionService } from '../../../entities/session/services/session.servi
 import { SessionTokens } from '../../../entities/session/dto/setSession.output.dto';
 
 export const authRefreshTokenHandler = async (req: Request, res: Response) => {
-  console.log(1);
   const updatedSession: ResultType<SessionTokens | null> = await sessionService.updateSession(req);
 
-  console.log(updatedSession);
   if (updatedSession.status !== ResultStatus.Success) {
-    return res
-      .status(resultCodeToHttpException(updatedSession.status))
-      .send(updatedSession.extensions);
+    return res.sendStatus(resultCodeToHttpException(updatedSession.status));
   }
 
   res.cookie('refreshToken', updatedSession.data?.refreshToken, { httpOnly: true, secure: true });

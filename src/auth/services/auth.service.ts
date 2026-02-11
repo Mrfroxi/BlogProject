@@ -9,6 +9,9 @@ import { UserCredentials } from '../dto/userCredentialsDto';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { SETTINGS } from '../../core/setting/settings';
 import { userRepository } from '../../entities/user/repositories/user.repository';
+import { jwtService } from '../../core/services/jwt.service';
+import { ISession } from '../../entities/session/dto/verifyRefToken.dto';
+import { sessionService } from '../../entities/session/services/session.service';
 
 export const authService = {
   loginUser: async (
@@ -141,24 +144,23 @@ export const authService = {
   },
 
   logOut: async (token: string): Promise<ResultType<null | boolean>> => {
-    const { id }: JwtPayload = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as { id: string };
+    const { id, deviceId, iat, exp } = await jwtService.decodeToken(token);
 
-    // const addTokenToBlackList: boolean = await refreshTokenBlackListRepository.addInvalidToken(
-    //   token,
-    //   id
-    // );
+    const payload: ISession = { id, deviceId, iat, exp };
 
-    // if (!addTokenToBlackList) {
-    //   return {
-    //     status: ResultStatus.Unauthorized,
-    //     data: null,
-    //     extensions: [{ field: 'addTokenToBlackList', message: 'dont add token to blackList' }],
-    //   };
-    // }
+    const foundSession: ResultType<boolean | null> = await sessionService.resetToken(payload);
+
+    if (!foundSession.data) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ field: ' ', message: ' ' }],
+      };
+    }
 
     return {
       status: ResultStatus.Success,
-      data: null,
+      data: true,
       extensions: [{ field: '', message: '' }],
     };
   },

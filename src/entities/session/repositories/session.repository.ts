@@ -31,6 +31,7 @@ export const sessionRepository = {
   },
 
   updateSession: async (payload: ISession): Promise<SessionTokens | null> => {
+    //ref
     const newRefToken: string = await jwtService.generateRefreshUserToken({
       id: payload.id,
       deviceId: payload.deviceId,
@@ -48,7 +49,7 @@ export const sessionRepository = {
     if (!result.acknowledged) {
       return null;
     }
-
+    //ref
     const newAuthToken: string = await jwtService.generateAuthUserToken({
       id: payload.id,
       deviceId: payload.deviceId,
@@ -58,5 +59,15 @@ export const sessionRepository = {
       refreshToken: newRefToken,
       accessToken: newAuthToken,
     };
+  },
+
+  logOut: async (payload: ISession) => {
+    const result = await sessionsCollection.deleteOne({
+      userId: payload.id,
+      deviceId: payload.deviceId,
+      iat: payload.iat,
+    });
+
+    return result.acknowledged;
   },
 };

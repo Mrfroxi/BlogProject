@@ -11,7 +11,7 @@ export const authLogoutHandler = async (req: Request, res: Response) => {
   const logOutResult: ResultType<null | boolean> = await authService.logOut(refreshToken);
 
   if (logOutResult.status !== ResultStatus.Success) {
-    return res.status(resultCodeToHttpException(logOutResult.status)).send(logOutResult.extensions);
+    return res.sendStatus(resultCodeToHttpException(logOutResult.status));
   }
 
   res.clearCookie('refreshToken', {

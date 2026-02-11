@@ -104,4 +104,22 @@ export const sessionService = {
       extensions: [{ field: ' ', message: ' ' }],
     };
   },
+
+  resetToken: async (payload: ISession) => {
+    const resetToken = await sessionRepository.logOut(payload);
+
+    if (!resetToken) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ field: ' ', message: ' ' }],
+      };
+    }
+
+    return {
+      status: ResultStatus.Success,
+      data: true,
+      extensions: [{ field: ' ', message: ' ' }],
+    };
+  },
 };

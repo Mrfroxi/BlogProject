@@ -70,9 +70,9 @@ export const jwtService = {
       iat,
       exp,
     };
-    console.log(2);
+
     const verifiedToken = await sessionService.verifySession(payload);
-    console.log(verifiedToken);
+
     if (verifiedToken.data) {
       return {
         status: ResultStatus.Success,
