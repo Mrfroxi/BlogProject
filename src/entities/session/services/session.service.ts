@@ -1,23 +1,20 @@
 import { Request } from 'express';
-import { normalizeIp } from '../../../core/helper/normalizeIp';
 import { jwtService } from '../../../core/services/jwt.service';
 import { ResultStatus } from '../../../core/object-result/resultCode';
 import { Session } from '../types/session';
 import { sessionRepository } from '../repositories/session.repository';
-import { AuthTokens } from '../dto/setSession.output.dto';
+import { SessionTokens } from '../dto/setSession.output.dto';
 import { ResultType } from '../../../core/object-result/result.type';
+import { ISession } from '../dto/verifyRefToken.dto';
+import { SessionOutputDto } from '../mappers/session.output.mapper';
+import { getRequestInfo } from '../helpers/getRequestInfo';
 
 export const sessionService = {
-  async setSession(req: Request, userId: string): Promise<ResultType<AuthTokens | null>> {
-    const userAgent: string | null = req.headers['user-agent'] || null;
-
-    const ip: string = await normalizeIp(
-      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
-        req.socket.remoteAddress ||
-        req.ip
-    );
-
-    const deviceId: string = crypto.randomUUID();
+  setSession: async (
+    request: Request,
+    userId: string
+  ): Promise<ResultType<SessionTokens | null>> => {
+    const { userAgent, ip, deviceId } = await getRequestInfo(request);
 
     const [accessToken, refreshToken] = await Promise.all([
       jwtService.generateAuthUserToken({ id: userId, deviceId: deviceId }),
@@ -58,6 +55,52 @@ export const sessionService = {
     return {
       status: ResultStatus.Success,
       data: { accessToken, refreshToken },
+      extensions: [{ field: ' ', message: ' ' }],
+    };
+  },
+
+  verifySession: async (payload: ISession) => {
+    const foundSession: SessionOutputDto | null =
+      await sessionRepository.findSessionByRefToken(payload);
+
+    if (!foundSession) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ field: 'foundSession', message: 'foundSession is wrong' }],
+      };
+    }
+
+    return {
+      status: ResultStatus.Success,
+      data: foundSession,
+      extensions: [{ field: '', message: '' }],
+    };
+  },
+
+  updateSession: async (request: Request) => {
+    const refreshToken = request.cookies.refreshToken;
+
+    const { id, deviceId, iat, exp } = await jwtService.decodeToken(refreshToken);
+
+    const updatedSessionToken: SessionTokens | null = await sessionRepository.updateSession({
+      id,
+      deviceId,
+      iat,
+      exp,
+    });
+
+    if (!updatedSessionToken) {
+      return {
+        status: ResultStatus.InternalServerError,
+        data: null,
+        extensions: [{ field: 'updatedSessionToken', message: 'updatedSessionToken is bad' }],
+      };
+    }
+
+    return {
+      status: ResultStatus.Success,
+      data: updatedSessionToken,
       extensions: [{ field: ' ', message: ' ' }],
     };
   },

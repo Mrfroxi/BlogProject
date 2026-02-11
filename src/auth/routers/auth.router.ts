@@ -13,6 +13,7 @@ import { authRegistrationResendingHandler } from './handlers/auth-registration-e
 import { authRefreshTokenHandler } from './handlers/auth-refreshToken.handler';
 import { authLogoutHandler } from './handlers/auth-logout.handler';
 import { rateLimitMiddleware } from '../../entities/rateLimit/middleware/rateLimit-middleware';
+import { refreshTokenValidator } from '../validators/refreshToken.validator';
 
 export const authRoute = Router({});
 
@@ -47,5 +48,6 @@ authRoute
     authRegistrationResendingHandler
   )
 
-  .post('/refresh-token', refreshTokenValidator, authRefreshTokenHandler);
-// .post('/logout', refreshTokenValidator, authLogoutHandler);
+  .post('/refresh-token', refreshTokenValidator, authRefreshTokenHandler)
+
+  .post('/logout', refreshTokenValidator, authLogoutHandler);

@@ -1,7 +1,7 @@
 export type Session = {
   userId: string;
   deviceId: string;
-  deviceName: string | null;
+  deviceName: string;
   ip: string;
   iat: number;
   exp: number;

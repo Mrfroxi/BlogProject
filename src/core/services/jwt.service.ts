@@ -2,6 +2,9 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { SETTINGS } from '../setting/settings';
 import { ResultStatus } from '../object-result/resultCode';
 import { ResultType } from '../object-result/result.type';
+import { sessionService } from '../../entities/session/services/session.service';
+import { ISession } from '../../entities/session/dto/verifyRefToken.dto';
+import { SessionOutputDto } from '../../entities/session/mappers/session.output.mapper';
 
 interface generateUserTokenDto {
   id: string;
@@ -10,18 +13,19 @@ interface generateUserTokenDto {
 
 export const jwtService = {
   generateAuthUserToken: async (dto: generateUserTokenDto) => {
-    return jwt.sign({ id: dto.id }, SETTINGS.JWT_AUTH_SECRET, {
+    return jwt.sign({ id: dto.id, deviceId: dto.deviceId }, SETTINGS.JWT_AUTH_SECRET, {
       expiresIn: SETTINGS.EXPIRES_AUTH as jwt.SignOptions['expiresIn'],
     });
   },
 
   generateRefreshUserToken: async (dto: generateUserTokenDto) => {
-    return jwt.sign({ id: dto.id }, SETTINGS.JWT_REFRESH_SECRET, {
+    return jwt.sign({ id: dto.id, deviceId: dto.deviceId }, SETTINGS.JWT_REFRESH_SECRET, {
       expiresIn: SETTINGS.EXPIRES_REFRESH as jwt.SignOptions['expiresIn'],
     });
   },
 
   verifyAuthToken: async (token: string): Promise<ResultType<JwtPayload | null>> => {
+    //time
     return new Promise((resolve) => {
       jwt.verify(token, SETTINGS.JWT_AUTH_SECRET, (err, decoded) => {
         if (err || !decoded) {
@@ -41,12 +45,12 @@ export const jwtService = {
     });
   },
 
-  verifyRefreshToken: async (token: string): Promise<JwtPayload | ResultType> => {
+  verifyRefreshToken: async (token: string): Promise<ResultType<SessionOutputDto | null>> => {
     //time
     const verifiedTokenByExpired = await new Promise<JwtPayload | null>((resolve) => {
       jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET, (err, decoded) => {
         if (err || !decoded) return resolve(null);
-        resolve(decoded as JwtPayload & { userId: string; login: string });
+        resolve(decoded as JwtPayload);
       });
     });
 
@@ -58,18 +62,24 @@ export const jwtService = {
       };
     }
 
-    // //blackList
-    // const verifiedTokenByBlackList: ResultType<boolean | null> = null;
-    // // await refreshTokenBlackListService.isTokenBlacklisted(verifiedTokenByExpired, token);
-    //
-    // //There is no token in blackList
-    // if (verifiedTokenByBlackList.data) {
-    //   return {
-    //     status: ResultStatus.Success,
-    //     data: verifiedTokenByBlackList.data,
-    //     extensions: [{ field: ' ', message: ' ' }],
-    //   };
-    // }
+    const { id, deviceId, iat, exp } = verifiedTokenByExpired;
+
+    const payload: ISession = {
+      id,
+      deviceId,
+      iat,
+      exp,
+    };
+    console.log(2);
+    const verifiedToken = await sessionService.verifySession(payload);
+    console.log(verifiedToken);
+    if (verifiedToken.data) {
+      return {
+        status: ResultStatus.Success,
+        data: verifiedToken.data,
+        extensions: [{ field: '', message: '' }],
+      };
+    }
 
     return {
       status: ResultStatus.Unauthorized,
@@ -78,7 +88,7 @@ export const jwtService = {
     };
   },
 
-  async decodeToken(token: string): Promise<JwtPayload | null> {
-    return jwt.decode(token) as { iat: number; exp: number } | null;
+  async decodeToken(token: string): Promise<JwtPayload> {
+    return jwt.decode(token) as ISession;
   },
 };

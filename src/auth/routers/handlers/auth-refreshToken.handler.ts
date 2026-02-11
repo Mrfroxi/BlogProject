@@ -3,19 +3,20 @@ import { HttpStatuses } from '../../../core/types/http-statuses';
 import { ResultType } from '../../../core/object-result/result.type';
 import { ResultStatus } from '../../../core/object-result/resultCode';
 import { resultCodeToHttpException } from '../../../core/object-result/resultCodeToHttpException';
+import { sessionService } from '../../../entities/session/services/session.service';
+import { SessionTokens } from '../../../entities/session/dto/setSession.output.dto';
 
 export const authRefreshTokenHandler = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+  console.log(1);
+  const updatedSession: ResultType<SessionTokens | null> = await sessionService.updateSession(req);
 
-  const refreshTokens: ResultType<null | { accessToken: string; refreshToken: string }> = null;
-  /*await refreshTokenBlackListService.refreshTokens(refreshToken);
-   */
-  if (refreshTokens.status !== ResultStatus.Success) {
+  console.log(updatedSession);
+  if (updatedSession.status !== ResultStatus.Success) {
     return res
-      .status(resultCodeToHttpException(refreshTokens.status))
-      .send(refreshTokens.extensions);
+      .status(resultCodeToHttpException(updatedSession.status))
+      .send(updatedSession.extensions);
   }
 
-  res.cookie('refreshToken', refreshTokens.data?.refreshToken, { httpOnly: true, secure: true });
-  return res.status(HttpStatuses.Ok).send({ accessToken: refreshTokens.data!.accessToken });
+  res.cookie('refreshToken', updatedSession.data?.refreshToken, { httpOnly: true, secure: true });
+  return res.status(HttpStatuses.Ok).send({ accessToken: updatedSession.data!.accessToken });
 };
