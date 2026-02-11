@@ -3,6 +3,6 @@ export const POSTS_PATH = '/posts';
 export const USER_PATH = '/users';
 export const AUTH_PATH = '/auth';
 export const COMMENT_PATH = '/comments';
-export const SECURITY_DEVICES = '/devices';
+export const SECURITY_DEVICES = '/security/devices';
 
 export const TEST_ALLDATA_PATH = '/testing';

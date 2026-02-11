@@ -130,11 +130,7 @@ export const authService = {
       };
     }
 
-    await nodemailerService.sendEmail(
-      user.data.email,
-      newCode.data,
-      emailExamples.registrationEmail
-    );
+    nodemailerService.sendEmail(user.data.email, newCode.data, emailExamples.registrationEmail);
 
     return {
       status: ResultStatus.Success,

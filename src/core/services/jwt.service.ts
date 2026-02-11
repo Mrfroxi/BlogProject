@@ -5,6 +5,7 @@ import { ResultType } from '../object-result/result.type';
 import { sessionService } from '../../entities/session/services/session.service';
 import { ISession } from '../../entities/session/dto/verifyRefToken.dto';
 import { SessionOutputDto } from '../../entities/session/mappers/session.output.mapper';
+import { RefreshTokenSessionDto } from '../../entities/session/mappers/tokenPayload.mapper';
 
 interface generateUserTokenDto {
   id: string;
@@ -45,7 +46,7 @@ export const jwtService = {
     });
   },
 
-  verifyRefreshToken: async (token: string): Promise<ResultType<SessionOutputDto | null>> => {
+  verifyRefreshToken: async (token: string): Promise<ResultType<RefreshTokenSessionDto | null>> => {
     //time
     const verifiedTokenByExpired = await new Promise<JwtPayload | null>((resolve) => {
       jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET, (err, decoded) => {
@@ -64,14 +65,12 @@ export const jwtService = {
 
     const { id, deviceId, iat, exp } = verifiedTokenByExpired;
 
-    const payload: ISession = {
+    const verifiedToken = await sessionService.verifySession({
       id,
       deviceId,
       iat,
       exp,
-    };
-
-    const verifiedToken = await sessionService.verifySession(payload);
+    });
 
     if (verifiedToken.data) {
       return {

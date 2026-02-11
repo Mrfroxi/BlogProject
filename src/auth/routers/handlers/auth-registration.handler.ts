@@ -30,7 +30,7 @@ export const authRegistrationHandler = async (req: Request, res: Response) => {
     });
   }
 
-  await nodemailerService.sendEmail(
+  nodemailerService.sendEmail(
     createdUser.data.email,
     createdUser.data.emailConfirmation.confirmationCode,
     emailExamples.registrationEmail

@@ -6,8 +6,9 @@ import { sessionRepository } from '../repositories/session.repository';
 import { SessionTokens } from '../dto/setSession.output.dto';
 import { ResultType } from '../../../core/object-result/result.type';
 import { ISession } from '../dto/verifyRefToken.dto';
-import { SessionOutputDto } from '../mappers/session.output.mapper';
 import { getRequestInfo } from '../helpers/getRequestInfo';
+import { sessionQueryRepository } from '../repositories/session.query.repository';
+import { RefreshTokenSessionDto } from '../mappers/tokenPayload.mapper';
 
 export const sessionService = {
   setSession: async (
@@ -60,8 +61,8 @@ export const sessionService = {
   },
 
   verifySession: async (payload: ISession) => {
-    const foundSession: SessionOutputDto | null =
-      await sessionRepository.findSessionByRefToken(payload);
+    const foundSession: RefreshTokenSessionDto | null =
+      await sessionQueryRepository.findSessionByRefToken(payload);
 
     if (!foundSession) {
       return {
@@ -119,6 +120,52 @@ export const sessionService = {
     return {
       status: ResultStatus.Success,
       data: true,
+      extensions: [{ field: ' ', message: ' ' }],
+    };
+  },
+
+  deleteUserSessions: async (userId: string, deviceId: string) => {
+    const deleteResult = await sessionRepository.deleteUserSessions(userId, deviceId);
+
+    if (!deleteResult.acknowledged) {
+      return {
+        status: ResultStatus.InternalServerError,
+        data: null,
+        extensions: [{ field: 'deleteResult', message: 'deleteResult is wrong' }],
+      };
+    }
+
+    return {
+      status: ResultStatus.Success,
+      data: deleteResult.acknowledged,
+      extensions: [{ field: ' ', message: ' ' }],
+    };
+  },
+
+  deleteOneUserSession: async (userId: string, deviceId: string) => {
+    const findSession = await sessionRepository.findSessionByDeviceId(deviceId);
+
+    if (!findSession) {
+      return {
+        status: ResultStatus.NotFound,
+        data: null,
+        extensions: [{ field: 'findSession', message: 'findSession NotFound' }],
+      };
+    }
+
+    if (findSession.userId !== userId) {
+      return {
+        status: ResultStatus.Forbidden,
+        data: null,
+        extensions: [{ field: 'findSession', message: 'findSession is forbidden' }],
+      };
+    }
+
+    const deleteUserSessionById = await sessionRepository.deleteUserSessionById(deviceId, userId);
+
+    return {
+      status: ResultStatus.Success,
+      data: deleteUserSessionById,
       extensions: [{ field: ' ', message: ' ' }],
     };
   },

@@ -2,7 +2,6 @@ import { sessionsCollection } from '../../../db/mongo.db';
 import { Session } from '../types/session';
 import { InsertOneResult } from 'mongodb';
 import { ISession } from '../dto/verifyRefToken.dto';
-import { mapSession } from '../mappers/session.output.mapper';
 import { jwtService } from '../../../core/services/jwt.service';
 import { SessionTokens } from '../dto/setSession.output.dto';
 
@@ -11,23 +10,6 @@ export const sessionRepository = {
     const result: InsertOneResult<Session> = await sessionsCollection.insertOne(payload);
 
     return result.acknowledged;
-  },
-
-  findSessionByRefToken: async (payload: ISession) => {
-    console.log(payload);
-
-    const result = await sessionsCollection.findOne({
-      userId: payload.id,
-      deviceId: payload.deviceId,
-      iat: payload.iat,
-      exp: payload.exp,
-    });
-
-    if (!result) {
-      return null;
-    }
-
-    return mapSession(result);
   },
 
   updateSession: async (payload: ISession): Promise<SessionTokens | null> => {
@@ -69,5 +51,19 @@ export const sessionRepository = {
     });
 
     return result.acknowledged;
+  },
+
+  deleteUserSessions: async (userId: string, deviceId: string) => {
+    return sessionsCollection.deleteMany({ userId, deviceId: { $ne: deviceId } });
+  },
+
+  deleteUserSessionById: async (deviceId: string, userId: string) => {
+    const result = await sessionsCollection.deleteOne({ deviceId: deviceId, userId: userId });
+
+    return result.acknowledged;
+  },
+
+  findSessionByDeviceId: async (deviceId: string) => {
+    return sessionsCollection.findOne({ deviceId });
   },
 };

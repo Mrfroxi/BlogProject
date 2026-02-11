@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
-import { HttpStatuses } from '../../types/http-statuses';
+import { HttpStatuses } from '../types/http-statuses';
 import {
   blogCollection,
   commentCollection,
   postCollection,
   userCollection,
-} from '../../../db/mongo.db';
+} from '../../db/mongo.db';
 
 export const testAllDataRouter = Router({});
 

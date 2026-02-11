@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { HttpStatuses } from '../../core/types/http-statuses';
 import { ResultType } from '../../core/object-result/result.type';
 import { jwtService } from '../../core/services/jwt.service';
-import { SessionOutputDto } from '../../entities/session/mappers/session.output.mapper';
+import { RefreshTokenSessionDto } from '../../entities/session/mappers/tokenPayload.mapper';
 
 export const refreshTokenValidator = async (req: Request, res: Response, next: NextFunction) => {
   const refreshToken = req.cookies.refreshToken;
@@ -12,7 +12,7 @@ export const refreshTokenValidator = async (req: Request, res: Response, next: N
     return;
   }
 
-  const verifyToken: ResultType<SessionOutputDto | null> =
+  const verifyToken: ResultType<RefreshTokenSessionDto | null> =
     await jwtService.verifyRefreshToken(refreshToken);
 
   if (!verifyToken.data) {
@@ -20,5 +20,6 @@ export const refreshTokenValidator = async (req: Request, res: Response, next: N
     return;
   }
 
+  req.session = verifyToken.data;
   next();
 };

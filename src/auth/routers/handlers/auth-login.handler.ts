@@ -27,6 +27,12 @@ export const authLoginHandler = async (req: Request, res: Response) => {
     return res.status(resultCodeToHttpException(setSession.status)).send(setSession.extensions);
   }
 
-  res.cookie('refreshToken', setSession.data?.refreshToken, { httpOnly: true, secure: true });
+  res.cookie('refreshToken', setSession.data!.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    path: '/',
+  });
+
   return res.status(HttpStatuses.Ok).send({ accessToken: setSession.data!.accessToken });
 };

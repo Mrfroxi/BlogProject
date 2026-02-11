@@ -2,21 +2,19 @@ import { WithId } from 'mongodb';
 import { Session } from '../types/session';
 
 export type SessionOutputDto = {
-  id: string;
-  userId: string;
-  deviceName: string;
+  title: string;
   ip: string;
-  iat: number;
-  exp: number;
+  lastActiveDate: string;
   deviceId: string;
 };
 
 export const mapSession = (dto: WithId<Session>): SessionOutputDto => ({
-  id: dto._id.toString(),
-  userId: dto.userId,
-  deviceName: dto.deviceName,
+  title: dto.deviceName,
   ip: dto.ip,
-  iat: dto.iat,
-  exp: dto.exp,
+  lastActiveDate: `${new Date(dto.iat * 1000).toISOString()}`,
   deviceId: dto.deviceId,
 });
+
+export const mapSessionsArray = (dtos: WithId<Session>[]): SessionOutputDto[] => {
+  return dtos.map(mapSession);
+};

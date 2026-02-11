@@ -10,13 +10,13 @@ import {
   TEST_ALLDATA_PATH,
   USER_PATH,
 } from './core/paths/paths';
-import { testAllDataRouter } from './core/reset_data/routers/testAllData.router';
+import { testAllDataRouter } from './core/routers/testAllData.router';
 import { postsRouter } from './entities/posts/routers/posts.router';
 import { userRouter } from './entities/user/routers/user.router';
 import { authRoute } from './auth/routers/auth.router';
 import { commentRouter } from './entities/comments/routers/comment.router';
 import cookieParser from 'cookie-parser';
-import { securityDevicesRouter } from './core/reset_data/routers/securityDevices.router';
+import { securityDevicesRouter } from './core/routers/securityDevices.router';
 
 export const setupApp = (app: Express) => {
   app.use(express.json());
