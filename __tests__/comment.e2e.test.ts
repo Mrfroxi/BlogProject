@@ -70,6 +70,7 @@ describe('comment entity', () => {
       expect(res.body.commentatorInfo.userLogin).toBe(ctx.userLogin);
     });
   });
+
   describe('Comment PUT', () => {
     it('should update own comment', async () => {
       const commentRes = await request(app)

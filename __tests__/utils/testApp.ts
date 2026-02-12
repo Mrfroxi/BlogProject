@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import request from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { runDB } from '../../src/db/mongo.db';
+import { rateLimitsCollection, runDB } from '../../src/db/mongo.db';
 import { setupApp } from '../../src/setup-app';
 import { TEST_ALLDATA_PATH } from '../../src/core/paths/paths';
 
@@ -21,6 +21,7 @@ export const createTestApp = () => {
   });
 
   beforeEach(async () => {
+    await rateLimitsCollection.deleteMany({});
     await request(app).delete(`${TEST_ALLDATA_PATH}/all-data`);
   });
 
