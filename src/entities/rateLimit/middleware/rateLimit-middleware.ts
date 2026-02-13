@@ -27,7 +27,7 @@ export async function rateLimitMiddleware(req: Request, res: Response, next: Nex
       url: url,
       date: { $gte: fromDate },
     });
-    console.log(requestsCount);
+
     if (requestsCount >= LIMIT) {
       return res.sendStatus(HttpStatuses.TooManyRequests);
     }
