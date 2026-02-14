@@ -9,12 +9,12 @@ export const securityDeviceTerminateOneDeviceHandler = async (req: Request, res:
 
   const deviceId = req.params.deviceId;
 
-  const deletByDeviceId = await sessionService.deleteOneUserSession(userId, deviceId);
+  const deleteByDeviceId = await sessionService.deleteOneUserSession(userId, deviceId);
 
-  if (deletByDeviceId.status !== ResultStatus.Success) {
+  if (deleteByDeviceId.status !== ResultStatus.Success) {
     return res
-      .status(resultCodeToHttpException(deletByDeviceId.status))
-      .send(deletByDeviceId.extensions);
+      .status(resultCodeToHttpException(deleteByDeviceId.status))
+      .send(deleteByDeviceId.extensions);
   }
 
   res.sendStatus(HttpStatuses.NoContent);
