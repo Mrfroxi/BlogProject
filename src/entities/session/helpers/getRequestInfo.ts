@@ -11,7 +11,7 @@ export type RequestInfo = {
 export const getRequestInfo = async (req: Request) => {
   const userAgent: string = req.headers['user-agent'] || 'bad user-agent';
 
-  const ip: string = await normalizeIp(
+  const ip: string = normalizeIp(
     (req.headers['x-forwarded-for'] as string)?.split(',')[0] || req.socket.remoteAddress || req.ip
   );
 

@@ -9,7 +9,7 @@ const LIMIT = Number(SETTINGS.LIMIT_REQUESTS);
 
 export async function rateLimitMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
-    const ip = await normalizeIp(
+    const ip = normalizeIp(
       (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
         req.socket.remoteAddress ||
         req.ip
