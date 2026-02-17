@@ -6,8 +6,6 @@ import { UserOutputDto } from '../../entities/user/dto/user-output.dto';
 import { nodemailerService } from '../../core/services/nodemailerService';
 import { emailExamples } from '../../core/helper/email-template';
 import { UserCredentials } from '../dto/userCredentialsDto';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { SETTINGS } from '../../core/setting/settings';
 import { userRepository } from '../../entities/user/repositories/user.repository';
 import { jwtService } from '../../core/services/jwt.service';
 import { ISession } from '../../entities/session/dto/verifyRefToken.dto';

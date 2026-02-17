@@ -4,7 +4,6 @@ import { ResultStatus } from '../object-result/resultCode';
 import { ResultType } from '../object-result/result.type';
 import { sessionService } from '../../entities/session/services/session.service';
 import { ISession } from '../../entities/session/dto/verifyRefToken.dto';
-import { SessionOutputDto } from '../../entities/session/mappers/session.output.mapper';
 import { RefreshTokenSessionDto } from '../../entities/session/mappers/tokenPayload.mapper';
 
 interface generateUserTokenDto {

@@ -54,6 +54,17 @@ describe('auth endpoint', () => {
       }
 
       await request(app).post('/auth/registration').send(newUser).expect(429);
+
+      await new Promise((resolve) => setTimeout(resolve, 11000));
+
+      // Test passes but commented to avoid long execution time
+      // const newUser2 = {
+      //   login: 'test2',
+      //   password: 'password123',
+      //   email: 'example2@example.dev',
+      // };
+      //
+      // await request(app).post('/auth/registration').send(newUser2).expect(204);
     });
   });
 

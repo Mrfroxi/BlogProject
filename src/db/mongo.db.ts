@@ -41,7 +41,7 @@ export async function runDB(url: string): Promise<void> {
 
     await rateLimitsCollection.createIndex(
       { date: 1 }, // field date
-      { expireAfterSeconds: 10 }
+      { expireAfterSeconds: Number(SETTINGS.WINDOW_TIME_DELAY) / 1000 }
     );
     console.log('✅ TTL index created for rateLimitsCollection');
   } catch (e) {
