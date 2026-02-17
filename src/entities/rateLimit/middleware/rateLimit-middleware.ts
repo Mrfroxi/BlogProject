@@ -20,8 +20,6 @@ export async function rateLimitMiddleware(req: Request, res: Response, next: Nex
     const now = new Date();
     const fromDate = new Date(now.getTime() - WINDOW_MS);
 
-    await rateLimitsCollection.deleteMany({ date: { $lt: fromDate } });
-
     const requestsCount = await rateLimitsCollection.countDocuments({
       ip: ip,
       url: url,
