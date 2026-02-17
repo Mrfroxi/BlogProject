@@ -55,9 +55,8 @@ describe('auth endpoint', () => {
 
       await request(app).post('/auth/registration').send(newUser).expect(429);
 
-      await new Promise((resolve) => setTimeout(resolve, 11000));
-
-      // Test passes but commented to avoid long execution time
+      //Test passes but commented to avoid long execution time
+      // await new Promise((resolve) => setTimeout(resolve, 11000));
       // const newUser2 = {
       //   login: 'test2',
       //   password: 'password123',
