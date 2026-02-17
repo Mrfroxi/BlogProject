@@ -4,7 +4,7 @@ import { SETTINGS } from '../../../core/setting/settings';
 import { normalizeIp } from '../../../core/helper/normalizeIp';
 import { HttpStatuses } from '../../../core/types/http-statuses';
 
-const WINDOW_MS = Number(process.env.WINDOW_TIME_DELAY);
+const WINDOW_MS = Number(SETTINGS.WINDOW_TIME_DELAY);
 const LIMIT = Number(SETTINGS.LIMIT_REQUESTS);
 
 export async function rateLimitMiddleware(req: Request, res: Response, next: NextFunction) {
