@@ -1,17 +1,23 @@
 import { WithId } from 'mongodb';
 import { Blog } from '../types/blog';
 import { BlogCreateInput } from '../dto/blog-create.input';
-import { blogsRepository } from '../repositories/blogs.repository';
 import { BlogUpdateDto } from '../dto/blog-update';
+import { BlogsRepository } from '../repositories/blogs.repository';
+import { injectable, inject } from 'inversify';
 
-export const blogService = {
+@injectable()
+export class BlogService {
+  constructor(
+    @inject(BlogsRepository) private blogsRepository: BlogsRepository
+  ) {}
+
   async findAll(querySetup: any) {
-    return blogsRepository.findAll(querySetup);
-  },
+    return this.blogsRepository.findAll(querySetup);
+  }
 
   async findById(blogId: string): Promise<WithId<Blog>> {
-    return blogsRepository.findById(blogId);
-  },
+    return this.blogsRepository.findById(blogId);
+  }
 
   async createBlog(dto: BlogCreateInput) {
     const newBlog: Blog = {
@@ -22,14 +28,14 @@ export const blogService = {
       websiteUrl: dto.websiteUrl,
     };
 
-    return await blogsRepository.createBlog(newBlog);
-  },
+    return await this.blogsRepository.createBlog(newBlog);
+  }
 
   async updateBlog(blogId: string, reqBody: BlogUpdateDto) {
-    return await blogsRepository.updateBlog(blogId, reqBody);
-  },
+    return await this.blogsRepository.updateBlog(blogId, reqBody);
+  }
 
   async deleteBlog(id: string): Promise<void> {
-    return blogsRepository.deleteBlog(id);
-  },
-};
+    return this.blogsRepository.deleteBlog(id);
+  }
+}

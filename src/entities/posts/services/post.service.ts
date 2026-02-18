@@ -8,12 +8,14 @@ import { ResultStatus } from '../../../core/object-result/resultCode';
 import { ResultType } from '../../../core/object-result/result.type';
 import { commentCollection } from '../../../db/mongo.db';
 import { PostsRepository } from '../repositories/posts.repository';
+import { BlogService } from '../../blogs/services/blog.service';
 import { injectable, inject } from 'inversify';
 
 @injectable()
 export class PostService {
   constructor(
-    @inject(PostsRepository) private postsRepository: PostsRepository
+    @inject(PostsRepository) private postsRepository: PostsRepository,
+    @inject(BlogService) private blogService: BlogService
   ) {}
 
   async findAll(querySetup: any) {
@@ -40,10 +42,7 @@ export class PostService {
   }
 
   async createPost(dto: postCreateDto) {
-    // Здесь нужно будет получить BlogService через dependency injection
-    // когда будем рефакторить BlogService
-    const blogService = require('../../blogs/services/blog.service').blogService;
-    const blog: WithId<Blog> = await blogService.findById(dto.blogId);
+    const blog: WithId<Blog> = await this.blogService.findById(dto.blogId);
 
     const createPostDto: Post = {
       blogId: dto.blogId,

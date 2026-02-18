@@ -1,39 +1,36 @@
 import { Router } from 'express';
-import { getBlogsListHandler } from './handlers/get-blogs-list.handler';
-import { getBlogHandler } from './handlers/get-blog.handler';
+import { container } from '../../../composition-root';
+import { BlogController } from './blog.controller';
 import { idParamValidator } from '../../../core/middlewares/validation/id-param.validator';
 import { inputValidationResultMiddleware } from '../../../core/middlewares/validation/input-validation-result';
-import { createBlogHandler } from './handlers/create-blog.handler';
-import { blogCreateValidator } from '../validators/blog-create.validator';
 import { SuperAdminGuard } from '../../../auth/routers/middleware/super-admin.guard-middleware';
-import { updateBlogHandler } from './handlers/update-blog.handler';
-import { blogUpdateValidator } from '../validators/blog-update.validator';
-import { deleteBlogHandler } from './handlers/delete-blog.handler';
 import { paginationSortingValidator } from '../../../core/middlewares/validation/pagination.sorting.validator';
 import { BlogSortField } from '../types/blog-sortField';
-import { createBlogPostHandler } from './handlers/create-blog-post';
-import { getBlogPostListHandler } from './handlers/get-blog-post-list';
-import { PostSortField } from '../../posts/types/post-sort-fields';
+import { blogCreateValidator } from '../validators/blog-create.validator';
+import { blogUpdateValidator } from '../validators/blog-update.validator';
 import { blogIdParamValidator } from '../../../core/middlewares/validation/blogId-param.validator';
 import { blogPostCreateValidator } from '../validators/blog-post-create.validator';
+import { PostSortField } from '../../posts/types/post-sort-fields';
 
 export const blogsRouter = Router({});
+
+const blogController = container.get<BlogController>(BlogController);
 
 blogsRouter
   .get(
     '',
     paginationSortingValidator(BlogSortField),
     inputValidationResultMiddleware,
-    getBlogsListHandler
+    blogController.getBlogsList.bind(blogController)
   )
 
-  .get('/:id', idParamValidator, inputValidationResultMiddleware, getBlogHandler)
+  .get('/:id', idParamValidator, inputValidationResultMiddleware, blogController.getBlog.bind(blogController))
   .post(
     '',
     SuperAdminGuard,
     blogCreateValidator,
     inputValidationResultMiddleware,
-    createBlogHandler
+    blogController.createBlog.bind(blogController)
   )
   .put(
     '/:id',
@@ -41,14 +38,14 @@ blogsRouter
     idParamValidator,
     blogUpdateValidator,
     inputValidationResultMiddleware,
-    updateBlogHandler
+    blogController.updateBlog.bind(blogController)
   )
   .delete(
     '/:id',
     SuperAdminGuard,
     idParamValidator,
     inputValidationResultMiddleware,
-    deleteBlogHandler
+    blogController.deleteBlog.bind(blogController)
   )
 
   .post(
@@ -57,7 +54,7 @@ blogsRouter
     blogIdParamValidator,
     blogPostCreateValidator,
     inputValidationResultMiddleware,
-    createBlogPostHandler
+    blogController.createBlogPost.bind(blogController)
   )
 
   .get(
@@ -65,5 +62,5 @@ blogsRouter
     paginationSortingValidator(PostSortField),
     blogIdParamValidator,
     inputValidationResultMiddleware,
-    getBlogPostListHandler
+    blogController.getBlogPostList.bind(blogController)
   );

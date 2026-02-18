@@ -10,6 +10,9 @@ import { CommentController } from './entities/comments/routers/comment.controlle
 import { PostsRepository } from './entities/posts/repositories/posts.repository';
 import { PostService } from './entities/posts/services/post.service';
 import { PostController } from './entities/posts/routers/post.controller';
+import { BlogsRepository } from './entities/blogs/repositories/blogs.repository';
+import { BlogService } from './entities/blogs/services/blog.service';
+import { BlogController } from './entities/blogs/routers/blog.controller';
 
 export const container = new Container();
 
@@ -25,3 +28,6 @@ container.bind<CommentController>(CommentController).to(CommentController);
 container.bind<PostsRepository>(PostsRepository).to(PostsRepository);
 container.bind<PostService>(PostService).to(PostService);
 container.bind<PostController>(PostController).to(PostController);
+container.bind<BlogsRepository>(BlogsRepository).to(BlogsRepository);
+container.bind<BlogService>(BlogService).to(BlogService);
+container.bind<BlogController>(BlogController).to(BlogController);
