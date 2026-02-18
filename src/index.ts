@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express, { Express } from 'express';
 import { setupApp } from './setup-app';
 import { SETTINGS } from './core/setting/settings';
