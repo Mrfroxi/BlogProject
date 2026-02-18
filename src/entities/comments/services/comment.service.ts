@@ -1,8 +1,6 @@
-import { commentRepository } from '../repositories/commentRepository';
 import { CommentCreateDto } from '../dto/comment-create.dto';
 import { ResultType } from '../../../core/object-result/result.type';
 import { UserOutputDto } from '../../user/dto/user-output.dto';
-import { userService } from '../../user/services/user.service';
 import { PostOutput } from '../../posts/dto/post.output';
 import { postService } from '../../posts/services/post.service';
 import { Comment } from '../types/comment';
@@ -11,10 +9,18 @@ import { WithId } from 'mongodb';
 import { mapCommentToOutput } from '../repositories/mappers/map-comment-to-Output';
 import { CommentOutputDto } from '../dto/comment-outPut.dto';
 import { CommentDeleteInputDto } from '../dto/comment-delete-input.dto';
+import { CommentRepository } from '../repositories/commentRepository';
+import { UserService } from '../../user/services/user.service';
+import { injectable, inject } from 'inversify';
 
-export const commentService = {
-  findById: async (commentId: string): Promise<ResultType<CommentOutputDto | null>> => {
-    const comment = await commentRepository.findById(commentId);
+@injectable()
+export class CommentService {
+  constructor(
+    @inject(CommentRepository) private commentRepository: CommentRepository,
+    @inject(UserService) private userService: UserService
+  ) {}
+  async findById(commentId: string): Promise<ResultType<CommentOutputDto | null>> {
+    const comment = await this.commentRepository.findById(commentId);
 
     if (!comment) {
       return {
@@ -30,12 +36,13 @@ export const commentService = {
       data: outPutData,
       extensions: [{ field: ' ', message: ' ' }],
     };
-  },
+  }
 
-  createComment: async (dto: CommentCreateDto): Promise<ResultType<CommentOutputDto | null>> => {
+  async createComment(dto: CommentCreateDto): Promise<ResultType<CommentOutputDto | null>> {
     const { userId, postId, content } = dto;
 
-    const userResult: ResultType<UserOutputDto | null> = await userService.findUserById(userId);
+    const userResult: ResultType<UserOutputDto | null> =
+      await this.userService.findUserById(userId);
 
     if (!userResult.data) {
       return {
@@ -67,7 +74,7 @@ export const commentService = {
       createdAt: `${new Date().toISOString()}`,
     };
 
-    const commented: WithId<Comment> = await commentRepository.createComment(commentDto);
+    const commented: WithId<Comment> = await this.commentRepository.createComment(commentDto);
 
     const outPutData: CommentOutputDto = await mapCommentToOutput(commented);
 
@@ -76,12 +83,12 @@ export const commentService = {
       data: outPutData,
       extensions: [{ field: ' ', message: ' ' }],
     };
-  },
+  }
 
-  deleteComment: async function (dto: CommentDeleteInputDto): Promise<ResultType<boolean | null>> {
+  async deleteComment(dto: CommentDeleteInputDto): Promise<ResultType<boolean | null>> {
     const { commentId } = dto;
 
-    const comment = await commentRepository.findById(commentId);
+    const comment = await this.commentRepository.findById(commentId);
 
     if (!comment) {
       return {
@@ -91,7 +98,7 @@ export const commentService = {
       };
     }
 
-    const isOwner = await commentRepository.isCommentOwner(dto);
+    const isOwner = await this.commentRepository.isCommentOwner(dto);
 
     if (!isOwner) {
       return {
@@ -101,7 +108,7 @@ export const commentService = {
       };
     }
 
-    const deleteComment = await commentRepository.deleteComment(commentId);
+    const deleteComment = await this.commentRepository.deleteComment(commentId);
 
     if (!deleteComment) {
       return {
@@ -116,16 +123,16 @@ export const commentService = {
       data: true,
       extensions: [{ field: ' ', message: ' ' }],
     };
-  },
+  }
 
-  updateComment: async function (dto: {
+  async updateComment(dto: {
     commentId: string;
     userId: string;
     content: string;
   }): Promise<ResultType<CommentOutputDto | null>> {
     const { commentId, userId, content } = dto;
 
-    const comment = await commentRepository.findById(commentId);
+    const comment = await this.commentRepository.findById(commentId);
 
     if (!comment) {
       return {
@@ -135,7 +142,7 @@ export const commentService = {
       };
     }
 
-    const isOwner = await commentRepository.isCommentOwner({ commentId, userId });
+    const isOwner = await this.commentRepository.isCommentOwner({ commentId, userId });
 
     if (!isOwner) {
       return {
@@ -145,7 +152,7 @@ export const commentService = {
       };
     }
 
-    const updatedComment = await commentRepository.updateCommentContent(commentId, content);
+    const updatedComment = await this.commentRepository.updateCommentContent(commentId, content);
 
     if (!updatedComment) {
       return {
@@ -162,5 +169,5 @@ export const commentService = {
       data: outPutData,
       extensions: [{ field: ' ', message: ' ' }],
     };
-  },
-};
+  }
+}
