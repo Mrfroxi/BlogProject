@@ -1,23 +1,31 @@
-import { bcryptService } from '../../core/services/bcrypt.service';
 import { ResultType } from '../../core/object-result/result.type';
 import { ResultStatus } from '../../core/object-result/resultCode';
-import { userService } from '../../entities/user/services/user.service';
 import { UserOutputDto } from '../../entities/user/dto/user-output.dto';
-import { nodemailerService } from '../../core/services/nodemailerService';
 import { emailExamples } from '../../core/helper/email-template';
 import { UserCredentials } from '../dto/userCredentialsDto';
-import { userRepository } from '../../entities/user/repositories/user.repository';
-import { jwtService } from '../../core/services/jwt.service';
 import { ISession } from '../../entities/session/dto/verifyRefToken.dto';
+import { BcryptService } from '../../core/services/bcrypt.service';
+import { UserService } from '../../entities/user/services/user.service';
+import { UserRepository } from '../../entities/user/repositories/user.repository';
+import { injectable, inject } from 'inversify';
 import { sessionService } from '../../entities/session/services/session.service';
+import { nodemailerService } from '../../core/services/nodemailerService';
+import { jwtService } from '../../core/services/jwt.service';
 
-export const authService = {
-  loginUser: async (
+@injectable()
+export class AuthService {
+  constructor(
+    @inject(BcryptService) private bcryptService: BcryptService,
+    @inject(UserService) private userService: UserService,
+    @inject(UserRepository) private userRepository: UserRepository
+  ) {}
+
+  async loginUser(
     loginOrEmail: string,
     password: string
-  ): Promise<ResultType<{ userId: string } | null>> => {
+  ): Promise<ResultType<{ userId: string } | null>> {
     const userCredentials: UserCredentials | null =
-      await userRepository.checkUserCredentials(loginOrEmail);
+      await this.userRepository.checkUserCredentials(loginOrEmail);
 
     if (!userCredentials) {
       return {
@@ -28,7 +36,7 @@ export const authService = {
       };
     }
 
-    const isPasswordValid = await bcryptService.userPasswordCompare(
+    const isPasswordValid = await this.bcryptService.userPasswordCompare(
       password,
       userCredentials.hashPassword
     );
@@ -47,11 +55,11 @@ export const authService = {
       data: { userId: userCredentials.id },
       extensions: [],
     };
-  },
+  }
 
-  confirmationCode: async (code: string): Promise<ResultType<boolean | null>> => {
+  async confirmationCode(code: string): Promise<ResultType<boolean | null>> {
     const user: ResultType<UserOutputDto | null> =
-      await userService.verifyUserByCodeFromEmail(code);
+      await this.userService.verifyUserByCodeFromEmail(code);
 
     if (!user.data) {
       return {
@@ -76,7 +84,7 @@ export const authService = {
     const userId = user.data.id;
 
     const confirmedCode: ResultType<boolean | null> =
-      await userService.switchConfirmationStatus(userId);
+      await this.userService.switchConfirmationStatus(userId);
 
     if (!confirmedCode.data) {
       return {
@@ -92,10 +100,10 @@ export const authService = {
       data: confirmedCode.data,
       extensions: [],
     };
-  },
+  }
 
-  resendByEmail: async (email: string): Promise<ResultType<boolean | null>> => {
-    const user: ResultType<UserOutputDto | null> = await userService.findUserByEmail(email);
+  async resendByEmail(email: string): Promise<ResultType<boolean | null>> {
+    const user: ResultType<UserOutputDto | null> = await this.userService.findUserByEmail(email);
 
     if (!user.data) {
       return {
@@ -117,7 +125,7 @@ export const authService = {
       };
     }
 
-    const newCode = await userService.changeConfirmationCode(email);
+    const newCode = await this.userService.changeConfirmationCode(email);
 
     if (!newCode.data) {
       return {
@@ -135,9 +143,9 @@ export const authService = {
       data: true,
       extensions: [{ field: '', message: '' }],
     };
-  },
+  }
 
-  logOut: async (token: string): Promise<ResultType<null | boolean>> => {
+  async logOut(token: string): Promise<ResultType<null | boolean>> {
     const { id, deviceId, iat, exp } = await jwtService.decodeToken(token);
 
     const payload: ISession = { id, deviceId, iat, exp };
@@ -157,5 +165,5 @@ export const authService = {
       data: true,
       extensions: [{ field: '', message: '' }],
     };
-  },
-};
+  }
+}

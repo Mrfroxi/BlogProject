@@ -2,10 +2,12 @@ import request from 'supertest';
 import { createTestApp } from './utils/testApp';
 import { userCollection } from '../src/db/mongo.db';
 import { takeCodeByCreateMockUser } from './helpers/codeConfirmation.helper';
-import { userRepository } from '../src/entities/user/repositories/user.repository';
+import { container } from '../src/composition-root';
+import { UserRepository } from '../src/entities/user/repositories/user.repository';
 
 describe('auth endpoint', () => {
   const app = createTestApp();
+  const userRepository = container.get<UserRepository>(UserRepository);
 
   it('main endPoint', async () => {
     await request(app).get('/').expect(200);

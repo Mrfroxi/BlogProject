@@ -13,6 +13,8 @@ import { PostController } from './entities/posts/routers/post.controller';
 import { BlogsRepository } from './entities/blogs/repositories/blogs.repository';
 import { BlogService } from './entities/blogs/services/blog.service';
 import { BlogController } from './entities/blogs/routers/blog.controller';
+import { AuthService } from './auth/services/auth.service';
+import { AuthController } from './auth/routers/auth.controller';
 
 export const container = new Container();
 
@@ -31,3 +33,6 @@ container.bind<PostController>(PostController).to(PostController);
 container.bind<BlogsRepository>(BlogsRepository).to(BlogsRepository);
 container.bind<BlogService>(BlogService).to(BlogService);
 container.bind<BlogController>(BlogController).to(BlogController);
+container.bind<AuthService>(AuthService).to(AuthService);
+container.bind<AuthController>(AuthController).to(AuthController);
+
