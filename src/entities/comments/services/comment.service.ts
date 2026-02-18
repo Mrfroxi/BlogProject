@@ -2,7 +2,7 @@ import { CommentCreateDto } from '../dto/comment-create.dto';
 import { ResultType } from '../../../core/object-result/result.type';
 import { UserOutputDto } from '../../user/dto/user-output.dto';
 import { PostOutput } from '../../posts/dto/post.output';
-import { postService } from '../../posts/services/post.service';
+import { PostService } from '../../posts/services/post.service';
 import { Comment } from '../types/comment';
 import { ResultStatus } from '../../../core/object-result/resultCode';
 import { WithId } from 'mongodb';
@@ -17,7 +17,8 @@ import { injectable, inject } from 'inversify';
 export class CommentService {
   constructor(
     @inject(CommentRepository) private commentRepository: CommentRepository,
-    @inject(UserService) private userService: UserService
+    @inject(UserService) private userService: UserService,
+    @inject(PostService) private postService: PostService
   ) {}
   async findById(commentId: string): Promise<ResultType<CommentOutputDto | null>> {
     const comment = await this.commentRepository.findById(commentId);
@@ -53,7 +54,7 @@ export class CommentService {
       };
     }
 
-    const postResult: ResultType<PostOutput | null> = await postService.findPostById(postId);
+    const postResult: ResultType<PostOutput | null> = await this.postService.findPostById(postId);
 
     if (!postResult.data) {
       return {

@@ -1,22 +1,27 @@
-import { postsRepository } from '../repositories/posts.repository';
 import { postCreateDto } from '../dto/post-create.input';
 import { Post } from '../types/post';
 import { postUpdateDto } from '../dto/post-update.input';
-import { blogService } from '../../blogs/services/blog.service';
 import { WithId } from 'mongodb';
 import { Blog } from '../../blogs/types/blog';
 import { PostOutput } from '../dto/post.output';
 import { ResultStatus } from '../../../core/object-result/resultCode';
 import { ResultType } from '../../../core/object-result/result.type';
 import { commentCollection } from '../../../db/mongo.db';
+import { PostsRepository } from '../repositories/posts.repository';
+import { injectable, inject } from 'inversify';
 
-export const postService = {
+@injectable()
+export class PostService {
+  constructor(
+    @inject(PostsRepository) private postsRepository: PostsRepository
+  ) {}
+
   async findAll(querySetup: any) {
-    return postsRepository.findAll(querySetup);
-  },
+    return this.postsRepository.findAll(querySetup);
+  }
 
   async findPostById(postId: string): Promise<ResultType<PostOutput | null>> {
-    const postResult: PostOutput | null = await postsRepository.findById(postId);
+    const postResult: PostOutput | null = await this.postsRepository.findById(postId);
 
     if (!postResult) {
       return {
@@ -32,9 +37,12 @@ export const postService = {
       data: postResult,
       extensions: [{ field: ' ', message: ' ' }],
     };
-  },
+  }
 
   async createPost(dto: postCreateDto) {
+    // Здесь нужно будет получить BlogService через dependency injection
+    // когда будем рефакторить BlogService
+    const blogService = require('../../blogs/services/blog.service').blogService;
     const blog: WithId<Blog> = await blogService.findById(dto.blogId);
 
     const createPostDto: Post = {
@@ -46,16 +54,16 @@ export const postService = {
       title: dto.title ?? 'Default Title',
     };
 
-    return postsRepository.createPost(createPostDto);
-  },
+    return this.postsRepository.createPost(createPostDto);
+  }
 
   async updatePost(postId: string, reqBody: postUpdateDto) {
-    return postsRepository.updatePost(postId, reqBody);
-  },
+    return this.postsRepository.updatePost(postId, reqBody);
+  }
 
   async deletePost(postId: string) {
-    return postsRepository.deletePost(postId);
-  },
+    return this.postsRepository.deletePost(postId);
+  }
 
   async findAllComments(query: any) {
     const { pageNumber, pageSize, sortBy, sortDirection, postId } = query;
@@ -88,5 +96,5 @@ export const postService = {
       totalCount,
       items: mappedItems,
     };
-  },
-};
+  }
+}

@@ -7,8 +7,10 @@ import { postCollection } from '../../../db/mongo.db';
 import { PostSortField } from '../types/post-sort-fields';
 import { mapPostToOutput } from '../routers/mappers/map-post-to-output';
 import { PostOutput } from '../dto/post.output';
+import { injectable } from 'inversify';
 
-export const postsRepository = {
+@injectable()
+export class PostsRepository {
   async findAll(
     querySetup: PostQueryInput<PostSortField>
   ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
@@ -36,7 +38,7 @@ export const postsRepository = {
     const totalCount = await postCollection.countDocuments(filter);
 
     return { items, totalCount };
-  },
+  }
 
   async findById(id: string): Promise<PostOutput | null> {
     const postResult = await postCollection.findOne({ _id: new ObjectId(id) });
@@ -46,11 +48,13 @@ export const postsRepository = {
     }
 
     return mapPostToOutput(postResult);
-  },
+  }
+
   async createPost(newPost: Post): Promise<WithId<Post>> {
     const insertResult = await postCollection.insertOne(newPost);
     return { ...newPost, _id: insertResult.insertedId };
-  },
+  }
+
   async updatePost(id: string, dto: postUpdateDto): Promise<void> {
     const updateResult = await postCollection.updateOne(
       {
@@ -71,7 +75,8 @@ export const postsRepository = {
     }
 
     return;
-  },
+  }
+
   async deletePost(id: string): Promise<void> {
     const deleteResult = await postCollection.deleteOne({
       _id: new ObjectId(id),
@@ -82,5 +87,5 @@ export const postsRepository = {
     }
 
     return;
-  },
-};
+  }
+}
