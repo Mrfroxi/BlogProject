@@ -7,8 +7,10 @@ import { UserOutputDto } from '../dto/user-output.dto';
 import { UserListOutputDto } from '../dto/user-list-output.dto';
 import { mapUserAuthMeToOutput } from './mappers/map-userAuthMe-to-output';
 import { UserCredentials } from '../../../auth/dto/userCredentialsDto';
+import { injectable } from 'inversify';
 
-export const userQueryRepository = {
+@injectable()
+export class UserQueryRepository {
   async findAll(sortingDefault: DefaultValuesSortingDto): Promise<UserListOutputDto> {
     const { pageNumber, pageSize, sortBy, sortDirection, searchEmailTerm, searchLoginTerm } =
       sortingDefault;
@@ -48,7 +50,7 @@ export const userQueryRepository = {
       totalCount,
       items: mappedUserList,
     };
-  },
+  }
 
   async checkUserCredentials(loginOrEmail: string): Promise<UserCredentials | null> {
     const user: WithId<User> | null = await userCollection.findOne({
@@ -63,7 +65,7 @@ export const userQueryRepository = {
       id: user._id.toString(),
       hashPassword: user.password,
     };
-  },
+  }
 
   async AuthMeById(id: string) {
     const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
@@ -74,5 +76,5 @@ export const userQueryRepository = {
     }
 
     return mapUserAuthMeToOutput(user);
-  },
-};
+  }
+}
