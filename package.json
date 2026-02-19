@@ -23,7 +23,7 @@
     "uuid": "^13.0.0"
   },
   "scripts": {
-    "dev": "nodemon --inspect dist/index.js",
+    "dev": "nodemon --inspect dist/src/index.js",
     "ts-watch": "tsc -w",
     "test": "jest --config jest-config.json --runInBand --detectOpenHandles --forceExit",
     "lint": "eslint .",

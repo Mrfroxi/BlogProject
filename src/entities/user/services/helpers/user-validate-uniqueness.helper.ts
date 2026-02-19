@@ -1,9 +1,13 @@
 import { WithId } from 'mongodb';
 import { User } from '../../types/user';
-import { userRepository } from '../../repositories/user.repository';
 import { UniqueValidateError } from '../../../../core/errors/unique-validate-error';
+import { UserRepository } from '../../repositories/user.repository';
 
-export const validateUserUniqueness = async (email: string, login: string): Promise<void> => {
+export const validateUserUniqueness = async (
+  email: string, 
+  login: string, 
+  userRepository: UserRepository
+): Promise<void> => {
   const uniqueEmail: WithId<User> | null = await userRepository.userUniqueEmail(email);
 
   if (uniqueEmail) {

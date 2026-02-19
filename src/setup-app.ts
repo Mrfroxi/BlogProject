@@ -13,10 +13,10 @@ import {
 import { testAllDataRouter } from './core/routers/testAllData.router';
 import { postsRouter } from './entities/posts/routers/posts.router';
 import { userRouter } from './entities/user/routers/user.router';
-import { authRoute } from './auth/routers/auth.router';
 import { commentRouter } from './entities/comments/routers/comment.router';
 import cookieParser from 'cookie-parser';
 import { securityDevicesRouter } from './core/routers/securityDevices.router';
+import { authRoute } from './auth/routers/auth.router';
 
 export const setupApp = (app: Express) => {
   app.use(express.json());

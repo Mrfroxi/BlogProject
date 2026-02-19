@@ -5,8 +5,10 @@ import { mapUserToOutput } from './mappers/map-user-to-output';
 import { AdminUserOutputDto, UserOutputDto } from '../dto/user-output.dto';
 import { mapAdminUserToOutput } from './mappers/map-adminUser-to-output';
 import { UserCredentials } from '../../../auth/dto/userCredentialsDto';
+import { injectable } from 'inversify';
 
-export const userRepository = {
+@injectable()
+export class UserRepository {
   async findUserById(id: string): Promise<UserOutputDto | null> {
     const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
 
@@ -15,7 +17,19 @@ export const userRepository = {
     }
 
     return mapUserToOutput(user);
-  },
+  }
+
+  async findUserByEmailCode(code: string): Promise<UserOutputDto | null> {
+    const user: WithId<User> | null = await userCollection.findOne({
+      'emailConfirmation.confirmationCode': code,
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return mapUserToOutput(user);
+  }
 
   async findAdminUserById(id: string): Promise<AdminUserOutputDto | null> {
     const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
@@ -25,26 +39,26 @@ export const userRepository = {
     }
 
     return mapAdminUserToOutput(user);
-  },
+  }
 
   async createUser(dto: User) {
     return userCollection.insertOne(dto);
-  },
+  }
 
   async deleteUserById(userId: string) {
     //Returns true if deleted, otherwise false
     const isDeleted = await userCollection.deleteOne({ _id: new ObjectId(userId) });
 
     return isDeleted.deletedCount === 1 && isDeleted.acknowledged;
-  },
+  }
 
   async userUniqueLogin(userLogin: string): Promise<WithId<User> | null> {
     return userCollection.findOne({ login: userLogin });
-  },
+  }
 
   async userUniqueEmail(userEmail: string): Promise<WithId<User> | null> {
     return userCollection.findOne({ email: userEmail });
-  },
+  }
 
   async userVerifyCode(userCode: string): Promise<UserOutputDto | null> {
     const user: WithId<User> | null = await userCollection.findOne({
@@ -56,7 +70,7 @@ export const userRepository = {
     }
 
     return mapUserToOutput(user);
-  },
+  }
 
   async userSwitchEmailIsConfirmed(userId: string) {
     const switchedUser = await userCollection.updateOne(
@@ -65,7 +79,7 @@ export const userRepository = {
     );
 
     return switchedUser.acknowledged;
-  },
+  }
 
   async userChangeConfirmedCode(userEmail: string, newCode: string) {
     const switchedUser = await userCollection.updateOne(
@@ -74,7 +88,16 @@ export const userRepository = {
     );
 
     return switchedUser.acknowledged;
-  },
+  }
+
+  async updateUserPasswordByCode(recoveryCode: string, passwordHash: string) {
+    const updatedUser = await userCollection.updateOne(
+      { 'emailConfirmation.confirmationCode': recoveryCode },
+      { $set: { password: passwordHash } }
+    );
+
+    return updatedUser.modifiedCount ? true : false;
+  }
 
   async checkUserCredentials(loginOrEmail: string): Promise<UserCredentials | null> {
     const user: WithId<User> | null = await userCollection.findOne({
@@ -89,5 +112,5 @@ export const userRepository = {
       id: user._id.toString(),
       hashPassword: user.password,
     };
-  },
-};
+  }
+}

@@ -1,11 +1,8 @@
 import { Router } from 'express';
+import { container } from '../../../composition-root';
+import { PostController } from './post.controller';
 import { idParamValidator } from '../../../core/middlewares/validation/id-param.validator';
-import { getPostListHandler } from './handlers/get-posts-list.handler';
 import { SuperAdminGuard } from '../../../auth/routers/middleware/super-admin.guard-middleware';
-import { getPostHandler } from './handlers/get-post.handler';
-import { createPostHandler } from './handlers/create-post.handler';
-import { updatePostHandler } from './handlers/update-post.handler';
-import { deletePostHandler } from './handlers/delete-post.handler';
 import { paginationSortingValidator } from '../../../core/middlewares/validation/pagination.sorting.validator';
 import { PostSortField } from '../types/post-sort-fields';
 import { postCreateValidator } from '../validators/post-create.validator';
@@ -13,27 +10,27 @@ import { postUpdateValidator } from '../validators/post-update.validator';
 import { inputValidationResultMiddleware } from '../../../core/middlewares/validation/input-validation-result';
 import { createCommentValidator } from '../validators/postId.validator';
 import { JwtAuthorizations } from '../../../auth/routers/middleware/jwt-authorizations.guard-middleware';
-import { createPostCommentHandler } from './handlers/create-post-comment.handler';
 import { getAllPostCommentsValidator } from '../validators/post-getAll.sorting.validation';
-import { getAllPostCommentHandler } from './handlers/getAll-post-comment.handler';
 
 export const postsRouter = Router({});
+
+const postController = container.get<PostController>(PostController);
 
 postsRouter
   .get(
     '',
     paginationSortingValidator(PostSortField),
     inputValidationResultMiddleware,
-    getPostListHandler
+    postController.getPostList.bind(postController)
   )
 
-  .get('/:id', idParamValidator, inputValidationResultMiddleware, getPostHandler)
+  .get('/:id', idParamValidator, inputValidationResultMiddleware, postController.getPost.bind(postController))
   .post(
     '',
     SuperAdminGuard,
     postCreateValidator,
     inputValidationResultMiddleware,
-    createPostHandler
+    postController.createPost.bind(postController)
   )
   .put(
     '/:id',
@@ -41,14 +38,14 @@ postsRouter
     idParamValidator,
     postUpdateValidator,
     inputValidationResultMiddleware,
-    updatePostHandler
+    postController.updatePost.bind(postController)
   )
   .delete(
     '/:id',
     SuperAdminGuard,
     idParamValidator,
     inputValidationResultMiddleware,
-    deletePostHandler
+    postController.deletePost.bind(postController)
   )
 
   .post(
@@ -56,12 +53,12 @@ postsRouter
     JwtAuthorizations,
     createCommentValidator,
     inputValidationResultMiddleware,
-    createPostCommentHandler
+    postController.createPostComment.bind(postController)
   )
 
   .get(
     '/:postId/comments',
     getAllPostCommentsValidator,
     inputValidationResultMiddleware,
-    getAllPostCommentHandler
+    postController.getAllPostComments.bind(postController)
   );
