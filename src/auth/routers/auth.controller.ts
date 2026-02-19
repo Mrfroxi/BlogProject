@@ -154,4 +154,38 @@ export class AuthController {
 
     return res.sendStatus(HttpStatuses.NoContent);
   }
+
+  async passwordRecovery(req: Request, res: Response) {
+    const email = req.body.email;
+
+    const findUserCode: ResultType<{ code: string; email: string } | null> =
+      await this.authService.passwordRecovery(email);
+
+    if (findUserCode.status === ResultStatus.Success && findUserCode.data) {
+      nodemailerService.sendEmail(
+        findUserCode.data.email,
+        findUserCode.data.code,
+        emailExamples.passwordRecoveryEmail
+      );
+    }
+
+    return res.sendStatus(HttpStatuses.NoContent);
+  }
+
+  async newPassword(req: Request, res: Response) {
+    const { newPassword, recoveryCode } = req.body;
+
+    const result: ResultType<boolean | null> = await this.authService.newPassword(
+      newPassword,
+      recoveryCode
+    );
+
+    if (result.status !== ResultStatus.Success) {
+      return res.status(HttpStatuses.BadRequest).send({
+        errorsMessages: [...result.extensions],
+      });
+    }
+
+    return res.sendStatus(HttpStatuses.NoContent);
+  }
 }

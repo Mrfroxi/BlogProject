@@ -166,4 +166,35 @@ export class AuthService {
       extensions: [{ field: '', message: '' }],
     };
   }
+
+  async passwordRecovery(
+    email: string
+  ): Promise<ResultType<{ code: string; email: string } | null>> {
+    const findUserByEmail: ResultType<UserOutputDto | null> =
+      await this.userService.findUserByEmail(email);
+
+    if (findUserByEmail.status === ResultStatus.Success) {
+      return {
+        status: ResultStatus.Success,
+        data: {
+          code: findUserByEmail.data!.emailConfirmation.confirmationCode,
+          email,
+        },
+        extensions: [{ field: ' ', message: ' ' }],
+      };
+    }
+
+    return {
+      status: ResultStatus.NotFound,
+      data: null,
+      extensions: [{ field: 'findUserByEmail', message: 'user not found' }],
+    };
+  }
+
+  async newPassword(
+    newPassword: string,
+    recoveryCode: string
+  ): Promise<ResultType<boolean | null>> {
+    return await this.userService.updatePasswordByCode(recoveryCode, newPassword);
+  }
 }

@@ -9,7 +9,7 @@ import { ResultStatus } from '../../../core/object-result/resultCode';
 import { ResultType } from '../../../core/object-result/result.type';
 import { add } from 'date-fns';
 import { mapUserToOutput } from '../repositories/mappers/map-user-to-output';
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export class UserService {
@@ -240,7 +240,10 @@ export class UserService {
   async changeConfirmationCode(email: string) {
     const newConfirmedCode = crypto.randomUUID();
 
-    const changedConfirmationCode = this.userRepository.userChangeConfirmedCode(email, newConfirmedCode);
+    const changedConfirmationCode = this.userRepository.userChangeConfirmedCode(
+      email,
+      newConfirmedCode
+    );
 
     if (!changedConfirmationCode) {
       return {
@@ -254,6 +257,39 @@ export class UserService {
     return {
       status: ResultStatus.Success,
       data: newConfirmedCode,
+      extensions: [{ field: '', message: '' }],
+    };
+  }
+
+  async updatePasswordByCode(
+    recoveryCode: string,
+    newPassword: string
+  ): Promise<ResultType<boolean | null>> {
+    const user = await this.userRepository.findUserByEmailCode(recoveryCode);
+
+    if (!user) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        extensions: [{ field: 'recoveryCode', message: 'recoveryCode is incorrect' }],
+      };
+    }
+
+    const passwordHash = await this.bcryptService.userPasswordBcrypt(newPassword);
+
+    const updated = await this.userRepository.updateUserPasswordByCode(recoveryCode, passwordHash);
+
+    if (!updated) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        extensions: [{ field: 'updatePassword', message: 'Failed to update password' }],
+      };
+    }
+
+    return {
+      status: ResultStatus.Success,
+      data: true,
       extensions: [{ field: '', message: '' }],
     };
   }

@@ -19,6 +19,18 @@ export class UserRepository {
     return mapUserToOutput(user);
   }
 
+  async findUserByEmailCode(code: string): Promise<UserOutputDto | null> {
+    const user: WithId<User> | null = await userCollection.findOne({
+      'emailConfirmation.confirmationCode': code,
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return mapUserToOutput(user);
+  }
+
   async findAdminUserById(id: string): Promise<AdminUserOutputDto | null> {
     const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
 
@@ -76,6 +88,15 @@ export class UserRepository {
     );
 
     return switchedUser.acknowledged;
+  }
+
+  async updateUserPasswordByCode(recoveryCode: string, passwordHash: string) {
+    const updatedUser = await userCollection.updateOne(
+      { 'emailConfirmation.confirmationCode': recoveryCode },
+      { $set: { password: passwordHash } }
+    );
+
+    return updatedUser.modifiedCount ? true : false;
   }
 
   async checkUserCredentials(loginOrEmail: string): Promise<UserCredentials | null> {

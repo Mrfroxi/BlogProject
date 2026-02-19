@@ -9,6 +9,8 @@ import { rateLimitMiddleware } from '../../entities/rateLimit/middleware/rateLim
 import { refreshTokenValidator } from '../validators/refreshToken.validator';
 import { container } from '../../composition-root';
 import { JwtAuthorizations } from './middleware/jwt-authorizations.guard-middleware';
+import { emailValidator } from '../validators/recovery-password.validator';
+import { newPasswordValidator } from '../validators/new-password.validator';
 
 export const authRoute = Router({});
 
@@ -45,4 +47,19 @@ authRoute
     authController.registrationEmailResending.bind(authController)
   )
   .post('/refresh-token', refreshTokenValidator, authController.refreshToken.bind(authController))
-  .post('/logout', refreshTokenValidator, authController.logout.bind(authController));
+  .post('/logout', refreshTokenValidator, authController.logout.bind(authController))
+  .post(
+    '/password-recovery',
+    rateLimitMiddleware,
+    emailValidator,
+    inputValidationResultMiddleware,
+    authController.passwordRecovery.bind(authController)
+  )
+
+  .post(
+    '/new-password',
+    rateLimitMiddleware,
+    newPasswordValidator,
+    inputValidationResultMiddleware,
+    authController.newPassword.bind(authController)
+  );
