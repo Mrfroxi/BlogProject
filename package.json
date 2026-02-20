@@ -17,6 +17,7 @@
     "inversify": "^7.11.0",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.0.0",
+    "mongoose": "^9.2.3",
     "nanoid": "^5.1.6",
     "nodemailer": "^7.0.12",
     "reflect-metadata": "^0.2.2",
