@@ -1,5 +1,4 @@
 import { CreateUserDto } from '../dto/create-user.dto';
-import { InsertOneResult, WithId } from 'mongodb';
 import { User } from '../types/user';
 import { validateUserUniqueness } from './helpers/user-validate-uniqueness.helper';
 import { UserRepository } from '../repositories/user.repository';
@@ -10,6 +9,7 @@ import { ResultType } from '../../../core/object-result/result.type';
 import { add } from 'date-fns';
 import { mapUserToOutput } from '../repositories/mappers/map-user-to-output';
 import { inject, injectable } from 'inversify';
+import { IUser } from '../../../db/schemas/user.schema';
 
 @injectable()
 export class UserService {
@@ -37,10 +37,22 @@ export class UserService {
     };
   }
 
-  async createAdminUser(dto: CreateUserDto) {
+  async createAdminUser(dto: CreateUserDto): Promise<ResultType<string | null>> {
     const { email, login, password } = dto;
 
-    await validateUserUniqueness(email, login, this.userRepository);
+    const isUser: ResultType<boolean | null> = await validateUserUniqueness(
+      email,
+      login,
+      this.userRepository
+    );
+
+    if (!isUser.data) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        extensions: [{ field: 'notUnique', message: 'notUnique' }],
+      };
+    }
 
     const hashPassword = await this.bcryptService.userPasswordBcrypt(password);
 
@@ -50,18 +62,21 @@ export class UserService {
       createdAt: `${new Date().toISOString()}`,
       password: hashPassword,
       emailConfirmation: {
-        confirmationCode: '',
+        confirmationCode: 'admin',
         expirationDate: null,
         isConfirmed: true,
       },
     };
 
-    const createdUser: InsertOneResult<User> = await this.userRepository.createUser(validAdminUser);
+    const createdUser: IUser = await this.userRepository.createUser(validAdminUser);
 
-    return createdUser.insertedId.toString();
+    return {
+      status: ResultStatus.Success,
+      data: createdUser._id.toString(),
+      extensions: [{ field: ' ', message: ' ' }],
+    };
   }
 
-  //using this
   async deleteUser(userId: string): Promise<ResultType<boolean | null>> {
     const user = await this.findUserById(userId);
 
@@ -93,7 +108,7 @@ export class UserService {
   }
 
   async findUserByEmail(email: string): Promise<ResultType<UserOutputDto | null>> {
-    const validEmail: WithId<User> | null = await this.userRepository.userUniqueEmail(email);
+    const validEmail: IUser | null = await this.userRepository.userUniqueEmail(email);
 
     if (!validEmail) {
       return {
@@ -112,7 +127,7 @@ export class UserService {
   }
 
   async findUserByLogin(login: string) {
-    const validLogin: WithId<User> | null = await this.userRepository.userUniqueLogin(login);
+    const validLogin: IUser | null = await this.userRepository.userUniqueLogin(login);
 
     if (!validLogin) {
       return {
@@ -125,12 +140,12 @@ export class UserService {
 
     return {
       status: ResultStatus.Success,
-      data: validLogin,
+      data: mapUserToOutput(validLogin),
       extensions: [{ field: ' ', message: ' ' }],
     };
   }
 
-  async createUser(dto: CreateUserDto) {
+  async createUser(dto: CreateUserDto): Promise<ResultType<User | null>> {
     const { email, login, password } = dto;
 
     const validEmail = await this.findUserByEmail(email);
@@ -170,16 +185,7 @@ export class UserService {
       },
     };
 
-    const createdUser: InsertOneResult<User> = await this.userRepository.createUser(validUser);
-
-    if (!createdUser.acknowledged) {
-      return {
-        status: ResultStatus.BadRequest,
-        data: null,
-        extensions: [{ field: 'db', message: 'doesnt inset' }],
-        errorMessage: 'doesnt inset user entity ',
-      };
-    }
+    await this.userRepository.createUser(validUser);
 
     return {
       status: ResultStatus.Success,
@@ -240,7 +246,7 @@ export class UserService {
   async changeConfirmationCode(email: string) {
     const newConfirmedCode = crypto.randomUUID();
 
-    const changedConfirmationCode = this.userRepository.userChangeConfirmedCode(
+    const changedConfirmationCode = await this.userRepository.userChangeConfirmedCode(
       email,
       newConfirmedCode
     );

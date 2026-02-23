@@ -1,24 +1,36 @@
-import { WithId } from 'mongodb';
-import { User } from '../../types/user';
-import { UniqueValidateError } from '../../../../core/errors/unique-validate-error';
+import { IUser } from '../../../../db/schemas/user.schema';
 import { UserRepository } from '../../repositories/user.repository';
+import { ResultStatus } from '../../../../core/object-result/resultCode';
+import { ResultType } from '../../../../core/object-result/result.type';
 
 export const validateUserUniqueness = async (
-  email: string, 
-  login: string, 
+  email: string,
+  login: string,
   userRepository: UserRepository
-): Promise<void> => {
-  const uniqueEmail: WithId<User> | null = await userRepository.userUniqueEmail(email);
+): Promise<ResultType<boolean | null>> => {
+  const uniqueEmail: IUser | null = await userRepository.userUniqueEmail(email);
 
   if (uniqueEmail) {
-    throw new UniqueValidateError('email');
+    return {
+      status: ResultStatus.BadRequest,
+      data: null,
+      extensions: [{ field: 'findEmail', message: 'findEmail' }],
+    };
   }
 
-  const uniqueLogin: WithId<User> | null = await userRepository.userUniqueLogin(login);
+  const uniqueLogin: IUser | null = await userRepository.userUniqueLogin(login);
 
   if (uniqueLogin) {
-    throw new UniqueValidateError('login');
+    return {
+      status: ResultStatus.BadRequest,
+      data: null,
+      extensions: [{ field: 'findLogin', message: 'findLogin' }],
+    };
   }
 
-  return;
+  return {
+    status: ResultStatus.Success,
+    data: true,
+    extensions: [{ field: '', message: ' ' }],
+  };
 };
