@@ -1,8 +1,7 @@
-import { WithId } from 'mongodb';
-import { Post } from '../../types/post';
 import { PostOutput } from '../../dto/post.output';
+import { IPost } from '../../../../db/schemas/post.schema';
 
-export function mapPostToOutput(post: WithId<Post>): PostOutput {
+export function mapPostToOutput(post: IPost): PostOutput {
   return {
     id: post._id.toString(),
     title: post.title,

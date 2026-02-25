@@ -1,12 +1,10 @@
 import { postCreateDto } from '../dto/post-create.input';
 import { Post } from '../types/post';
 import { postUpdateDto } from '../dto/post-update.input';
-import { WithId } from 'mongodb';
-import { Blog } from '../../blogs/types/blog';
 import { PostOutput } from '../dto/post.output';
 import { ResultStatus } from '../../../core/object-result/resultCode';
 import { ResultType } from '../../../core/object-result/result.type';
-import { commentCollection } from '../../../db/mongo.db';
+import { CommentModel } from '../../../db/schemas/comment.schema';
 import { PostsRepository } from '../repositories/posts.repository';
 import { BlogService } from '../../blogs/services/blog.service';
 import { injectable, inject } from 'inversify';
@@ -42,7 +40,7 @@ export class PostService {
   }
 
   async createPost(dto: postCreateDto) {
-    const blog: WithId<Blog> = await this.blogService.findById(dto.blogId);
+    const blog = await this.blogService.findById(dto.blogId);
 
     const createPostDto: Post = {
       blogId: dto.blogId,
@@ -71,14 +69,12 @@ export class PostService {
 
     const filter = { postId };
 
-    const comments = await commentCollection
-      .find(filter)
+    const comments = await CommentModel.find(filter)
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip(skip)
-      .limit(pageSize)
-      .toArray();
+      .limit(pageSize);
 
-    const totalCount = await commentCollection.countDocuments(filter);
+    const totalCount = await CommentModel.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     const mappedItems = comments.map((c) => ({
