@@ -1,33 +1,30 @@
 import { Comment } from '../types/comment';
-import { commentCollection } from '../../../db/mongo.db';
-import { ObjectId, WithId } from 'mongodb';
+import { CommentModel, IComment } from '../../../db/schemas/comment.schema';
 import { CommentDeleteInputDto } from '../dto/comment-delete-input.dto';
 import { injectable } from 'inversify';
 
 @injectable()
 export class CommentRepository {
   async findById(commentId: string) {
-    return commentCollection.findOne({ _id: new ObjectId(commentId) });
+    return CommentModel.findById(commentId);
   }
 
   async createComment(commentDto: Comment) {
-    const createdComment = await commentCollection.insertOne(commentDto);
-
-    return { ...commentDto, _id: createdComment.insertedId };
+    return CommentModel.create(commentDto);
   }
 
   async deleteComment(commentId: string): Promise<boolean> {
-    const isDelete = await commentCollection.deleteOne({
-      _id: new ObjectId(commentId),
+    const isDelete = await CommentModel.deleteOne({
+      _id: commentId,
     });
 
     return isDelete.deletedCount === 1;
   }
 
   async isCommentOwner(dto: CommentDeleteInputDto): Promise<boolean> {
-    const comment = await commentCollection.findOne({
-      _id: new ObjectId(dto.commentId),
-      ['commentatorInfo.userId']: dto.userId,
+    const comment = await CommentModel.findOne({
+      _id: dto.commentId,
+      'commentatorInfo.userId': dto.userId,
     });
 
     return !!comment;
@@ -36,11 +33,11 @@ export class CommentRepository {
   async updateCommentContent(
     commentId: string,
     content: string
-  ): Promise<WithId<Comment> | null> {
-    return commentCollection.findOneAndUpdate(
-      { _id: new ObjectId(commentId) },
-      { $set: { content, updatedAt: new Date().toISOString() } },
-      { returnDocument: 'after' }
+  ): Promise<IComment | null> {
+    await CommentModel.updateOne(
+      { _id: commentId },
+      { $set: { content } }
     );
+    return CommentModel.findById(commentId);
   }
 }

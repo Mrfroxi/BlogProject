@@ -5,12 +5,12 @@ import { PostOutput } from '../../posts/dto/post.output';
 import { PostService } from '../../posts/services/post.service';
 import { Comment } from '../types/comment';
 import { ResultStatus } from '../../../core/object-result/resultCode';
-import { WithId } from 'mongodb';
 import { mapCommentToOutput } from '../repositories/mappers/map-comment-to-Output';
 import { CommentOutputDto } from '../dto/comment-outPut.dto';
 import { CommentDeleteInputDto } from '../dto/comment-delete-input.dto';
 import { CommentRepository } from '../repositories/commentRepository';
 import { UserService } from '../../user/services/user.service';
+import { IComment } from '../../../db/schemas/comment.schema';
 import { injectable, inject } from 'inversify';
 
 @injectable()
@@ -75,7 +75,7 @@ export class CommentService {
       createdAt: `${new Date().toISOString()}`,
     };
 
-    const commented: WithId<Comment> = await this.commentRepository.createComment(commentDto);
+    const commented: IComment = await this.commentRepository.createComment(commentDto);
 
     const outPutData: CommentOutputDto = await mapCommentToOutput(commented);
 
