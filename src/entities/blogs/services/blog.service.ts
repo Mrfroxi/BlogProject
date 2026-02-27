@@ -1,8 +1,8 @@
-import { WithId } from 'mongodb';
 import { Blog } from '../types/blog';
 import { BlogCreateInput } from '../dto/blog-create.input';
 import { BlogUpdateDto } from '../dto/blog-update';
 import { BlogsRepository } from '../repositories/blogs.repository';
+import { IBlog } from '../../../db/schemas/blog.schema';
 import { injectable, inject } from 'inversify';
 
 @injectable()
@@ -15,7 +15,7 @@ export class BlogService {
     return this.blogsRepository.findAll(querySetup);
   }
 
-  async findById(blogId: string): Promise<WithId<Blog>> {
+  async findById(blogId: string): Promise<IBlog> {
     return this.blogsRepository.findById(blogId);
   }
 

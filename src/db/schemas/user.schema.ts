@@ -35,6 +35,4 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-userSchema.index({ 'emailConfirmation.confirmationCode': 1 });
-
 export const UserModel = mongoose.model<IUser>('User', userSchema);

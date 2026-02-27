@@ -18,14 +18,21 @@ export function errorHandler(error: unknown, res: Response) {
     const httpStatus = HttpStatuses.BadRequest;
 
     res.status(httpStatus).send(createErrorMessage(error, error.field));
+    return;
   }
 
   if (error instanceof UnauthorizedError) {
     const httpStatus = HttpStatuses.Unauthorized;
 
     res.sendStatus(httpStatus);
+    return;
   }
 
-  res.status(HttpStatuses.InternalServerError);
+  // Логирование ошибки для отладки
+  console.error('Unhandled error:', error);
+
+  res.status(HttpStatuses.InternalServerError).send({
+    errorsMessages: [{ message: 'Internal Server Error', field: 'unknown' }],
+  });
   return;
 }

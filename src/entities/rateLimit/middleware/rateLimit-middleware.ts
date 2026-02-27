@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { rateLimitsCollection } from '../../../db/mongo.db';
 import { SETTINGS } from '../../../core/setting/settings';
 import { normalizeIp } from '../../../core/helper/normalizeIp';
 import { HttpStatuses } from '../../../core/types/http-statuses';
+import { RateLimitModel } from '../../../db/mongo.db';
 
 const WINDOW_MS = Number(SETTINGS.WINDOW_TIME_DELAY);
 const LIMIT = Number(SETTINGS.LIMIT_REQUESTS);
@@ -20,7 +20,7 @@ export async function rateLimitMiddleware(req: Request, res: Response, next: Nex
     const now = new Date();
     const fromDate = new Date(now.getTime() - WINDOW_MS);
 
-    const requestsCount = await rateLimitsCollection.countDocuments({
+    const requestsCount = await RateLimitModel.countDocuments({
       ip: ip,
       url: url,
       date: { $gte: fromDate },
@@ -30,7 +30,7 @@ export async function rateLimitMiddleware(req: Request, res: Response, next: Nex
       return res.sendStatus(HttpStatuses.TooManyRequests);
     }
 
-    await rateLimitsCollection.insertOne({
+    await RateLimitModel.insertOne({
       ip: ip,
       url: url,
       date: now,

@@ -15,6 +15,8 @@ export async function runDB(url: string): Promise<void> {
 
     console.log('✅ Connected to the database');
     console.log('✅ url:', url);
+
+    console.log('✅ Indexes created for all models');
   } catch (e) {
     throw new Error(`❌ Database is not connected: ${e}`);
   }
