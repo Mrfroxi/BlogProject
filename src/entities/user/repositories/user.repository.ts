@@ -1,5 +1,4 @@
-import { userCollection } from '../../../db/mongo.db';
-import { ObjectId, WithId } from 'mongodb';
+import { UserModel, IUser } from '../../../db/schemas/user.schema';
 import { User } from '../types/user';
 import { mapUserToOutput } from './mappers/map-user-to-output';
 import { AdminUserOutputDto, UserOutputDto } from '../dto/user-output.dto';
@@ -10,7 +9,7 @@ import { injectable } from 'inversify';
 @injectable()
 export class UserRepository {
   async findUserById(id: string): Promise<UserOutputDto | null> {
-    const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
+    const user: IUser | null = await UserModel.findById(id);
 
     if (!user) {
       return null;
@@ -20,7 +19,7 @@ export class UserRepository {
   }
 
   async findUserByEmailCode(code: string): Promise<UserOutputDto | null> {
-    const user: WithId<User> | null = await userCollection.findOne({
+    const user: IUser | null = await UserModel.findOne({
       'emailConfirmation.confirmationCode': code,
     });
 
@@ -32,7 +31,7 @@ export class UserRepository {
   }
 
   async findAdminUserById(id: string): Promise<AdminUserOutputDto | null> {
-    const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
+    const user: IUser | null = await UserModel.findById(id);
 
     if (!user) {
       return null;
@@ -41,27 +40,25 @@ export class UserRepository {
     return mapAdminUserToOutput(user);
   }
 
-  async createUser(dto: User) {
-    return userCollection.insertOne(dto);
+  async createUser(dto: User): Promise<IUser> {
+    return await UserModel.create(dto);
   }
 
-  async deleteUserById(userId: string) {
-    //Returns true if deleted, otherwise false
-    const isDeleted = await userCollection.deleteOne({ _id: new ObjectId(userId) });
-
-    return isDeleted.deletedCount === 1 && isDeleted.acknowledged;
+  async deleteUserById(userId: string): Promise<boolean> {
+    const result = await UserModel.deleteOne({ _id: userId });
+    return result.deletedCount === 1;
   }
 
-  async userUniqueLogin(userLogin: string): Promise<WithId<User> | null> {
-    return userCollection.findOne({ login: userLogin });
+  async userUniqueLogin(userLogin: string): Promise<IUser | null> {
+    return UserModel.findOne({ login: userLogin });
   }
 
-  async userUniqueEmail(userEmail: string): Promise<WithId<User> | null> {
-    return userCollection.findOne({ email: userEmail });
+  async userUniqueEmail(userEmail: string): Promise<IUser | null> {
+    return UserModel.findOne({ email: userEmail });
   }
 
   async userVerifyCode(userCode: string): Promise<UserOutputDto | null> {
-    const user: WithId<User> | null = await userCollection.findOne({
+    const user: IUser | null = await UserModel.findOne({
       'emailConfirmation.confirmationCode': userCode,
     });
 
@@ -72,35 +69,32 @@ export class UserRepository {
     return mapUserToOutput(user);
   }
 
-  async userSwitchEmailIsConfirmed(userId: string) {
-    const switchedUser = await userCollection.updateOne(
-      { _id: new ObjectId(userId) },
+  async userSwitchEmailIsConfirmed(userId: string): Promise<boolean> {
+    const result = await UserModel.updateOne(
+      { _id: userId },
       { $set: { 'emailConfirmation.isConfirmed': true } }
     );
-
-    return switchedUser.acknowledged;
+    return result.modifiedCount === 1;
   }
 
-  async userChangeConfirmedCode(userEmail: string, newCode: string) {
-    const switchedUser = await userCollection.updateOne(
+  async userChangeConfirmedCode(userEmail: string, newCode: string): Promise<boolean> {
+    const result = await UserModel.updateOne(
       { email: userEmail },
       { $set: { 'emailConfirmation.confirmationCode': newCode } }
     );
-
-    return switchedUser.acknowledged;
+    return result.modifiedCount === 1;
   }
 
-  async updateUserPasswordByCode(recoveryCode: string, passwordHash: string) {
-    const updatedUser = await userCollection.updateOne(
+  async updateUserPasswordByCode(recoveryCode: string, passwordHash: string): Promise<boolean> {
+    const result = await UserModel.updateOne(
       { 'emailConfirmation.confirmationCode': recoveryCode },
       { $set: { password: passwordHash } }
     );
-
-    return updatedUser.modifiedCount ? true : false;
+    return result.modifiedCount === 1;
   }
 
   async checkUserCredentials(loginOrEmail: string): Promise<UserCredentials | null> {
-    const user: WithId<User> | null = await userCollection.findOne({
+    const user: IUser | null = await UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
 

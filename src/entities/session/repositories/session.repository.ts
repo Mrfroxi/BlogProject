@@ -1,19 +1,16 @@
-import { sessionsCollection } from '../../../db/mongo.db';
 import { Session } from '../types/session';
-import { InsertOneResult } from 'mongodb';
 import { ISession } from '../dto/verifyRefToken.dto';
 import { jwtService } from '../../../core/services/jwt.service';
 import { SessionTokens } from '../dto/setSession.output.dto';
+import { SessionModel } from '../../../db/schemas/session.schema';
 
 export const sessionRepository = {
   createSession: async (payload: Session) => {
-    const result: InsertOneResult<Session> = await sessionsCollection.insertOne(payload);
-
-    return result.acknowledged;
+    await SessionModel.create(payload);
+    return true;
   },
 
   updateSession: async (payload: ISession): Promise<SessionTokens | null> => {
-    //ref
     const newRefToken: string = await jwtService.generateRefreshUserToken({
       id: payload.id,
       deviceId: payload.deviceId,
@@ -21,17 +18,17 @@ export const sessionRepository = {
 
     const { iat, exp } = await jwtService.decodeToken(newRefToken);
 
-    const result = await sessionsCollection.updateOne(
+    const result = await SessionModel.updateOne(
       { userId: payload.id, deviceId: payload.deviceId, iat: payload.iat },
       {
         $set: { iat, exp },
       }
     );
 
-    if (!result.acknowledged) {
+    if (result.matchedCount === 0) {
       return null;
     }
-    //ref
+    // ref
     const newAuthToken: string = await jwtService.generateAuthUserToken({
       id: payload.id,
       deviceId: payload.deviceId,
@@ -44,26 +41,26 @@ export const sessionRepository = {
   },
 
   logOut: async (payload: ISession) => {
-    const result = await sessionsCollection.deleteOne({
+    const result = await SessionModel.deleteOne({
       userId: payload.id,
       deviceId: payload.deviceId,
       iat: payload.iat,
     });
 
-    return result.acknowledged;
+    return result.deletedCount === 1;
   },
 
   deleteUserSessions: async (userId: string, deviceId: string) => {
-    return sessionsCollection.deleteMany({ userId, deviceId: { $ne: deviceId } });
+    return SessionModel.deleteMany({ userId, deviceId: { $ne: deviceId } });
   },
 
   deleteUserSessionById: async (deviceId: string, userId: string) => {
-    const result = await sessionsCollection.deleteOne({ deviceId: deviceId, userId: userId });
+    const result = await SessionModel.deleteOne({ deviceId, userId });
 
-    return result.acknowledged;
+    return result.deletedCount === 1;
   },
 
   findSessionByDeviceId: async (deviceId: string) => {
-    return sessionsCollection.findOne({ deviceId });
+    return SessionModel.findOne({ deviceId });
   },
 };

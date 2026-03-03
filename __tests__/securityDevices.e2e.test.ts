@@ -1,6 +1,6 @@
 import { createTestApp } from './utils/testApp';
 import request from 'supertest';
-import { userCollection } from '../src/db/mongo.db';
+import { UserModel } from '../src/db/schemas/user.schema';
 
 describe('Security Device endpoint', () => {
   const app = createTestApp();
@@ -22,7 +22,7 @@ describe('Security Device endpoint', () => {
     it('200 -> should return all active sessions for current user', async () => {
       await request(app).post('/auth/registration').send(newUser).expect(204);
 
-      await userCollection.updateOne(
+      await UserModel.updateOne(
         { login: newUser.login },
         { $set: { 'emailConfirmation.isConfirmed': true } }
       );
@@ -93,7 +93,7 @@ describe('Security Device endpoint', () => {
       // Register and activate user
       await request(app).post('/auth/registration').send(newUser).expect(204);
 
-      await userCollection.updateOne(
+      await UserModel.updateOne(
         { login: newUser.login },
         { $set: { 'emailConfirmation.isConfirmed': true } }
       );
@@ -140,7 +140,7 @@ describe('Security Device endpoint', () => {
     it('204 -> should delete specific device and return 204', async () => {
       // Create and activate user
       await request(app).post('/auth/registration').send(newUser).expect(204);
-      await userCollection.updateOne(
+      await UserModel.updateOne(
         { login: newUser.login },
         { $set: { 'emailConfirmation.isConfirmed': true } }
       );
@@ -173,7 +173,7 @@ describe('Security Device endpoint', () => {
 
       await request(app).post('/auth/registration').send(user1);
       await request(app).post('/auth/registration').send(user2);
-      await userCollection.updateMany({}, { $set: { 'emailConfirmation.isConfirmed': true } });
+      await UserModel.updateMany({}, { $set: { 'emailConfirmation.isConfirmed': true } });
 
       //  Login User 1 and get his deviceId
       const loginRes1 = await request(app)
@@ -200,7 +200,7 @@ describe('Security Device endpoint', () => {
     it('404 -> should return 404 if deviceId does not exist', async () => {
       //  Ensure user exists and is confirmed so login succeeds
       await request(app).post('/auth/registration').send(newUser);
-      await userCollection.updateOne(
+      await UserModel.updateOne(
         { login: newUser.login },
         { $set: { 'emailConfirmation.isConfirmed': true } }
       );

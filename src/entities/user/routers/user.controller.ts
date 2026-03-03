@@ -39,16 +39,20 @@ export class UserController {
   async createUser(req: Request, res: Response) {
     const reqBody = req.body;
 
-    try {
-      const createdUserId: string = await this.userService.createAdminUser(reqBody);
+    const createdUserId: ResultType<string | null> =
+      await this.userService.createAdminUser(reqBody);
 
-      const user: AdminUserOutputDto | null =
-        await this.userRepository.findAdminUserById(createdUserId);
-
-      res.status(HttpStatuses.Created).send(user);
-    } catch (e: unknown) {
-      errorHandler(e, res);
+    if (createdUserId.status !== ResultStatus.Success) {
+      return res
+        .status(resultCodeToHttpException(createdUserId.status))
+        .send(createdUserId.extensions);
     }
+
+    const user: AdminUserOutputDto | null = await this.userRepository.findAdminUserById(
+      createdUserId.data!
+    );
+
+    res.status(HttpStatuses.Created).send(user);
   }
 
   async deleteUser(req: Request, res: Response) {

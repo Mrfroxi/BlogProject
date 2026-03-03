@@ -5,22 +5,26 @@ import { PostOutput } from '../../posts/dto/post.output';
 import { PostService } from '../../posts/services/post.service';
 import { Comment } from '../types/comment';
 import { ResultStatus } from '../../../core/object-result/resultCode';
-import { WithId } from 'mongodb';
 import { mapCommentToOutput } from '../repositories/mappers/map-comment-to-Output';
 import { CommentOutputDto } from '../dto/comment-outPut.dto';
 import { CommentDeleteInputDto } from '../dto/comment-delete-input.dto';
 import { CommentRepository } from '../repositories/commentRepository';
 import { UserService } from '../../user/services/user.service';
+import { IComment } from '../../../db/schemas/comment.schema';
 import { injectable, inject } from 'inversify';
+import { LikeService } from '../../likes/services/like.service';
+import { LikeStatus } from '../../../db/schemas/likes.shema';
 
 @injectable()
 export class CommentService {
   constructor(
     @inject(CommentRepository) private commentRepository: CommentRepository,
     @inject(UserService) private userService: UserService,
-    @inject(PostService) private postService: PostService
+    @inject(PostService) private postService: PostService,
+    @inject(LikeService) private likeService: LikeService
   ) {}
-  async findById(commentId: string): Promise<ResultType<CommentOutputDto | null>> {
+
+  async findById(commentId: string, userId?: string): Promise<ResultType<CommentOutputDto | null>> {
     const comment = await this.commentRepository.findById(commentId);
 
     if (!comment) {
@@ -31,7 +35,15 @@ export class CommentService {
       };
     }
 
-    const outPutData: CommentOutputDto = await mapCommentToOutput(comment);
+    const { likesCount, dislikesCount } = await this.likeService.getLikesInfo(commentId);
+    const myStatus = userId ? await this.likeService.getMyStatus(commentId, userId) : LikeStatus.None;
+
+    const outPutData: CommentOutputDto = await mapCommentToOutput(comment, {
+      likesCount,
+      dislikesCount,
+      myStatus,
+    });
+
     return {
       status: ResultStatus.Success,
       data: outPutData,
@@ -75,7 +87,7 @@ export class CommentService {
       createdAt: `${new Date().toISOString()}`,
     };
 
-    const commented: WithId<Comment> = await this.commentRepository.createComment(commentDto);
+    const commented: IComment = await this.commentRepository.createComment(commentDto);
 
     const outPutData: CommentOutputDto = await mapCommentToOutput(commented);
 

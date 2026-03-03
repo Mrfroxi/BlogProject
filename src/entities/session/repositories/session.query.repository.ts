@@ -1,19 +1,19 @@
 import { Session } from '../types/session';
-import { sessionsCollection } from '../../../db/mongo.db';
 import { WithId } from 'mongodb';
 import { mapSessionsArray } from '../mappers/session.output.mapper';
 import { ISession } from '../dto/verifyRefToken.dto';
 import { mapRefreshTokenSession } from '../mappers/tokenPayload.mapper';
+import { SessionModel } from '../../../db/mongo.db';
 
 export const sessionQueryRepository = {
   getUserSessions: async (userId: string) => {
-    const result: WithId<Session>[] = await sessionsCollection.find({ userId }).toArray();
+    const result: WithId<Session>[] = await SessionModel.find({ userId });
 
     return mapSessionsArray(result);
   },
 
   findSessionByRefToken: async (payload: ISession) => {
-    const result = await sessionsCollection.findOne({
+    const result = await SessionModel.findOne({
       userId: payload.id,
       deviceId: payload.deviceId,
       iat: payload.iat,

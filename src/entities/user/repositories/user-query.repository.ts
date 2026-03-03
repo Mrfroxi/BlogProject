@@ -1,6 +1,4 @@
-import { ObjectId, WithId } from 'mongodb';
-import { userCollection } from '../../../db/mongo.db';
-import { User } from '../types/user';
+import { UserModel, IUser } from '../../../db/schemas/user.schema';
 import { DefaultValuesSortingDto } from '../dto/default-values-sorting.dto';
 import { mapUserListToOutput } from './mappers/map-user-list-to-output';
 import { UserOutputDto } from '../dto/user-output.dto';
@@ -30,21 +28,19 @@ export class UserQueryRepository {
     const skip = (pageNumber - 1) * pageSize;
     const sortDirMongo = sortDirection === 'asc' ? 1 : -1;
 
-    const userList = await userCollection
-      .find(filter)
+    const userList: IUser[] = await UserModel.find(filter)
       .sort({ [sortBy]: sortDirMongo })
       .skip(skip)
-      .limit(pageSize)
-      .toArray();
+      .limit(pageSize);
 
-    const totalCount: number = await userCollection.countDocuments(filter);
+    const totalCount: number = await UserModel.countDocuments(filter);
 
     const pagesCount: number = Math.ceil(totalCount / pageSize);
 
     const mappedUserList: UserOutputDto[] = mapUserListToOutput(userList);
 
     return {
-      pagesCount: pagesCount,
+      pagesCount,
       page: pageNumber,
       pageSize,
       totalCount,
@@ -53,7 +49,7 @@ export class UserQueryRepository {
   }
 
   async checkUserCredentials(loginOrEmail: string): Promise<UserCredentials | null> {
-    const user: WithId<User> | null = await userCollection.findOne({
+    const user: IUser | null = await UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
 
@@ -68,10 +64,9 @@ export class UserQueryRepository {
   }
 
   async AuthMeById(id: string) {
-    const user: WithId<User> | null = await userCollection.findOne({ _id: new ObjectId(id) });
+    const user: IUser | null = await UserModel.findById(id);
 
     if (!user) {
-      //ts
       return null;
     }
 

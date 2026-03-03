@@ -1,4 +1,5 @@
-import { userCollection } from '../../src/db/mongo.db';
+import { UserModel } from '../../src/db/schemas/user.schema';
+import { IUser } from '../../src/db/schemas/user.schema';
 
 export const takeCodeByCreateMockUser = async function () {
   const newUser = {
@@ -13,10 +14,10 @@ export const takeCodeByCreateMockUser = async function () {
     },
   };
 
-  const createdUser = await userCollection.insertOne(newUser);
+  const createdUser: IUser = await UserModel.create(newUser);
 
   return {
-    id: createdUser.insertedId.toString(),
+    id: createdUser._id.toString(),
     code: newUser.emailConfirmation.confirmationCode,
     email: newUser.email,
   };

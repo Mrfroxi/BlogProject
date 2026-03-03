@@ -1,10 +1,10 @@
 import request from 'supertest';
 import { createTestApp } from './utils/testApp';
-import { userCollection } from '../src/db/mongo.db';
 import { takeCodeByCreateMockUser } from './helpers/codeConfirmation.helper';
 import { container } from '../src/composition-root';
 import { UserRepository } from '../src/entities/user/repositories/user.repository';
 import { nodemailerService } from '../src/core/services/nodemailerService';
+import { UserModel } from '../src/db/mongo.db';
 
 describe('auth endpoint', () => {
   const app = createTestApp();
@@ -219,7 +219,7 @@ describe('auth endpoint', () => {
         .expect(204);
 
       //  Manually activate user in DB or via confirmation endpoint to allow login
-      await userCollection.updateOne(
+      await UserModel.updateOne(
         { login: newUser.login },
         { $set: { 'emailConfirmation.isConfirmed': true } }
       );
@@ -272,7 +272,7 @@ describe('auth endpoint', () => {
         .expect(204);
 
       //  Manually activate user in DB
-      await userCollection.updateOne(
+      await UserModel.updateOne(
         { login: newUser.login },
         { $set: { 'emailConfirmation.isConfirmed': true } }
       );
@@ -288,7 +288,7 @@ describe('auth endpoint', () => {
 
       const accessToken = loginRes.body.accessToken;
 
-      const user = await userCollection.findOne({ login: newUser.login });
+      const user = await UserModel.findOne({ login: newUser.login });
 
       const res = await request(app)
         .get(meEndpoint)
@@ -335,7 +335,7 @@ describe('auth endpoint', () => {
         .expect(204);
 
       // Manually activate user in DB
-      await userCollection.updateOne(
+      await UserModel.updateOne(
         { login: newUser.login },
         { $set: { 'emailConfirmation.isConfirmed': true } }
       );

@@ -13,10 +13,9 @@ import { ResultType } from '../../../core/object-result/result.type';
 import { PostOutput } from '../dto/post.output';
 import { ResultStatus } from '../../../core/object-result/resultCode';
 import { resultCodeToHttpException } from '../../../core/object-result/resultCodeToHttpException';
-import { WithId } from 'mongodb';
-import { Post } from '../types/post';
 import { mapPostToOutput } from './mappers/map-post-to-output';
 import { DefaultValuesSortingDto } from '../../user/dto/default-values-sorting.dto';
+import { IPost } from '../../../db/schemas/post.schema';
 
 @injectable()
 export class PostController {
@@ -64,7 +63,7 @@ export class PostController {
     const reqBody = req.body;
 
     try {
-      const newPost: WithId<Post> = await this.postService.createPost(reqBody);
+      const newPost: IPost = await this.postService.createPost(reqBody);
 
       res.status(HttpStatuses.Created).send(mapPostToOutput(newPost));
     } catch (e) {
@@ -125,7 +124,8 @@ export class PostController {
       return res.sendStatus(resultCodeToHttpException(isVerifyPostId.status));
     }
 
-    const validatedParams = await this.postService.findAllComments(matchSortingData);
+    const userId = req.userId ?? undefined;
+    const validatedParams = await this.postService.findAllComments(matchSortingData, userId);
 
     res.status(HttpStatuses.Ok).send(validatedParams);
   }

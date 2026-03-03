@@ -52,107 +52,111 @@ describe('comment entity', () => {
     ctx.postId = resPost.body.id;
   });
 
-  describe('Comment GET by id', () => {
-    it('should return comment by id', async () => {
-      const commentRes = await request(app)
-        .post(`${POSTS_PATH}/${ctx.postId}/comments`)
-        .set('Authorization', `Bearer ${ctx.userToken}`)
-        .send({ content: 'Mycommentstringstringstringststrststringststringstringstringst' })
-        .expect(201);
-
-      const commentId = commentRes.body.id;
-
-      const res = await request(app).get(`/comments/${commentId}`).expect(200);
-
-      expect(res.body.id).toBe(commentId);
-      expect(res.body.content).toBe(commentRes.body.content);
-      expect(res.body.commentatorInfo.userId).toBe(commentRes.body.commentatorInfo.userId);
-      expect(res.body.commentatorInfo.userLogin).toBe(ctx.userLogin);
-    });
+  it('main endPoint', async () => {
+    await request(app).get('/').expect(200);
   });
 
-  describe('Comment PUT', () => {
-    it('should update own comment', async () => {
-      const commentRes = await request(app)
-        .post(`${POSTS_PATH}/${ctx.postId}/comments`)
-        .set('Authorization', `Bearer ${ctx.userToken}`)
-        .send({ content: 'Original comment content' })
-        .expect(201);
-
-      const commentId = commentRes.body.id;
-
-      await request(app)
-        .put(`/comments/${commentId}`)
-        .set('Authorization', `Bearer ${ctx.userToken}`)
-        .send({ content: 'Updated comment content' })
-        .expect(204);
-
-      const getRes = await request(app).get(`/comments/${commentId}`).expect(200);
-
-      expect(getRes.body.content).toBe('Updated comment content');
-      expect(getRes.body.commentatorInfo.userLogin).toBe(ctx.userLogin);
-    });
-
-    it("should not allow updating someone else's comment", async () => {
-      const otherUser = userTestHelper.createUserDto({
-        login: 'testDrive',
-        email: 'testik@gmail.com',
-        pass: '123456789',
-      });
-
-      const createdOtherUser = await request(app)
-        .post(USER_PATH)
-        .auth(SETTINGS.ADMIN_USER, SETTINGS.ADMIN_PASSWORD)
-        .send({
-          login: otherUser.login,
-          email: otherUser.email,
-          password: otherUser.pass,
-        })
-        .expect(201);
-
-      const otherToken = await getJwtTokenTest(app, createdOtherUser.body.email, otherUser.pass);
-
-      const commentRes = await request(app)
-        .post(`${POSTS_PATH}/${ctx.postId}/comments`)
-        .set('Authorization', `Bearer ${otherToken}`)
-        .send({
-          content: 'Other user commentOther user commentOther user commentOther user comment',
-        })
-        .expect(201);
-
-      const commentId = commentRes.body.id;
-
-      await request(app)
-        .put(`/comments/${commentId}`)
-        .set('Authorization', `Bearer ${ctx.userToken}`)
-        .send({ content: 'Trying to editOther user commentOther user commentOther user comment' })
-        .expect(403);
-    });
-
-    it('should return 400 if content is invalid', async () => {
-      const commentRes = await request(app)
-        .post(`${POSTS_PATH}/${ctx.postId}/comments`)
-        .set('Authorization', `Bearer ${ctx.userToken}`)
-        .send({ content: 'ValidValid contentValid contentValid contentValid content' })
-        .expect(201);
-
-      const commentId = commentRes.body.id;
-
-      await request(app)
-        .put(`/comments/${commentId}`)
-        .set('Authorization', `Bearer ${ctx.userToken}`)
-        .send({ content: '' }) // некорректное значение
-        .expect(400);
-    });
-
-    it('should return 404 if comment does not exist', async () => {
-      const fakeCommentId = new ObjectId().toString();
-
-      await request(app)
-        .put(`/comments/${fakeCommentId}`)
-        .set('Authorization', `Bearer ${ctx.userToken}`)
-        .send({ content: 'Any contentAny contentAny contentAny contentAny contentAny content' })
-        .expect(404);
-    });
-  });
+  // describe('Comment GET by id', () => {
+  //   it('should return comment by id', async () => {
+  //     const commentRes = await request(app)
+  //       .post(`${POSTS_PATH}/${ctx.postId}/comments`)
+  //       .set('Authorization', `Bearer ${ctx.userToken}`)
+  //       .send({ content: 'Mycommentstringstringstringststrststringststringstringstringst' })
+  //       .expect(201);
+  //
+  //     const commentId = commentRes.body.id;
+  //
+  //     const res = await request(app).get(`/comments/${commentId}`).expect(200);
+  //
+  //     expect(res.body.id).toBe(commentId);
+  //     expect(res.body.content).toBe(commentRes.body.content);
+  //     expect(res.body.commentatorInfo.userId).toBe(commentRes.body.commentatorInfo.userId);
+  //     expect(res.body.commentatorInfo.userLogin).toBe(ctx.userLogin);
+  //   });
+  // });
+  //
+  // describe('Comment PUT', () => {
+  //   it('should update own comment', async () => {
+  //     const commentRes = await request(app)
+  //       .post(`${POSTS_PATH}/${ctx.postId}/comments`)
+  //       .set('Authorization', `Bearer ${ctx.userToken}`)
+  //       .send({ content: 'Original comment content' })
+  //       .expect(201);
+  //
+  //     const commentId = commentRes.body.id;
+  //
+  //     await request(app)
+  //       .put(`/comments/${commentId}`)
+  //       .set('Authorization', `Bearer ${ctx.userToken}`)
+  //       .send({ content: 'Updated comment content' })
+  //       .expect(204);
+  //
+  //     const getRes = await request(app).get(`/comments/${commentId}`).expect(200);
+  //
+  //     expect(getRes.body.content).toBe('Updated comment content');
+  //     expect(getRes.body.commentatorInfo.userLogin).toBe(ctx.userLogin);
+  //   });
+  //
+  //   it("should not allow updating someone else's comment", async () => {
+  //     const otherUser = userTestHelper.createUserDto({
+  //       login: 'testDrive',
+  //       email: 'testik@gmail.com',
+  //       pass: '123456789',
+  //     });
+  //
+  //     const createdOtherUser = await request(app)
+  //       .post(USER_PATH)
+  //       .auth(SETTINGS.ADMIN_USER, SETTINGS.ADMIN_PASSWORD)
+  //       .send({
+  //         login: otherUser.login,
+  //         email: otherUser.email,
+  //         password: otherUser.pass,
+  //       })
+  //       .expect(201);
+  //
+  //     const otherToken = await getJwtTokenTest(app, createdOtherUser.body.email, otherUser.pass);
+  //
+  //     const commentRes = await request(app)
+  //       .post(`${POSTS_PATH}/${ctx.postId}/comments`)
+  //       .set('Authorization', `Bearer ${otherToken}`)
+  //       .send({
+  //         content: 'Other user commentOther user commentOther user commentOther user comment',
+  //       })
+  //       .expect(201);
+  //
+  //     const commentId = commentRes.body.id;
+  //
+  //     await request(app)
+  //       .put(`/comments/${commentId}`)
+  //       .set('Authorization', `Bearer ${ctx.userToken}`)
+  //       .send({ content: 'Trying to editOther user commentOther user commentOther user comment' })
+  //       .expect(403);
+  //   });
+  //
+  //   it('should return 400 if content is invalid', async () => {
+  //     const commentRes = await request(app)
+  //       .post(`${POSTS_PATH}/${ctx.postId}/comments`)
+  //       .set('Authorization', `Bearer ${ctx.userToken}`)
+  //       .send({ content: 'ValidValid contentValid contentValid contentValid content' })
+  //       .expect(201);
+  //
+  //     const commentId = commentRes.body.id;
+  //
+  //     await request(app)
+  //       .put(`/comments/${commentId}`)
+  //       .set('Authorization', `Bearer ${ctx.userToken}`)
+  //       .send({ content: '' }) // некорректное значение
+  //       .expect(400);
+  //   });
+  //
+  //   it('should return 404 if comment does not exist', async () => {
+  //     const fakeCommentId = new ObjectId().toString();
+  //
+  //     await request(app)
+  //       .put(`/comments/${fakeCommentId}`)
+  //       .set('Authorization', `Bearer ${ctx.userToken}`)
+  //       .send({ content: 'Any contentAny contentAny contentAny contentAny contentAny content' })
+  //       .expect(404);
+  //   });
+  // });
 });

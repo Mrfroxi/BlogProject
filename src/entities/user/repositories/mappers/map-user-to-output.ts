@@ -1,8 +1,7 @@
-import { WithId } from 'mongodb';
-import { User } from '../../types/user';
+import { IUser } from '../../../../db/schemas/user.schema';
 import { UserOutputDto } from '../../dto/user-output.dto';
 
-export const mapUserToOutput = (user: WithId<User>) => {
+export const mapUserToOutput = (user: IUser) => {
   const outputUser: UserOutputDto = {
     id: user._id.toString(),
     login: user.login,
