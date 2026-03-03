@@ -124,7 +124,8 @@ export class PostController {
       return res.sendStatus(resultCodeToHttpException(isVerifyPostId.status));
     }
 
-    const validatedParams = await this.postService.findAllComments(matchSortingData);
+    const userId = req.userId ?? undefined;
+    const validatedParams = await this.postService.findAllComments(matchSortingData, userId);
 
     res.status(HttpStatuses.Ok).send(validatedParams);
   }

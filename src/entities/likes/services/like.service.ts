@@ -38,23 +38,17 @@ export class LikeService {
     };
   }
 
-  async getLikesInfo(commentId: string, userId?: string): Promise<{
-    likesCount: number;
-    dislikesCount: number;
-    myStatus: LikeStatus | null;
-  }> {
-    const { likesCount, dislikesCount } = await this.likeRepository.getLikesInfo(commentId);
+  async getLikesInfo(commentId: string): Promise<{ likesCount: number; dislikesCount: number }> {
+    return await this.likeRepository.getLikesInfo(commentId);
+  }
 
-    let myStatus: LikeStatus | null = null;
+  async getMyStatus(commentId: string, userId: string): Promise<LikeStatus> {
+    let myStatus: LikeStatus = LikeStatus.None;
     if (userId) {
       myStatus = await this.likeRepository.getUserLikeStatus(commentId, userId);
     }
 
-    return {
-      likesCount,
-      dislikesCount,
-      myStatus: myStatus || LikeStatus.None,
-    };
+    return myStatus;
   }
 
   private async updateCommentCounters(commentId: string): Promise<void> {

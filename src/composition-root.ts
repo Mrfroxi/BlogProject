@@ -15,6 +15,9 @@ import { BlogService } from './entities/blogs/services/blog.service';
 import { BlogController } from './entities/blogs/routers/blog.controller';
 import { AuthService } from './auth/services/auth.service';
 import { AuthController } from './auth/routers/auth.controller';
+import { LikeRepository } from './entities/likes/repositories/like.repository';
+import { LikeService } from './entities/likes/services/like.service';
+import { LikeController } from './entities/likes/routers/like.controller';
 
 export const container = new Container();
 
@@ -35,4 +38,7 @@ container.bind<BlogService>(BlogService).to(BlogService);
 container.bind<BlogController>(BlogController).to(BlogController);
 container.bind<AuthService>(AuthService).to(AuthService);
 container.bind<AuthController>(AuthController).to(AuthController);
+container.bind<LikeRepository>(LikeRepository).to(LikeRepository);
+container.bind<LikeService>(LikeService).to(LikeService);
+container.bind<LikeController>(LikeController).to(LikeController);
 

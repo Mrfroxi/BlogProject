@@ -8,6 +8,8 @@ export interface IComment extends Document {
   };
   content: string;
   createdAt: string;
+  likesCount: number;
+  dislikesCount: number;
 }
 
 const commentatorInfoSchema = new Schema(
@@ -24,6 +26,8 @@ const commentSchema = new Schema<IComment>(
     commentatorInfo: { type: commentatorInfoSchema, required: true },
     content: { type: String, required: true },
     createdAt: { type: String, required: true },
+    likesCount: { type: Number, default: 0 },
+    dislikesCount: { type: Number, default: 0 },
   },
   {
     timestamps: false,

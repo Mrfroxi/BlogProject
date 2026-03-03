@@ -40,4 +40,15 @@ export class CommentRepository {
     );
     return CommentModel.findById(commentId);
   }
+
+  async updateLikesCounters(
+    commentId: string,
+    likesCount: number,
+    dislikesCount: number
+  ): Promise<void> {
+    await CommentModel.updateOne(
+      { _id: commentId },
+      { $set: { likesCount, dislikesCount } }
+    );
+  }
 }

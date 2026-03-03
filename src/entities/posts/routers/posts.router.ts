@@ -10,6 +10,7 @@ import { postUpdateValidator } from '../validators/post-update.validator';
 import { inputValidationResultMiddleware } from '../../../core/middlewares/validation/input-validation-result';
 import { createCommentValidator } from '../validators/postId.validator';
 import { JwtAuthorizations } from '../../../auth/routers/middleware/jwt-authorizations.guard-middleware';
+import { JwtOptionalAuthorization } from '../../../auth/routers/middleware/jwt-optional-authorization.middleware';
 import { getAllPostCommentsValidator } from '../validators/post-getAll.sorting.validation';
 
 export const postsRouter = Router({});
@@ -58,6 +59,7 @@ postsRouter
 
   .get(
     '/:postId/comments',
+    JwtOptionalAuthorization,
     getAllPostCommentsValidator,
     inputValidationResultMiddleware,
     postController.getAllPostComments.bind(postController)

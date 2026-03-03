@@ -12,8 +12,9 @@ export class CommentController {
 
   async getComment(req: Request, res: Response) {
     const commentId = req.params.id;
+    const userId = req.userId!;
 
-    const commentResult = await this.commentService.findById(commentId);
+    const commentResult = await this.commentService.findById(commentId, userId);
 
     if (commentResult.status !== ResultStatus.Success) {
       return res

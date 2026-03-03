@@ -7,13 +7,16 @@ import { ResultType } from '../../../core/object-result/result.type';
 import { CommentModel } from '../../../db/schemas/comment.schema';
 import { PostsRepository } from '../repositories/posts.repository';
 import { BlogService } from '../../blogs/services/blog.service';
+import { LikeService } from '../../likes/services/like.service';
+import { LikeStatus } from '../../../db/schemas/likes.shema';
 import { injectable, inject } from 'inversify';
 
 @injectable()
 export class PostService {
   constructor(
     @inject(PostsRepository) private postsRepository: PostsRepository,
-    @inject(BlogService) private blogService: BlogService
+    @inject(BlogService) private blogService: BlogService,
+    @inject(LikeService) private likeService: LikeService
   ) {}
 
   async findAll(querySetup: any) {
@@ -62,7 +65,7 @@ export class PostService {
     return this.postsRepository.deletePost(postId);
   }
 
-  async findAllComments(query: any) {
+  async findAllComments(query: any, userId?: string) {
     const { pageNumber, pageSize, sortBy, sortDirection, postId } = query;
 
     const skip = (pageNumber - 1) * pageSize;
@@ -77,12 +80,24 @@ export class PostService {
     const totalCount = await CommentModel.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
-    const mappedItems = comments.map((c) => ({
-      id: c._id.toString(),
-      content: c.content,
-      commentatorInfo: c.commentatorInfo,
-      createdAt: c.createdAt,
-    }));
+    const mappedItems = await Promise.all(
+      comments.map(async (c) => {
+        const { likesCount, dislikesCount } = await this.likeService.getLikesInfo(c._id.toString());
+        const myStatus = userId ? await this.likeService.getMyStatus(c._id.toString(), userId) : LikeStatus.None;
+
+        return {
+          id: c._id.toString(),
+          content: c.content,
+          commentatorInfo: c.commentatorInfo,
+          createdAt: c.createdAt,
+          likesInfo: {
+            likesCount,
+            dislikesCount,
+            myStatus,
+          },
+        };
+      })
+    );
 
     return {
       pagesCount,
