@@ -50,6 +50,12 @@ describe('post entity', () => {
         blogId: ctx.blogId,
         blogName: ctx.blogName,
         createdAt: expect.any(String),
+        extendedLikesInfo: {
+          likesCount: expect.any(Number),
+          dislikesCount: expect.any(Number),
+          myStatus: expect.any(String),
+          newestLikes: expect.any(Array),
+        },
       });
     });
 
@@ -108,6 +114,12 @@ describe('post entity', () => {
         blogId: ctx.blogId,
         blogName: ctx.blogName,
         createdAt: expect.any(String),
+        extendedLikesInfo: {
+          likesCount: expect.any(Number),
+          dislikesCount: expect.any(Number),
+          myStatus: expect.any(String),
+          newestLikes: expect.any(Array),
+        },
       });
     });
 
