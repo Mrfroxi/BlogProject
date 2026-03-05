@@ -110,6 +110,7 @@ export class BlogController {
   async getBlogPostList(req: Request, res: Response) {
     try {
       const blogId = req.params.blogId;
+      const userId = req.userId ?? undefined;
 
       const sanitizedQuery = matchedData<PostQueryInput<PostSortField>>(req, {
         locations: ['query', 'params'],
@@ -120,14 +121,14 @@ export class BlogController {
 
       const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
-      const { items, totalCount } = await this.postService.findAll(queryInput);
+      const { items, totalCount } = await this.postService.findAll(queryInput, userId);
 
       res.status(HttpStatuses.Ok).send(
         mapPostListToOutput(items, {
           pageNumber: queryInput.pageNumber,
           pageSize: queryInput.pageSize,
           totalCount,
-        })
+        }, userId)
       );
     } catch (e: unknown) {
       errorHandler(e, res);

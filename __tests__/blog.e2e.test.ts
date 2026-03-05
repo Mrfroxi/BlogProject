@@ -338,6 +338,12 @@ describe('blog entity', () => {
         blogId: blogId,
         blogName: expect.any(String),
         createdAt: expect.any(String),
+        extendedLikesInfo: {
+          likesCount: expect.any(Number),
+          dislikesCount: expect.any(Number),
+          myStatus: expect.any(String),
+          newestLikes: expect.any(Array),
+        },
       });
     });
 

@@ -8,6 +8,7 @@ import { CommentModel } from '../../../db/schemas/comment.schema';
 import { PostsRepository } from '../repositories/posts.repository';
 import { BlogService } from '../../blogs/services/blog.service';
 import { LikeService } from '../../likes/services/like.service';
+import { PostLikeService } from '../../likes/services/post-like.service';
 import { LikeStatus } from '../../../db/schemas/likes.shema';
 import { injectable, inject } from 'inversify';
 
@@ -16,14 +17,31 @@ export class PostService {
   constructor(
     @inject(PostsRepository) private postsRepository: PostsRepository,
     @inject(BlogService) private blogService: BlogService,
-    @inject(LikeService) private likeService: LikeService
+    @inject(LikeService) private likeService: LikeService,
+    @inject(PostLikeService) private postLikeService: PostLikeService
   ) {}
 
-  async findAll(querySetup: any) {
-    return this.postsRepository.findAll(querySetup);
+  async findAll(querySetup: any, userId?: string) {
+    const result = await this.postsRepository.findAll(querySetup);
+
+    // Добавляем extendedLikesInfo к каждому посту
+    const itemsWithLikes = await Promise.all(
+      result.items.map(async (post) => {
+        const extendedLikesInfo = await this.postLikeService.getExtendedLikesInfo(
+          post._id.toString(),
+          userId
+        );
+        return {
+          ...post.toObject(),
+          extendedLikesInfo,
+        };
+      })
+    );
+
+    return { items: itemsWithLikes, totalCount: result.totalCount };
   }
 
-  async findPostById(postId: string): Promise<ResultType<PostOutput | null>> {
+  async findPostById(postId: string, userId?: string): Promise<ResultType<PostOutput | null>> {
     const postResult: PostOutput | null = await this.postsRepository.findById(postId);
 
     if (!postResult) {
@@ -35,9 +53,16 @@ export class PostService {
       };
     }
 
+    const extendedLikesInfo = await this.postLikeService.getExtendedLikesInfo(postId, userId);
+
+    const outputWithLikes: PostOutput = {
+      ...postResult,
+      extendedLikesInfo,
+    };
+
     return {
       status: ResultStatus.Success,
-      data: postResult,
+      data: outputWithLikes,
       extensions: [{ field: ' ', message: ' ' }],
     };
   }
@@ -52,6 +77,8 @@ export class PostService {
       createdAt: `${new Date().toISOString()}`,
       shortDescription: dto.shortDescription ?? 'Default shortDescription',
       title: dto.title ?? 'Default Title',
+      likesCount: 0,
+      dislikesCount: 0,
     };
 
     return this.postsRepository.createPost(createPostDto);
@@ -65,7 +92,7 @@ export class PostService {
     return this.postsRepository.deletePost(postId);
   }
 
-  async findAllComments(query: any, userId?: string) {
+  async findAllComments(query: any, userId?: string | null) {
     const { pageNumber, pageSize, sortBy, sortDirection, postId } = query;
 
     const skip = (pageNumber - 1) * pageSize;
@@ -81,15 +108,19 @@ export class PostService {
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     const mappedItems = await Promise.all(
-      comments.map(async (c) => {
-        const { likesCount, dislikesCount } = await this.likeService.getLikesInfo(c._id.toString());
-        const myStatus = userId ? await this.likeService.getMyStatus(c._id.toString(), userId) : LikeStatus.None;
+      comments.map(async (elem) => {
+        const { likesCount, dislikesCount } = await this.likeService.getLikesInfo(
+          elem._id.toString()
+        );
+        const myStatus = userId
+          ? await this.likeService.getMyStatus(elem._id.toString(), userId)
+          : LikeStatus.None;
 
         return {
-          id: c._id.toString(),
-          content: c.content,
-          commentatorInfo: c.commentatorInfo,
-          createdAt: c.createdAt,
+          id: elem._id.toString(),
+          content: elem.content,
+          commentatorInfo: elem.commentatorInfo,
+          createdAt: elem.createdAt,
           likesInfo: {
             likesCount,
             dislikesCount,

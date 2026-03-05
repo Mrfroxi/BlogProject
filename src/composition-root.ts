@@ -18,6 +18,9 @@ import { AuthController } from './auth/routers/auth.controller';
 import { LikeRepository } from './entities/likes/repositories/like.repository';
 import { LikeService } from './entities/likes/services/like.service';
 import { LikeController } from './entities/likes/routers/like.controller';
+import { PostLikeRepository } from './entities/likes/repositories/post-like.repository';
+import { PostLikeService } from './entities/likes/services/post-like.service';
+import { PostLikeController } from './entities/likes/routers/post-like.controller';
 
 export const container = new Container();
 
@@ -41,4 +44,7 @@ container.bind<AuthController>(AuthController).to(AuthController);
 container.bind<LikeRepository>(LikeRepository).to(LikeRepository);
 container.bind<LikeService>(LikeService).to(LikeService);
 container.bind<LikeController>(LikeController).to(LikeController);
+container.bind<PostLikeRepository>(PostLikeRepository).to(PostLikeRepository);
+container.bind<PostLikeService>(PostLikeService).to(PostLikeService);
+container.bind<PostLikeController>(PostLikeController).to(PostLikeController);
 

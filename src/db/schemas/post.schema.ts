@@ -7,6 +7,8 @@ export interface IPost extends Document {
   blogId: string;
   blogName: string;
   createdAt: string;
+  likesCount: number;
+  dislikesCount: number;
 }
 
 const postSchema = new Schema<IPost>(
@@ -17,6 +19,8 @@ const postSchema = new Schema<IPost>(
     blogId: { type: String, required: true, index: true },
     blogName: { type: String, required: true },
     createdAt: { type: String, required: true },
+    likesCount: { type: Number, default: 0 },
+    dislikesCount: { type: Number, default: 0 },
   },
   {
     timestamps: false,

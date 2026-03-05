@@ -1,5 +1,6 @@
 import { PostOutput } from '../../dto/post.output';
 import { IPost } from '../../../../db/schemas/post.schema';
+import { PostLikeStatus } from '../../../../db/schemas/post-like.schema';
 
 export function mapPostToOutput(post: IPost): PostOutput {
   return {
@@ -10,5 +11,11 @@ export function mapPostToOutput(post: IPost): PostOutput {
     blogId: post.blogId,
     blogName: post.blogName,
     createdAt: post.createdAt,
+    extendedLikesInfo: {
+      likesCount: post.likesCount || 0,
+      dislikesCount: post.dislikesCount || 0,
+      myStatus: PostLikeStatus.None,
+      newestLikes: [],
+    },
   };
 }

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-
 import { CommentService } from '../services/comment.service';
 import { injectable, inject } from 'inversify';
 import { ResultStatus } from '../../../core/object-result/resultCode';

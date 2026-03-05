@@ -26,8 +26,8 @@ export class LikeRepository {
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]);
 
-    const likesCount = result.find((r) => r._id === LikeStatus.Like)?.count || 0;
-    const dislikesCount = result.find((r) => r._id === LikeStatus.Dislike)?.count || 0;
+    const likesCount = result.find((elem) => elem._id === LikeStatus.Like)?.count || 0;
+    const dislikesCount = result.find((elem) => elem._id === LikeStatus.Dislike)?.count || 0;
 
     return { likesCount, dislikesCount };
   }

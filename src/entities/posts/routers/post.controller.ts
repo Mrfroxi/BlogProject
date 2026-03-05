@@ -32,14 +32,15 @@ export class PostController {
       });
 
       const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
+      const userId = req.userId ?? undefined;
 
-      const { items, totalCount } = await this.postService.findAll(queryInput);
+      const { items, totalCount } = await this.postService.findAll(queryInput, userId);
 
       const blogListOutput = mapPostListToOutput(items, {
         totalCount,
         pageNumber: queryInput.pageNumber,
         pageSize: queryInput.pageSize,
-      });
+      }, userId);
 
       res.status(HttpStatuses.Ok).send(blogListOutput);
     } catch (e: unknown) {
@@ -49,8 +50,12 @@ export class PostController {
 
   async getPost(req: Request, res: Response) {
     const postId: string = req.params.id;
+    const userId = req.userId ?? undefined;
 
-    const postResult: ResultType<PostOutput | null> = await this.postService.findPostById(postId);
+    const postResult: ResultType<PostOutput | null> = await this.postService.findPostById(
+      postId,
+      userId
+    );
 
     if (postResult.status !== ResultStatus.Success) {
       return res.status(resultCodeToHttpException(postResult.status)).send(postResult.extensions);
@@ -124,7 +129,7 @@ export class PostController {
       return res.sendStatus(resultCodeToHttpException(isVerifyPostId.status));
     }
 
-    const userId = req.userId ?? undefined;
+    const userId = req.userId ?? null;
     const validatedParams = await this.postService.findAllComments(matchSortingData, userId);
 
     res.status(HttpStatuses.Ok).send(validatedParams);
