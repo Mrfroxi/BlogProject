@@ -11,6 +11,7 @@ import { blogUpdateValidator } from '../validators/blog-update.validator';
 import { blogIdParamValidator } from '../../../core/middlewares/validation/blogId-param.validator';
 import { blogPostCreateValidator } from '../validators/blog-post-create.validator';
 import { PostSortField } from '../../posts/types/post-sort-fields';
+import { JwtOptionalAuthorization } from '../../../auth/routers/middleware/jwt-optional-authorization.middleware';
 
 export const blogsRouter = Router({});
 
@@ -59,6 +60,7 @@ blogsRouter
 
   .get(
     '/:blogId/posts',
+    JwtOptionalAuthorization,
     paginationSortingValidator(PostSortField),
     blogIdParamValidator,
     inputValidationResultMiddleware,

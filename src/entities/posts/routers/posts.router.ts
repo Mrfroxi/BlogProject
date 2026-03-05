@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { container } from '../../../composition-root';
 import { PostController } from './post.controller';
+import { PostLikeController } from '../../likes/routers/post-like.controller';
 import { idParamValidator } from '../../../core/middlewares/validation/id-param.validator';
 import { SuperAdminGuard } from '../../../auth/routers/middleware/super-admin.guard-middleware';
 import { paginationSortingValidator } from '../../../core/middlewares/validation/pagination.sorting.validator';
@@ -12,20 +13,32 @@ import { createCommentValidator } from '../validators/postId.validator';
 import { JwtAuthorizations } from '../../../auth/routers/middleware/jwt-authorizations.guard-middleware';
 import { JwtOptionalAuthorization } from '../../../auth/routers/middleware/jwt-optional-authorization.middleware';
 import { getAllPostCommentsValidator } from '../validators/post-getAll.sorting.validation';
+import { postLikeStatusValidator } from '../../likes/validators/post-like-status.validator';
+import { param } from 'express-validator';
+
+const postIdValidator = param('postId')
+  .exists()
+  .withMessage('PostId is required')
+  .isString()
+  .withMessage('PostId must be a string')
+  .isMongoId()
+  .withMessage('Invalid PostId format');
 
 export const postsRouter = Router({});
 
 const postController = container.get<PostController>(PostController);
+const postLikeController = container.get<PostLikeController>(PostLikeController);
 
 postsRouter
   .get(
     '',
+    JwtOptionalAuthorization,
     paginationSortingValidator(PostSortField),
     inputValidationResultMiddleware,
     postController.getPostList.bind(postController)
   )
 
-  .get('/:id', idParamValidator, inputValidationResultMiddleware, postController.getPost.bind(postController))
+  .get('/:id', JwtOptionalAuthorization, idParamValidator, inputValidationResultMiddleware, postController.getPost.bind(postController))
   .post(
     '',
     SuperAdminGuard,
@@ -63,4 +76,13 @@ postsRouter
     getAllPostCommentsValidator,
     inputValidationResultMiddleware,
     postController.getAllPostComments.bind(postController)
+  )
+
+  .put(
+    '/:postId/like-status',
+    JwtAuthorizations,
+    postIdValidator,
+    postLikeStatusValidator,
+    inputValidationResultMiddleware,
+    postLikeController.setLikeStatus.bind(postLikeController)
   );
